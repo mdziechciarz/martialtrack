@@ -1,0 +1,228 @@
+/* Topbar */
+
+.layoutContainer {
+  width: 100%;
+  display: flex;
+  /* flex-direction: column; */
+  /* height: 100vh; */
+}
+
+.mainContainer {
+  flex-grow: 1;
+}
+
+.topBarContainer {
+  width: 100%;
+  height: 64px;
+  background-color: #fff;
+
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.hamburgerButton {
+  height: 40px;
+  width: 40px;
+
+  background: none;
+  outline: none;
+  border: none;
+  color: black;
+}
+.hamburgerButton svg {
+  /* font-size: 32px; */
+  width: 32px;
+  height: 32px;
+}
+
+/* Sidebar */
+
+.sideBarContainer {
+  width: 280px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+
+  background: linear-gradient(185.4deg, #28354d 0%, #10203e 100.71%);
+
+  padding: 0 16px;
+}
+
+.sideBarCloseButton {
+  width: 40px;
+  height: 40px;
+  background: none;
+  outline: none;
+  border: none;
+  color: white;
+
+  position: absolute;
+  top: 12px;
+  left: 16px;
+}
+.sideBarCloseButton svg {
+  width: 32px;
+  height: 32px;
+}
+
+.MartialTrackLogo {
+  text-align: center;
+  margin-top: 80px;
+  color: white;
+}
+
+.sideBarButtonsList {
+  width: 100%;
+  margin-top: 80px;
+  list-style: none;
+}
+
+.sideBarButton {
+  margin-bottom: 8px;
+}
+.sideBarButton button {
+  width: 100%;
+  height: 40px;
+  padding: 0 16px;
+  color: white;
+  font-size: 14px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.sideBarButton:hover button {
+  background: #958e8e1d;
+}
+
+.sideBarButtonActive button {
+  background: #958e8e26;
+  font-weight: bold;
+}
+
+.sideBarButtonIcon {
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+}
+
+@media (max-width: 600px) {
+  .sideBarClosed {
+    display: none;
+  }
+}
+
+/*  */
+/* TABLET 600 - 1199 */
+/*  */
+
+@media screen and (min-width: 600px) and (max-width: 1199px) {
+  /* @media screen and (min-width: 600px) { */
+  .sideBarContainer {
+    position: unset;
+    margin: 0;
+  }
+
+  .hamburgerButton {
+    color: white;
+    width: 56px;
+    height: 56px;
+    margin-top: 24px;
+    margin-left: 18px;
+  }
+
+  .hamburgerButton svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .sideBarCloseButton {
+    top: 24px;
+    left: 18px;
+    width: 56px;
+    height: 56px;
+  }
+
+  .sideBarCloseButton svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .sideBarButton button {
+    font-size: 16px;
+  }
+
+  /* SideBar Closed */
+
+  .sideBarClosed.sideBarContainer {
+    width: 92px;
+    padding: 0;
+    margin: 0 auto;
+  }
+  .sideBarClosed .MartialTrackLogo {
+    display: none;
+  }
+
+  .sideBarClosed .sideBarButtonsList {
+    display: none;
+  }
+}
+
+/* Laptop and Desktop (1200+) */
+
+@media screen and (min-width: 1200px) {
+  /* .sideBarCloseButton {
+    display: none;
+  }
+  .hamburgerButton {
+    display: none;
+  }
+  .sideBarClosed .MartialTrackLogo {
+    display: unset;
+  }
+  .sideBarClosed .sideBarButtonsList {
+    display: unset;
+  }
+  .sideBarContainer.sideBarClosed {
+    width: unset;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .sideBarContainer {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .sideBarClosed .MartialTrackLogo {
+    margin-top: 40px;
+  } */
+
+  .sideBarContainer,
+  .sideBarContainer.sideBarClosed {
+    position: unset;
+    padding: 0 24px;
+  }
+
+  .hamburgerButton,
+  .sidebarClosed .hamburgerButton {
+    display: none;
+  }
+  .sideBarCloseButton,
+  .sidebarClosed .sideBarCloseButton {
+    display: none;
+  }
+  .MartialTrackLogo,
+  .sidebarClosed .MartialTrackLogo {
+    margin-top: 80px;
+  }
+}
