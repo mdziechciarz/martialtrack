@@ -1,6 +1,7 @@
 // import { Inter } from "next/font/google";
 import {Roboto} from 'next/font/google';
 import './globals.css';
+import {Providers} from './providers';
 
 const roboto = Roboto({
   weight: ['400', '700'],
@@ -15,7 +16,9 @@ export const metadata = {
 export default function RootLayout({children}) {
   return (
     <html lang="en">
-      <body className={roboto.className}>{children}</body>
+      <body className={roboto.className}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

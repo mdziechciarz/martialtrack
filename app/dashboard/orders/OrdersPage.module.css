@@ -1,0 +1,50 @@
+.tableContainer {
+  margin-top: 40px;
+
+  background-color: white;
+
+  /* padding-top: 16px; */
+  padding: 16px;
+
+  border-radius: 12px;
+
+  /* max-width: 100vw; */
+  /* width: 100%; */
+  /* width: auto; */
+  /* flex-grow: 1; */
+  /* max-width: 100%; */
+  /* width: fit-content; */
+  /* overflow-x: scroll; */
+}
+
+.newOrderButton {
+  margin-top: 16px;
+  width: 100%;
+}
+
+.tableTitle {
+  /* margin-left: 16px; */
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #5ab8fb;
+  text-transform: uppercase;
+}
+
+@media screen and (min-width: 600px) {
+  .tableContainer {
+    /* padding: 24px 8px; */
+    padding: 24px;
+  }
+
+  .newOrderButton {
+    width: unset;
+    margin-left: auto;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .tableContainer {
+    padding: 32px;
+  }
+}
