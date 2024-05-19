@@ -1,0 +1,96 @@
+@media screen and (min-width: 600px) {
+  .tableContainer {
+    /* padding: 24px 8px; */
+    padding: 24px;
+  }
+
+  .newOrderButton {
+    width: unset;
+    margin-left: auto;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .tableContainer {
+    padding: 32px;
+  }
+  .tableWrapper::-webkit-scrollbar {
+    width: 6px; /* Mostly for vertical scrollbars */
+    height: 6px; /* Mostly for horizontal scrollbars */
+  }
+  .tableWrapper::-webkit-scrollbar-thumb {
+    /* Foreground */
+    background: #4ba7e8;
+    border-radius: 8px;
+  }
+  .tableWrapper::-webkit-scrollbar-track {
+    /* Background */
+    background: #f0f0f0;
+    margin: 16px;
+    border-radius: 14px;
+  }
+}
+
+.cardContainer {
+  margin-top: 16px;
+}
+
+.table {
+  margin-top: 16px;
+}
+
+.medicalCheckupsCell svg {
+  width: 20px;
+  height: 20px;
+  margin-left: 4px;
+}
+
+/* AVATAR NAME */
+.avatarNameContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  width: fit-content;
+  cursor: pointer;
+}
+
+.avatar {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: 100%;
+}
+
+.name {
+  margin-left: 8px;
+  font-size: 14px;
+}
+
+.avatarNameContainer:hover .name {
+  text-decoration: underline;
+}
+
+.statusChipContainer {
+  display: flex;
+  align-items: center;
+  /* justify-content: flex-end; */
+  flex-direction: row;
+  cursor: pointer;
+}
+
+.statusChipContainer:hover .statusChevronContainer {
+  /* display: block; */
+  visibility: visible;
+}
+
+@media screen and (min-width: 1200px) {
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .statusChevronContainer {
+    visibility: hidden;
+  }
+}

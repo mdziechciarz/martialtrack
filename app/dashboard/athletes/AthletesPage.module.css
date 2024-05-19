@@ -1,0 +1,15 @@
+.addAthleteButton {
+  margin-top: 16px;
+  width: 100%;
+}
+
+@media screen and (min-width: 600px) {
+  .buttonsContainer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .addAthleteButton {
+    width: auto;
+  }
+}
