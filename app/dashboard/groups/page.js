@@ -19,6 +19,7 @@ import {
   DropdownTrigger,
   Tooltip,
 } from '@nextui-org/react';
+import {useRouter} from 'next/navigation';
 import styles from './GroupsPage.module.css';
 import CoachCard from './components/AvatarCard/CoachCard';
 
@@ -126,6 +127,7 @@ const GroupsPage = () => {
                 {section.groups.map(group => (
                   <GroupCard
                     key={group.id}
+                    id={group.id}
                     name={group.name}
                     color={group.color}
                     coach={group.coach}
@@ -144,9 +146,15 @@ const GroupsPage = () => {
 
 export default GroupsPage;
 
-const GroupCard = ({name, color, members, openingTimes, coach}) => {
+const GroupCard = ({id, name, color, members, openingTimes, coach}) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/dashboard/groups/${id}`);
+  };
+
   return (
-    <li className={styles.groupCard} style={{borderLeftColor: color}}>
+    <li onClick={handleClick} className={styles.groupCard} style={{borderLeftColor: color}}>
       <div className={styles.groupContentContainer}>
         <h3 className={styles.groupTitle}>{name}</h3>
         <CoachCard name={coach.name} imgSrc={coach.imgsrc} />

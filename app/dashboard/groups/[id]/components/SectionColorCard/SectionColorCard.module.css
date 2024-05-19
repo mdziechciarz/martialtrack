@@ -1,0 +1,56 @@
+.contentContainer {
+  margin-top: 16px;
+  width: 100%;
+  display: grid;
+  row-gap: 8px;
+  column-gap: 24px;
+  grid-template-columns: 7fr 3fr;
+}
+
+.entry {
+  min-width: 40%;
+}
+
+.entry .key {
+  color: #4a4a4a;
+  font-size: 13px;
+}
+
+.entry .value {
+  color: #000;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+.colorInput {
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  width: 80px;
+  height: 40px;
+  border: 0;
+  padding: 0;
+}
+
+.editable .colorInput:hover {
+  filter: brightness(0.8);
+}
+
+.colorInput::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.colorInput::-webkit-color-swatch {
+  border: 0;
+  border-radius: 12px;
+}
+
+/* ::-moz-color-swatch,
+::-moz-focus-inner {
+  border: 0;
+}
+
+::-moz-focus-inner {
+  padding: 0;
+} */
