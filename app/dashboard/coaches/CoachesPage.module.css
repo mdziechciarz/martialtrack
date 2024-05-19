@@ -1,0 +1,56 @@
+.toolbar {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.buttonsContainer button {
+  width: 100%;
+}
+
+.inputWrapper {
+  background-color: #fff;
+}
+
+.inputBase[data-focus='true'] .inputWrapper {
+  background-color: #fbfbfb;
+}
+
+.coachesList {
+  list-style: none;
+  display: grid;
+
+  grid-template-columns: repeat(1fr, 1);
+
+  padding: 16px 0;
+}
+
+@media screen and (min-width: 600px) {
+  .coachesList {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 24px;
+    row-gap: 24px;
+  }
+
+  .toolbar {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .buttonsContainer {
+    order: 2;
+  }
+  .inputContainer {
+    order: 1;
+    flex-grow: 1;
+    max-width: 50%;
+    /* max-width: 50%; */
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .coachesList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
