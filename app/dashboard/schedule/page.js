@@ -4,14 +4,14 @@ import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
 import PageTitle from '@/components/PageTitle/PageTitle';
 
-const AttendancePage = () => {
+const SchedulePage = () => {
   return (
     <MainLayout>
       <ContentContainer>
-        <PageTitle title="Listy obecności" />
+        <PageTitle title="Harmonogram zajęć" />
       </ContentContainer>
     </MainLayout>
   );
 };
 
-export default AttendancePage;
+export default SchedulePage;
