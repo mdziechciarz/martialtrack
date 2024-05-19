@@ -13,7 +13,6 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  User,
 } from '@nextui-org/react';
 import React from 'react';
 // import {ChevronDownIcon} from './ChevronDownIcon';
@@ -22,16 +21,70 @@ import {
   Search16Filled as SearchIcon,
   MoreVertical20Filled as VerticalDotsIcon,
 } from '@fluentui/react-icons';
+import Image from 'next/image';
 import {columns, statusOptions, users} from './data';
 import {capitalize} from './utils';
 
+import styles from './OrdersTable.module.css';
+
 const statusColorMap = {
-  active: 'success',
-  paused: 'danger',
-  vacation: 'warning',
+  Zrealizowane: 'success',
+  Nieopłacone: 'danger',
+  Opłacone: 'warning',
 };
 
-const INITIAL_VISIBLE_COLUMNS = ['name', 'role', 'status', 'actions'];
+const INITIAL_VISIBLE_COLUMNS = ['name', 'date', 'order', 'status', 'actions'];
+
+const AvaratName = ({imgSrc, name}) => (
+  <div className={styles.avatarNameContainer}>
+    <Image src={imgSrc} alt={name} width={24} height={24} className={styles.avatar} />
+    <span className={styles.name}>{name}</span>
+  </div>
+);
+
+const StatusChip = ({status}) => {
+  const [selectedStatus, setSelectedStatus] = React.useState(status);
+
+  console.log('selectedStatus', selectedStatus);
+
+  return (
+    <Dropdown>
+      <DropdownTrigger className="hidden sm:flex">
+        <div className={styles.statusChipContainer}>
+          <Chip
+            className="capitalize"
+            color={statusColorMap[selectedStatus]}
+            size="sm"
+            variant="flat"
+          >
+            {selectedStatus}
+          </Chip>
+          <div className={styles.statusChevronContainer}>
+            <ChevronDownIcon className={styles.statusChevronIcon} />
+          </div>
+        </div>
+      </DropdownTrigger>
+      <DropdownMenu
+        disallowEmptySelection
+        aria-label="Table Columns"
+        closeOnSelect
+        selectedKeys={selectedStatus}
+        selectionMode="single"
+        onAction={setSelectedStatus}
+      >
+        <DropdownItem key={'Zrealizowane'} className="capitalize">
+          Zrealizowane
+        </DropdownItem>
+        <DropdownItem key={'Opłacone'} className="capitalize">
+          Opłacone
+        </DropdownItem>
+        <DropdownItem key={'Nieopłacone'} className="capitalize">
+          Nieopłacone
+        </DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
+  );
+};
 
 export default function OrdersTable() {
   const [filterValue, setFilterValue] = React.useState('');
@@ -93,13 +146,10 @@ export default function OrdersTable() {
     switch (columnKey) {
       case 'name':
         return (
-          <User
-            avatarProps={{radius: 'lg', src: user.avatar}}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
+          // <User avatarProps={{src: user.avatar}} description={user.email} name={cellValue}>
+          //   {user.email}
+          // </User>
+          <AvaratName imgSrc={user.avatar} name={user.name} />
         );
       case 'role':
         return (
@@ -110,13 +160,14 @@ export default function OrdersTable() {
         );
       case 'status':
         return (
-          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-            {cellValue}
-          </Chip>
+          // <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
+          //   {cellValue}
+          // </Chip>
+          <StatusChip status={cellValue} />
         );
       case 'actions':
         return (
-          <div className="relative flex justify-end items-center gap-2">
+          <div className="relative flex justify-end items-center gnap-2">
             <Dropdown>
               <DropdownTrigger>
                 <Button isIconOnly size="sm" variant="light">
