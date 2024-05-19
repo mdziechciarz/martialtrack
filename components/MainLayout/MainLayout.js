@@ -15,6 +15,8 @@ import {
 } from '@fluentui/react-icons';
 import {useState} from 'react';
 
+import {Button} from '@nextui-org/react';
+import {usePathname, useRouter} from 'next/navigation';
 import styles from './MainLayout.module.css';
 
 const MainLayout = ({children}) => {
@@ -71,15 +73,19 @@ const SideBar = ({isOpen, closeSideBar, openSideBar}) => {
       )}
       <h1 className={styles.MartialTrackLogo}>MartialTrack</h1>
       <ul className={styles.sideBarButtonsList}>
-        <SideBarButton icon={Home16Filled} text="Panel Główny" active />
-        <SideBarButton icon={Person16Filled} text="Zawodnicy" />
-        <SideBarButton icon={ClipboardTaskListLtr20Filled} text="Listy obecności" />
-        <SideBarButton icon={People12Filled} text="Grupy" />
-        <SideBarButton icon={Wallet16Filled} text="Płatności" />
-        <SideBarButton icon={Send16Filled} text="Wiadomości" />
-        <SideBarButton icon={ShieldPerson20Filled} text="Trenerzy" />
-        <SideBarButton icon={Calendar12Filled} text="Harmonogram zajęć" />
-        <SideBarButton icon={Settings16Filled} text="Ustawienia" />
+        <SideBarButton icon={Home16Filled} text="Panel Główny" url="/dashboard" />
+        <SideBarButton icon={Person16Filled} text="Zawodnicy" url="/dashboard/athletes" />
+        <SideBarButton
+          icon={ClipboardTaskListLtr20Filled}
+          text="Listy obecności"
+          url="/dashboard/attendance"
+        />
+        <SideBarButton icon={People12Filled} text="Grupy" url="/dashboard/groups" />
+        <SideBarButton icon={Wallet16Filled} text="Płatności" url="/dashboard/payments" />
+        <SideBarButton icon={Send16Filled} text="Wiadomości" url="/dashboard/messages" />
+        <SideBarButton icon={ShieldPerson20Filled} text="Trenerzy" url="/dashboard/coaches" />
+        <SideBarButton icon={Calendar12Filled} text="Harmonogram zajęć" url="/dashboard/schedule" />
+        <SideBarButton icon={Settings16Filled} text="Ustawienia" url="/dashboard/settings" />
       </ul>
     </div>
   );
@@ -93,13 +99,20 @@ const SideBarCloseButton = ({closeSideBar}) => {
   );
 };
 
-const SideBarButton = ({icon: Icon, text, active}) => {
+const SideBarButton = ({icon: Icon, text, url}) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const isActive = pathname === url;
+
+  const handleClick = () => {
+    router.push(url);
+  };
+
   return (
-    <li className={`${styles.sideBarButton} ${active ? styles.sideBarButtonActive : ''}`}>
-      <button>
-        <Icon className={styles.sideBarButtonIcon} />
-        <span>{text}</span>
-      </button>
+    <li className={`${styles.sideBarButton} ${isActive ? styles.sideBarButtonActive : ''}`}>
+      <Button onClick={handleClick} fullWidth startContent={<Icon />}>
+        {text}
+      </Button>
     </li>
   );
 };

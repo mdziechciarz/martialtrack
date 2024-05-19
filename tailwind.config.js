@@ -10,7 +10,12 @@ const config = {
     './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: '#5AB8FB',
+        secondary: '#2d3142',
+      },
+    },
   },
   darkMode: 'class',
   plugins: [nextui()],

@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  width: fit-content;
+  cursor: pointer;
+}
+
+.avatar {
+  display: block;
+  margin-left: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 100%;
+}
+
+.name {
+  margin-left: 4px;
+  font-size: 14px;
+}

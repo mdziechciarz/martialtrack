@@ -1,0 +1,96 @@
+.buttonsContainer {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.buttonsContainer button {
+  flex-grow: 1;
+}
+
+.sectionContainer {
+  margin-bottom: 32px;
+  list-style: none;
+
+  display: grid;
+
+  grid-template-columns: repeat(1, 1fr);
+  row-gap: 8px;
+}
+
+.groupCard {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-left: 8px solid #f0f0f0;
+  padding: 16px 16px;
+
+  display: flex;
+  flex-direction: row;
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.groupCard:hover {
+  background-color: #f7f7f7;
+}
+
+.groupContentContainer {
+  flex-grow: 1;
+  padding-right: 12px;
+}
+
+.groupButtonsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0;
+
+  border-left: 2px solid #e8e8e8;
+  padding-left: 12px;
+}
+
+.groupButtonsContainer button {
+  color: #a6a6a6;
+}
+
+.addMemberButton {
+  display: none;
+}
+
+.groupTitle {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+@media screen and (min-width: 600px) {
+  .sectionContainer {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 16px;
+    column-gap: 24px;
+  }
+
+  .buttonsContainer button {
+    flex-grow: unset;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .sectionContainer {
+    row-gap: 24px;
+  }
+
+  .groupCard {
+    padding: 24px 24px;
+  }
+
+  .groupButtonsContainer button svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .addMemberButton {
+    display: block;
+  }
+}

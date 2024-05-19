@@ -7,11 +7,14 @@ const Button = ({
   icon: Icon = null,
   iconLeft = false,
   secondary = false,
-  grow = false,
+  tertiary = false,
+  mobileFullWidth = false,
 }) => {
   return (
     <button
-      className={`${styles.button} ${className} ${secondary ? styles.buttonSecondary : ''}`}
+      className={`${styles.button} ${className} ${secondary ? styles.buttonSecondary : ''} ${
+        tertiary ? styles.buttonTertiary : ''
+      } ${mobileFullWidth ? styles.mobileFullWidth : ''}`}
       onClick={onClick}
     >
       {Icon && iconLeft && (
