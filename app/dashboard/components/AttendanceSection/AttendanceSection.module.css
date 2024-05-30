@@ -1,0 +1,117 @@
+.container {
+  padding: 16px;
+  background-color: #fff;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* GRID */
+.grid {
+  /* margin-top: 24px; */
+  padding: 24px 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 32px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.grid::-webkit-scrollbar {
+  width: 6px; /* Mostly for vertical scrollbars */
+  height: 6px; /* Mostly for horizontal scrollbars */
+}
+.grid::-webkit-scrollbar-thumb {
+  /* Foreground */
+  background: #4ba7e8;
+  border-radius: 8px;
+}
+.grid::-webkit-scrollbar-track {
+  /* Background */
+  background: #f0f0f0;
+  margin: 16px;
+  border-radius: 14px;
+}
+
+/* DAY COLUMN */
+.dayColumnContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dayColumnHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.dayColumnContainer svg {
+  width: 24px;
+  height: 24px;
+  color: #11f50c;
+}
+
+.dayColumnContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ATTENDANCE CARD */
+.attendanceCardContainer {
+  padding: 8px;
+
+  background-color: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-left: 8px solid #11f50c;
+
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  justify-content: space-between;
+}
+
+.attendanceCardContainer:hover {
+  background-color: #f0f0f0;
+}
+
+.classDetailsContainer {
+  line-height: 1.4;
+}
+
+.attendanceDetailsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@media screen and (min-width: 600px) {
+  .container {
+    padding: 24px;
+  }
+
+  .sectionTitle {
+    font-size: 16px;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .container {
+    grid-column: span 2;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .container {
+    padding: 32px;
+  }
+}

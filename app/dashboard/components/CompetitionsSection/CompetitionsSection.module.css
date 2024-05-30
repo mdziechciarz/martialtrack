@@ -1,0 +1,105 @@
+.container {
+  padding: 16px;
+  background-color: #fff;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.competitionsList {
+  margin: 16px 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.competitionCardContainer {
+  width: 100%;
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+
+  border: 1px solid #e8e8e8;
+  border-left: 6px solid orange;
+
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.competitionCardContainer:hover {
+  background-color: #fafafa;
+}
+
+.competitionCardContainer:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.detailsContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  font-size: 14px;
+}
+
+.entrantsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.competitionName {
+  width: 100%;
+  /* min-height: 38px; */
+  font-weight: 600;
+  line-height: normal;
+}
+.competitionDate {
+  margin-top: 6px;
+}
+
+.entrantsIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.entrantsIcon svg {
+  color: #4a4a4a;
+  width: 24px;
+  height: 24px;
+}
+
+.entrantsText {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@media screen and (min-width: 600px) {
+  .container {
+    padding: 24px;
+  }
+
+  .sectionTitle {
+    font-size: 16px;
+  }
+
+  .competitionCardContainer {
+    border-left-width: 8px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .container {
+    padding: 32px;
+  }
+
+  .competitionCardContainer {
+    padding: 24px;
+    border-left-width: 10px;
+  }
+  .competitionName {
+    font-size: 16px;
+  }
+}

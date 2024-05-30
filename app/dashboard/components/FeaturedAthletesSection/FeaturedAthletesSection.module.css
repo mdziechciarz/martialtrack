@@ -1,0 +1,46 @@
+.container {
+  padding: 16px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.buttonsContainer {
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filtersContainer {
+  display: flex;
+  gap: 16px;
+}
+
+.chartsContainer {
+  /* height: 400px; */
+  flex-grow: 1;
+  min-height: 300px;
+  max-height: 500px;
+}
+
+@media screen and (min-width: 600px) {
+  .container {
+    padding: 24px;
+  }
+
+  .sectionTitle {
+    font-size: 16px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .container {
+    padding: 32px;
+  }
+}

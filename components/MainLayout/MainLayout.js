@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  AppsList20Filled,
   Calendar12Filled,
   Cart16Filled,
   ClipboardTaskListLtr20Filled,
@@ -85,6 +86,7 @@ const SideBar = ({isOpen, closeSideBar, openSideBar}) => {
         <SideBarButton icon={Wallet16Filled} text="Płatności" url="/dashboard/payments" />
         <SideBarButton icon={Send16Filled} text="Wiadomości" url="/dashboard/messages" />
         <SideBarButton icon={ShieldPerson20Filled} text="Trenerzy" url="/dashboard/coaches" />
+        <SideBarButton icon={AppsList20Filled} text="Zawody" url="/dashboard/competitions" />
         <SideBarButton icon={Calendar12Filled} text="Harmonogram zajęć" url="/dashboard/schedule" />
         <SideBarButton icon={Cart16Filled} text="Zamówienia" url="/dashboard/orders" />
         <SideBarButton icon={Settings16Filled} text="Ustawienia" url="/dashboard/settings" />

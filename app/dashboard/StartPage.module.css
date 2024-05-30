@@ -1,2 +1,22 @@
 .contentContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.competitionsAndAthletesContainer {
+  margin-top: 16px;
+  display: grid;
+}
+
+@media screen and (min-width: 900px) {
+  .contentContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .contentContainer {
+    grid-template-columns: 7fr 5fr;
+  }
 }

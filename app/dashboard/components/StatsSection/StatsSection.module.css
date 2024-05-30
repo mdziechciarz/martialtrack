@@ -1,0 +1,118 @@
+.container {
+  /* margin-top: 16px; */
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+}
+
+.cardContainer {
+  /* width: 100%; */
+  min-width: 100%;
+  min-height: 120px;
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+
+  background-color: #fff;
+
+  border: 1px solid #e8e8e8;
+}
+
+.cardTitleContainer {
+  flex-grow: 1;
+}
+
+.cardTitle {
+  font-size: 14px;
+  color: #4a4a4a;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.cardValuesContainer {
+  display: flex;
+  flex-direction: row;
+  text-wrap: nowrap;
+  /* gap: 4px; */
+  align-items: center;
+}
+
+.cardValuesChangeIndicatorContainer {
+  display: flex;
+  align-items: center;
+}
+
+.cardValuesChangeIndicatorContainer svg {
+  width: 24px;
+  height: 24px;
+}
+
+.cardValuesTextContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.primaryValue {
+  font-size: 24px;
+  font-weight: bold;
+  color: #5ab8fb;
+  line-height: 1.05;
+  align-self: flex-end;
+}
+
+.secondaryValue {
+  font-size: 14px;
+  color: #4a4a4a;
+}
+
+@media screen and (min-width: 600px) {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cardContainer {
+    min-width: unset;
+    padding: 24px;
+  }
+
+  .cardTitle {
+    font-size: 16px;
+  }
+
+  .primaryValue {
+    font-size: 32px;
+  }
+
+  .secondaryValue {
+    font-size: 16px;
+  }
+
+  .cardValuesChangeIndicatorContainer svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .container {
+    grid-column: span 2;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .cardContainer {
+    padding: 32px;
+  }
+
+  .cardValuesChangeIndicatorContainer svg {
+    width: 32px;
+    height: 32px;
+  }
+}

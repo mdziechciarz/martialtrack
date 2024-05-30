@@ -23,6 +23,10 @@
 }
 
 @media screen and (min-width: 600px) {
+  .header {
+    margin-bottom: -50px;
+  }
+
   .clubLogo {
     width: 100px;
     height: 100px;
@@ -31,6 +35,10 @@
 }
 
 @media screen and (min-width: 1200px) {
+  .header {
+    margin-bottom: -60px;
+  }
+
   .banner {
     /* height: 200px; */
   }
