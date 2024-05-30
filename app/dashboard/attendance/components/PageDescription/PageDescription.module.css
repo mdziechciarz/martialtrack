@@ -1,0 +1,16 @@
+.pageDescription {
+  font-size: 14px;
+  color: black;
+}
+
+@media screen and (min-width: 600px) {
+  .pageDescription {
+    font-size: 16px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pageDescription {
+    font-size: 18px;
+  }
+}

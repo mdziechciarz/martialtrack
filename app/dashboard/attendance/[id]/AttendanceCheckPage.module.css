@@ -1,0 +1,40 @@
+.buttonsContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.buttonsContainer svg {
+  width: 20px;
+  height: 20px;
+}
+
+.buttonsGroup {
+  flex-grow: 1;
+}
+
+.mainButton {
+  flex-grow: 1;
+}
+
+.cancelButton,
+.editButton {
+  flex-grow: 1;
+  background-color: #fff;
+}
+
+@media screen and (min-width: 600px) {
+  .buttonsGroup {
+    flex-grow: 0;
+  }
+
+  .mainButton {
+    flex-grow: 0;
+  }
+
+  .cancelButton,
+  .editButton {
+    flex-grow: 0;
+  }
+}
