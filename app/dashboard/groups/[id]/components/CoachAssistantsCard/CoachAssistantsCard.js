@@ -1,4 +1,4 @@
-import Card from '@/app/dashboard/athletes/[id]/AthleteDetailsView/components/Card/Card';
+import Card from '@/components/Card/Card';
 import Image from 'next/image';
 import {useState} from 'react';
 import styles from './CoachAssistantsCard.module.css';

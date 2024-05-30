@@ -1,4 +1,4 @@
-import Card from '@/app/dashboard/athletes/[id]/AthleteDetailsView/components/Card/Card';
+import Card from '@/components/Card/Card';
 import {Select, SelectItem} from '@nextui-org/react';
 import {useState} from 'react';
 import styles from './SectionColorCard.module.css';

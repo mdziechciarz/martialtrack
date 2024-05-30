@@ -1,9 +1,9 @@
 'use client';
 
+import Card, {CardEntries} from '@/components/Card/Card';
 import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
 import PageTitle from '@/components/PageTitle/PageTitle';
-import Card from '../../athletes/[id]/AthleteDetailsView/components/Card/Card';
 import styles from './GroupPage.module.css';
 import CoachAssistantsCard from './components/CoachAssistantsCard/CoachAssistantsCard';
 import MembersCard from './components/MembersCard/MembersCard.';
@@ -37,15 +37,15 @@ const GroupPage = () => {
             clubBranches={availableClubBranches}
           />
           <CoachAssistantsCard className={styles.coachAndAssitantsCard} />
-          <Card
-            className={styles.scheduleCard}
-            title="Harmonogram zajęć"
-            entries={{
-              Poniedziałek: '16:00 - 17:00',
-              Wtorek: '16:00 - 17:00',
-              Środa: '16:00 - 17:00',
-            }}
-          />
+          <Card className={styles.scheduleCard} title="Harmonogram zajęć">
+            <CardEntries
+              entries={{
+                Poniedziałek: '16:00 - 17:00',
+                Wtorek: '16:00 - 17:00',
+                Środa: '16:00 - 17:00',
+              }}
+            />
+          </Card>
           <MembersCard className={styles.athletesCard} />
         </div>
       </ContentContainer>

@@ -1,4 +1,12 @@
 import {
+  CheckboxChecked20Filled,
+  ChevronDown20Regular as ChevronDownIcon,
+  DismissCircle16Filled,
+  PersonAdd20Filled,
+  Search16Filled as SearchIcon,
+  MoreVertical20Filled as VerticalDotsIcon,
+} from '@fluentui/react-icons';
+import {
   Button,
   Chip,
   Dropdown,
@@ -14,20 +22,11 @@ import {
   TableHeader,
   TableRow,
 } from '@nextui-org/react';
-import React from 'react';
-// import {ChevronDownIcon} from './ChevronDownIcon';
-import {
-  CheckboxChecked20Filled,
-  ChevronDown20Regular as ChevronDownIcon,
-  DismissCircle16Filled,
-  PersonAdd20Filled,
-  Search16Filled as SearchIcon,
-  MoreVertical20Filled as VerticalDotsIcon,
-} from '@fluentui/react-icons';
 import Image from 'next/image';
+import React from 'react';
 import {columns, statusOptions, users} from './data';
 
-import Card from '@/app/dashboard/athletes/[id]/AthleteDetailsView/components/Card/Card';
+import Card from '@/components/Card/Card';
 import {useRouter} from 'next/navigation';
 import styles from './MembersCard.module.css';
 
@@ -133,7 +132,7 @@ const MembersTable = () => {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState('all');
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: 'age',
     direction: 'ascending',
@@ -316,10 +315,11 @@ const MembersTable = () => {
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
+              defaultValue={rowsPerPage}
             >
-              <option value="5">5</option>
-              <option value="10">10</option>
               <option value="15">15</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
             </select>
           </label>
         </div>
@@ -372,7 +372,7 @@ const MembersTable = () => {
       bottomContentPlacement="outside"
       className={styles.table}
       classNames={{
-        wrapper: `max-h-[400px] ${styles.tableWrapper}`,
+        wrapper: `max-h-[380px] ${styles.tableWrapper}`,
       }}
       selectedKeys={selectedKeys}
       selectionMode="multiple"
