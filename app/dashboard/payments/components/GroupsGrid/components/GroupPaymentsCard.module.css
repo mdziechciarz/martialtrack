@@ -1,0 +1,81 @@
+.card {
+  border-top: 10px solid #fff;
+}
+
+.contentContainer {
+}
+
+.groupName {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.summaryContainer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  /* margin-top: 8px; */
+}
+
+.payersList {
+  padding: 0 8px;
+  margin-top: 16px;
+  margin: 16px -8px 0;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.payersList::-webkit-scrollbar {
+  /* display: none; */
+  width: 6px;
+  height: 6px;
+}
+/* .card:hover .payersList::-webkit-scrollbar {
+  display: block;
+} */
+
+.payersList::-webkit-scrollbar-thumb {
+  /* Foreground */
+  background: #4ba7e8;
+  border-radius: 8px;
+}
+.payersList::-webkit-scrollbar-track {
+  /* Background */
+  background: #f0f0f0;
+  margin: 16px;
+  border-radius: 14px;
+}
+
+.paidList {
+  margin-top: 16px;
+}
+
+.payersList ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.payer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+}
+
+@media screen and (min-width: 600px) {
+  .card {
+    padding: 24px 16px;
+    border-top-width: 12px;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .groupName {
+    font-size: 18px;
+  }
+}

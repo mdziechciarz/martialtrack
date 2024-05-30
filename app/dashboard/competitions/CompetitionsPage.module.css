@@ -103,6 +103,10 @@
     margin-left: auto;
   }
 
+  .tabList {
+    padding: 8px 24px;
+  }
+
   .detailsContainer {
     padding: 16px;
     border-left-width: 12px;
@@ -121,6 +125,10 @@
 }
 
 @media screen and (min-width: 1200px) {
+  .tabList {
+    padding: 8px 32px;
+  }
+
   .detailsContainer {
     padding: 16px 36px;
     border-left-width: 12px;
