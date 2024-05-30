@@ -3,9 +3,9 @@ import {PeopleCommunityAdd20Filled} from '@fluentui/react-icons';
 import Card from '../Card/Card';
 import styles from './GroupsCard.module.css';
 
-const GroupsCard = ({groups = []}) => {
+const GroupsCard = ({className = '', groups = []}) => {
   return (
-    <Card title="Grupy">
+    <Card title="Grupy" className={className}>
       <ul className={styles.groupsList}>
         {groups.map(({id, color, groupName, coachName, days, hours}) => (
           <GroupTile

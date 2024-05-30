@@ -1,4 +1,4 @@
-import styles from './AthleteDetailsView.module.css';
+import styles from './AthleteDetailsTab.module.css';
 import AvatarCard from './components/AvatarCard/AvatarCard';
 import Card from './components/Card/Card';
 import GroupsCard from './components/GroupsCard/GroupsCard';
@@ -26,7 +26,7 @@ const exampleGroups = [
 const AthleteDetailsView = () => {
   return (
     <div className={styles.mainContainer}>
-      <AvatarCard name="Karolina Kowalska" imgSrc={examplePhoto} />
+      <AvatarCard className={styles.avatarCard} name="Karolina Kowalska" imgSrc={examplePhoto} />
       <Card
         title="Dane zawodnika"
         entries={{
@@ -38,6 +38,7 @@ const AthleteDetailsView = () => {
       />
       <Card
         title="Adres zamieszkania"
+        className={styles.addressCard}
         entries={{
           Ulica: 'Kwiatowa',
           'Numer domu/mieszkania': '12',
@@ -47,12 +48,13 @@ const AthleteDetailsView = () => {
       />
       <Card
         title="Dane kontaktowe"
+        className={styles.contactCard}
         entries={{
           Telefon: '123456789',
           Email: 'karolina.kowalska@gmail.com',
         }}
       />
-      <GroupsCard groups={exampleGroups} />
+      <GroupsCard className={styles.groupsCard} groups={exampleGroups} />
       <Card
         title="Stopnie"
         entries={{
@@ -60,7 +62,11 @@ const AthleteDetailsView = () => {
           Taekwondo: '4 cup',
         }}
       />
-      <Card title="Badania i licencje" />
+      <Card
+        title="Badania i licencje"
+        className={styles.licensesCard}
+        entries={{'Licencja PZKB': 'Ważna do 24.12.2023 \t ARE/2017/SDFSD/124'}}
+      />
       <Card
         title="Inne"
         entries={{
@@ -68,6 +74,7 @@ const AthleteDetailsView = () => {
         }}
       />
       <Card
+        className={styles.medicalDataCard}
         title="Dane medyczne"
         entries={{
           'Grupa krwi': '0+',

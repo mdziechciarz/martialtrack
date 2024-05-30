@@ -5,7 +5,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Input,
   Pagination,
   Table,
   TableBody,
@@ -17,120 +16,56 @@ import {
 import React from 'react';
 // import {ChevronDownIcon} from './ChevronDownIcon';
 import {
-  CheckboxChecked20Filled,
   ChevronDown20Regular as ChevronDownIcon,
-  DismissCircle16Filled,
-  PersonAdd20Filled,
-  Search16Filled as SearchIcon,
+  Dismiss16Filled,
+  Edit16Filled,
+  TextPeriodAsterisk20Regular,
   MoreVertical20Filled as VerticalDotsIcon,
+  WalletCreditCard16Filled,
 } from '@fluentui/react-icons';
-import Image from 'next/image';
-import {columns, statusOptions, users} from './data';
+import {columns, groupsOptions, monthOptions, statusOptions, users} from './data';
 
 import Card from '@/components/Card/Card';
-import {useRouter} from 'next/navigation';
-import styles from './AthletesTable.module.css';
+import AvaratName from './compoenents/AvatarName';
+import RecordPaymentButton from './compoenents/RecordPaymentButton';
+
+import styles from './PaymentsTable.module.css';
 
 const statusColorMap = {
-  Zrealizowane: 'success',
+  Opłacone: 'success',
   Nieopłacone: 'danger',
-  Opłacone: 'warning',
 };
 
 const capitalize = str => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-const INITIAL_VISIBLE_COLUMNS = ['name', 'birthdate', 'medical_checkups', 'actions'];
+const INITIAL_VISIBLE_COLUMNS = [
+  'month',
+  'amountDue',
+  'paymentMethod',
+  'paymentDate',
+  'status',
+  'actions',
+];
 
-export default function AthletesTable({className = ''}) {
+export default function PaymentsTable({className = ''}) {
   return (
-    <Card title="Zawodnicy" className={`${styles.cardContainer} ${className}`}>
+    <Card title="Historia wpłat" className={`${styles.cardContainer} ${className}`}>
       <MembersTable />
     </Card>
   );
 }
 
-const AddNewMemberButton = ({onClick = () => {}}) => {
-  const isMobile = window.matchMedia('(max-width: 599px)').matches;
-
-  if (isMobile) {
-    return (
-      <Button isIconOnly onClick={onClick} color="primary">
-        <PersonAdd20Filled />
-      </Button>
-    );
-  } else {
-    return (
-      <Button color="primary" endContent={<PersonAdd20Filled />}>
-        Nowy zawodnik
-      </Button>
-    );
-  }
-};
-
-const AvaratName = ({id, imgSrc, name}) => {
-  const router = useRouter();
-
-  const handleClick = () => {
-    router.push(`/dashboard/athletes/${id}`);
-  };
-
-  return (
-    <div onClick={handleClick} className={styles.avatarNameContainer}>
-      <Image src={imgSrc} alt={name} width={24} height={24} className={styles.avatar} />
-      <span className={styles.name}>{name}</span>
-    </div>
-  );
-};
-
-const StatusChip = ({status}) => {
-  const [selectedStatus, setSelectedStatus] = React.useState(status);
-
-  return (
-    <Dropdown>
-      <DropdownTrigger className="hidden sm:flex">
-        <div className={styles.statusChipContainer}>
-          <Chip
-            className="capitalize"
-            color={statusColorMap[selectedStatus]}
-            size="sm"
-            variant="flat"
-          >
-            {selectedStatus}
-          </Chip>
-          <div className={styles.statusChevronContainer}>
-            <ChevronDownIcon className={styles.statusChevronIcon} />
-          </div>
-        </div>
-      </DropdownTrigger>
-      <DropdownMenu
-        disallowEmptySelection
-        aria-label="Table Columns"
-        closeOnSelect
-        selectedKeys={selectedStatus}
-        selectionMode="single"
-        onAction={setSelectedStatus}
-      >
-        <DropdownItem key={'Zrealizowane'} className="capitalize">
-          Zrealizowane
-        </DropdownItem>
-        <DropdownItem key={'Opłacone'} className="capitalize">
-          Opłacone
-        </DropdownItem>
-        <DropdownItem key={'Nieopłacone'} className="capitalize">
-          Nieopłacone
-        </DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
-  );
-};
-
 const MembersTable = () => {
   const [filterValue, setFilterValue] = React.useState('');
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState('all');
+  const [groupsFilter, setGroupsFilter] = React.useState('all');
+  const [monthFilter, setMonthFilter] = React.useState('all');
+
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: 'age',
@@ -158,8 +93,19 @@ const MembersTable = () => {
       filteredUsers = filteredUsers.filter(user => Array.from(statusFilter).includes(user.status));
     }
 
+    if (monthFilter !== 'all' && Array.from(statusFilter).length !== statusOptions.length) {
+      filteredUsers = filteredUsers.filter(user => user.month === monthFilter);
+    }
+
+    if (groupsFilter !== 'all' && Array.from(groupsFilter).length !== groupsOptions.length) {
+      filteredUsers = filteredUsers.filter(user => {
+        const userGroups = user.groups.map(group => group.uid);
+        return Array.from(groupsFilter).some(group => userGroups.includes(group));
+      });
+    }
+
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [users, filterValue, statusFilter, groupsFilter, monthFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -185,36 +131,32 @@ const MembersTable = () => {
 
     switch (columnKey) {
       case 'name':
+        return <AvaratName id={user.id} imgSrc={user.avatar} name={user.name} />;
+      case 'groups':
         return (
-          // <User avatarProps={{src: user.avatar}} description={user.email} name={cellValue}>
-          //   {user.email}
-          // </User>
-          <AvaratName id={user.id} imgSrc={user.avatar} name={user.name} />
+          <ul className={styles.groupsList}>
+            {user.groups.map(group => (
+              <li key={group.uid} className={styles.group}>
+                <Chip
+                  variant="dot"
+                  classNames={{base: styles.chipBase, dot: styles.chipDot}}
+                  style={{'--dot-color': groupsOptions.find(g => g.uid === group.uid).color}}
+                >
+                  {group.name}
+                </Chip>
+              </li>
+            ))}
+          </ul>
         );
-      case 'medical_checkups':
-        return (
-          <p className={styles.medicalCheckupsCell}>
-            {cellValue}
-            {cellValue < new Date().toISOString().split('T')[0] ? (
-              <DismissCircle16Filled style={{color: '#FF5151'}} />
-            ) : (
-              <CheckboxChecked20Filled style={{color: '#7BD879'}} />
-            )}
-          </p>
-        );
-      case 'role':
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400">{user.team}</p>
-          </div>
-        );
+      case 'amountDue':
+        return <span>{cellValue} PLN</span>;
+      case 'paymentMethod':
+        return <span>{cellValue || ''}</span>;
       case 'status':
         return (
-          // <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-          //   {cellValue}
-          // </Chip>
-          <StatusChip status={cellValue} />
+          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
+            {cellValue}
+          </Chip>
         );
       case 'actions':
         return (
@@ -226,9 +168,14 @@ const MembersTable = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+                <DropdownItem startContent={<WalletCreditCard16Filled />}>
+                  Zaksięguj wpłatę
+                </DropdownItem>
+                <DropdownItem startContent={<Dismiss16Filled />}>Anuluj wpłatę</DropdownItem>
+                <DropdownItem startContent={<Edit16Filled />}>Zmień należną kwotę</DropdownItem>
+                <DropdownItem startContent={<TextPeriodAsterisk20Regular />}>
+                  Zwolnij z płatności w tym miesiącu
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -237,18 +184,6 @@ const MembersTable = () => {
         return cellValue;
     }
   }, []);
-
-  const onNextPage = React.useCallback(() => {
-    if (page < pages) {
-      setPage(page + 1);
-    }
-  }, [page, pages]);
-
-  const onPreviousPage = React.useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page]);
 
   const onRowsPerPageChange = React.useCallback(e => {
     setRowsPerPage(Number(e.target.value));
@@ -273,7 +208,7 @@ const MembersTable = () => {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
-          <Input
+          {/* <Input
             isClearable
             className="w-full sm:max-w-[44%]"
             placeholder="Wyszukaj zawodnika"
@@ -281,9 +216,55 @@ const MembersTable = () => {
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}
-          />
-          <div className="flex gap-3">
+          /> */}
+          <div className="flex gap-3" style={{marginLeft: 'auto'}}>
+            {/* MONTH FILTER DROPDOWN */}
             <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                  Miesiąc
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Month filter"
+                closeOnSelect={false}
+                selectedKeys={monthFilter}
+                selectionMode="multiple"
+                onSelectionChange={setMonthFilter}
+              >
+                {monthOptions.map(month => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {capitalize(month.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            {/* <Dropdown>
+            {/* STATUS FILTER DROPDOWN */}
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                  Status
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Status filter"
+                closeOnSelect={false}
+                selectedKeys={statusFilter}
+                selectionMode="multiple"
+                onSelectionChange={setStatusFilter}
+              >
+                {statusOptions.map(status => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {capitalize(status.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            {/* COLUMNS FILTER */}
+            {/* <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
                   Kolumny
@@ -297,14 +278,16 @@ const MembersTable = () => {
                 selectionMode="multiple"
                 onSelectionChange={setVisibleColumns}
               >
-                {columns.map(column => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {capitalize(column.name)}
-                  </DropdownItem>
-                ))}
+                {columns
+                  .filter(col => col.uid !== 'actions')
+                  .map(column => (
+                    <DropdownItem key={column.uid} className="capitalize">
+                      {capitalize(column.name)}
+                    </DropdownItem>
+                  ))}
               </DropdownMenu>
-            </Dropdown>
-            <AddNewMemberButton />
+            </Dropdown> */}
+            <RecordPaymentButton />
           </div>
         </div>
       </div>
@@ -312,6 +295,8 @@ const MembersTable = () => {
   }, [
     filterValue,
     statusFilter,
+    groupsFilter,
+    monthFilter,
     visibleColumns,
     onRowsPerPageChange,
     users.length,
@@ -337,12 +322,6 @@ const MembersTable = () => {
           onChange={setPage}
         />
         <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          {/* <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
-            Previous
-          </Button>
-          <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
-            Next
-          </Button> */}
           <label className="flex items-center text-default-400 text-small">
             Wyświetlaj:
             <select
@@ -362,7 +341,7 @@ const MembersTable = () => {
 
   return (
     <Table
-      aria-label="Example table with custom cells, pagination and sorting"
+      aria-label=""
       isHeaderSticky
       bottomContent={bottomContent}
       bottomContentPlacement="outside"
@@ -389,7 +368,7 @@ const MembersTable = () => {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={'Nie znaleziono zawodników'} items={sortedItems}>
+      <TableBody emptyContent={'Nie znaleziono żadnych wpłat'} items={sortedItems}>
         {item => (
           <TableRow key={item.id}>
             {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}

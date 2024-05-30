@@ -1,5 +1,5 @@
-import Card from '../../AthleteDetailsView/components/Card/Card';
-import styles from './ParentDetailsView.module.css';
+import Card from '../AthleteDetailsTab/components/Card/Card';
+import styles from './ParentDetailsTab.module.css';
 
 const ParentDetailsView = () => {
   return (

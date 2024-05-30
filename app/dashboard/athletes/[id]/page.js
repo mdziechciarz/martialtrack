@@ -5,9 +5,11 @@ import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
 import {Chat12Filled} from '@fluentui/react-icons';
 import {Tab, Tabs} from '@nextui-org/react';
-import AthleteDetailsView from './AthleteDetailsView/AthleteDetailsView';
 import styles from './AthletePage.module.css';
-import ParentDetailsView from './components/ParentDetailsView/ParentDetailsView';
+import AthleteDetailsTab from './components/AthleteDetailsTab/AthleteDetailsTab';
+import OrdersTab from './components/OrdersTab/OrdersTab';
+import ParentDetailsTab from './components/ParentDetailsTab/ParentDetailsTab';
+import PaymentsTab from './components/PaymentsTab/PaymentsTab';
 
 const AthletePage = () => {
   return (
@@ -34,16 +36,16 @@ const AthletePage = () => {
           className={styles.tabsContainer}
         >
           <Tab key="athleteDetails" title="Dane zawodnika">
-            <AthleteDetailsView />
+            <AthleteDetailsTab />
           </Tab>
           <Tab key="payments" title="Składki">
-            <p>Składki</p>
+            <PaymentsTab />
           </Tab>
           <Tab key="parents" title="Dane rodziców">
-            <ParentDetailsView />
+            <ParentDetailsTab />
           </Tab>
           <Tab key="orders" title="Zamówienia">
-            <p>Zamówienia</p>
+            <OrdersTab />
           </Tab>
         </Tabs>
       </ContentContainer>

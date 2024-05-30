@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import styles from './AvatarCard.module.css';
 
-const AvatarCard = ({children, name, imgSrc}) => {
+const AvatarCard = ({children, className = '', name, imgSrc}) => {
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${className}`}>
       <div className={styles.avatarWrapper}>
         <Image className={styles.avatar} src={imgSrc} alt="Avatar" width={300} height={300} />
       </div>
