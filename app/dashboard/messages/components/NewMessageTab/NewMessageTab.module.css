@@ -1,0 +1,56 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.buttonsGroup {
+  flex-grow: 1;
+}
+
+.buttonsGroup svg {
+  width: 20px;
+  height: 20px;
+}
+
+.mainButton {
+  flex-grow: 1;
+}
+
+.cancelButton {
+  background-color: #fff;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+}
+
+.messageContentContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media screen and (min-width: 600px) {
+  .buttonsGroup {
+    flex-grow: 0;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .grid {
+    grid-template-columns: 5fr 7fr;
+    grid-template-rows: min-content 1fr;
+  }
+
+  .textarea textarea {
+    font-size: 18px;
+  }
+}

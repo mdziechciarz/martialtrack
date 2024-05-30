@@ -1,0 +1,38 @@
+.container {
+}
+
+.tabList {
+  background: #fff;
+  border-radius: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
+  /* padding-left: 16px; */
+}
+
+.tab {
+  height: 40px;
+}
+
+.tabCursor {
+  height: 4px;
+  width: 100%;
+  border-radius: 2px;
+  margin-bottom: 4px;
+}
+
+.tabPanel {
+  padding: 16px 0 0 0;
+  margin-top: 0;
+}
+
+@media screen and (min-width: 600px) {
+  .tabList {
+    padding: 8px 24px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .tabList {
+    padding: 4px 32px;
+  }
+}
