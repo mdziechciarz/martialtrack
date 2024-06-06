@@ -23,7 +23,7 @@ import {
   MoreVertical20Filled as VerticalDotsIcon,
   WalletCreditCard16Filled,
 } from '@fluentui/react-icons';
-import {columns, groupsOptions, statusOptions, users} from './data';
+import {columns, statusOptions, users} from './data';
 
 import Card from '@/components/Card/Card';
 import AddOrderButton from './compoenents/AddOrderButton';
@@ -91,15 +91,8 @@ const OrdersTable = () => {
       filteredUsers = filteredUsers.filter(user => user.month === monthFilter);
     }
 
-    if (groupsFilter !== 'all' && Array.from(groupsFilter).length !== groupsOptions.length) {
-      filteredUsers = filteredUsers.filter(user => {
-        const userGroups = user.groups.map(group => group.uid);
-        return Array.from(groupsFilter).some(group => userGroups.includes(group));
-      });
-    }
-
     return filteredUsers;
-  }, [users, filterValue, statusFilter, groupsFilter, monthFilter]);
+  }, [users, filterValue, statusFilter, monthFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -126,22 +119,6 @@ const OrdersTable = () => {
     switch (columnKey) {
       case 'name':
         return <AvaratName id={user.id} imgSrc={user.avatar} name={user.name} />;
-      case 'groups':
-        return (
-          <ul className={styles.groupsList}>
-            {user.groups.map(group => (
-              <li key={group.uid} className={styles.group}>
-                <Chip
-                  variant="dot"
-                  classNames={{base: styles.chipBase, dot: styles.chipDot}}
-                  style={{'--dot-color': groupsOptions.find(g => g.uid === group.uid).color}}
-                >
-                  {group.name}
-                </Chip>
-              </li>
-            ))}
-          </ul>
-        );
       case 'amountDue':
         return <span>{cellValue} PLN</span>;
       case 'paymentMethod':

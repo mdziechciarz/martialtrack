@@ -1,3 +1,5 @@
+'use client';
+
 import {WalletCreditCard16Filled} from '@fluentui/react-icons';
 import {Button} from '@nextui-org/react';
 

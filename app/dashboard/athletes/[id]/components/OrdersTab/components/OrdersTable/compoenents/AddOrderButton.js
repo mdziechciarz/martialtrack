@@ -1,3 +1,5 @@
+'use client';
+
 import {Add16Filled} from '@fluentui/react-icons';
 import {Button} from '@nextui-org/react';
 
