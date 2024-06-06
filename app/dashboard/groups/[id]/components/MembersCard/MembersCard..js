@@ -24,7 +24,7 @@ import {
   useDisclosure,
 } from '@nextui-org/react';
 import Image from 'next/image';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {columns, statusOptions, users} from './data';
 
 import Card from '@/components/Card/Card';
@@ -54,7 +54,12 @@ export default function MembersCard({className = ''}) {
 }
 
 const AddNewMemberButton = ({onClick = () => {}}) => {
-  const isMobile = window.matchMedia('(max-width: 599px)').matches;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const isMobile = window.matchMedia('(max-width: 599px)').matches;
+    setIsMobile(isMobile);
+  }, []);
 
   if (isMobile) {
     return (
