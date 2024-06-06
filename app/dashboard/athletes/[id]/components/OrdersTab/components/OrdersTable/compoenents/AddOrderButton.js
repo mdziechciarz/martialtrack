@@ -2,9 +2,15 @@
 
 import {Add16Filled} from '@fluentui/react-icons';
 import {Button} from '@nextui-org/react';
+import {useEffect, useState} from 'react';
 
 const AddOrderButton = ({onClick = () => {}}) => {
-  const isMobile = window.matchMedia('(max-width: 599px)').matches;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const isMobile = window.matchMedia('(max-width: 599px)').matches;
+    setIsMobile(isMobile);
+  }, []);
 
   if (isMobile) {
     return (

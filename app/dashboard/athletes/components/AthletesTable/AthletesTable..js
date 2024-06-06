@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@nextui-org/react';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 // import {ChevronDownIcon} from './ChevronDownIcon';
 import {
   CheckboxChecked20Filled,
@@ -54,7 +54,12 @@ export default function AthletesTable({className = ''}) {
 }
 
 const AddNewMemberButton = ({onClick = () => {}}) => {
-  const isMobile = window.matchMedia('(max-width: 599px)').matches;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const isMobile = window.matchMedia('(max-width: 599px)').matches;
+    setIsMobile(isMobile);
+  }, []);
 
   if (isMobile) {
     return (
