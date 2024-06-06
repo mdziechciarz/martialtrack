@@ -1,11 +1,10 @@
 'use client';
 
-import Button from '@/components/Button/Button';
 import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
 import PageTitle from '@/components/PageTitle/PageTitle';
 import {People12Filled} from '@fluentui/react-icons';
-import {Tab, Tabs} from '@nextui-org/react';
+import {Button, Tab, Tabs} from '@nextui-org/react';
 import styles from './CompetitionsPage.module.css';
 
 const CompetitionsPage = () => {
@@ -13,11 +12,11 @@ const CompetitionsPage = () => {
     <MainLayout>
       <ContentContainer>
         <PageTitle title="Zawody" />
-        <Button
-          text="Nowe zawody"
-          // icon={ReceiptAdd20Filled}
-          className={styles.addCompetitionButton}
-        />
+        <div className={styles.buttonsContainer}>
+          <Button className={styles.addCompetitionButton} color="primary">
+            Nowe zawody
+          </Button>
+        </div>
         <Tabs
           variant="underlined"
           color="primary"

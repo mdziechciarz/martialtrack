@@ -17,8 +17,14 @@
   /* overflow-x: scroll; */
 }
 
+.buttonsContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .newOrderButton {
-  margin-top: 16px;
+  /* margin-left: auto; */
   width: 100%;
 }
 
@@ -39,7 +45,6 @@
 
   .newOrderButton {
     width: unset;
-    margin-left: auto;
   }
 }
 

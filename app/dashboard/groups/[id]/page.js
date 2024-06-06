@@ -1,12 +1,12 @@
 'use client';
 
-import Card, {CardEntries} from '@/components/Card/Card';
 import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
 import PageTitle from '@/components/PageTitle/PageTitle';
 import styles from './GroupPage.module.css';
 import CoachAssistantsCard from './components/CoachAssistantsCard/CoachAssistantsCard';
 import MembersCard from './components/MembersCard/MembersCard.';
+import ScheduleCard from './components/ScheduleCard/ScheduleCard';
 import SectionColorCard from './components/SectionColorCard/SectionColorCard';
 
 const groupData = {
@@ -37,15 +37,7 @@ const GroupPage = () => {
             clubBranches={availableClubBranches}
           />
           <CoachAssistantsCard className={styles.coachAndAssitantsCard} />
-          <Card className={styles.scheduleCard} title="Harmonogram zajęć">
-            <CardEntries
-              entries={{
-                Poniedziałek: '16:00 - 17:00',
-                Wtorek: '16:00 - 17:00',
-                Środa: '16:00 - 17:00',
-              }}
-            />
-          </Card>
+          <ScheduleCard className={styles.scheduleCard} />
           <MembersCard className={styles.athletesCard} />
         </div>
       </ContentContainer>

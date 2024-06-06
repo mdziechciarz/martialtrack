@@ -17,7 +17,10 @@ import {
 } from '@fluentui/react-icons';
 import {useState} from 'react';
 
+// import {ReactComponent as MartialTrackLogo} from './logo_white.svg';
+
 import {Button} from '@nextui-org/react';
+import Image from 'next/image';
 import {usePathname, useRouter} from 'next/navigation';
 import styles from './MainLayout.module.css';
 
@@ -73,7 +76,10 @@ const SideBar = ({isOpen, closeSideBar, openSideBar}) => {
       ) : (
         <HamburgerButton openSideBar={openSideBar} />
       )}
-      <h1 className={styles.MartialTrackLogo}>MartialTrack</h1>
+      {/* <h1 className={styles.MartialTrackLogo}>MartialTrack</h1> */}
+      <div className={styles.MartialTrackLogo}>
+        <Image src="/logo_white.svg" alt="MartialTrack Logo" width={180} height={37} />
+      </div>
       <ul className={styles.sideBarButtonsList}>
         <SideBarButton icon={Home16Filled} text="Panel Główny" url="/dashboard" />
         <SideBarButton icon={Person16Filled} text="Zawodnicy" url="/dashboard/athletes" />

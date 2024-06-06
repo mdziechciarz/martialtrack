@@ -18,10 +18,13 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Tooltip,
+  useDisclosure,
 } from '@nextui-org/react';
 import {useRouter} from 'next/navigation';
 import styles from './GroupsPage.module.css';
+import AddMemberModal from './components/AddMemberModal/AddMemberModal';
 import CoachCard from './components/AvatarCard/CoachCard';
+import NewBranchModal from './components/NewBranchModal/NewBranchModal';
 
 const example_sections = [
   {
@@ -105,18 +108,36 @@ const example_sections = [
 ];
 
 const GroupsPage = () => {
+  const {
+    isOpen: isBranchModalOpen,
+    onOpen: onBranchModalOpen,
+    onOpenChange: onBranchModalOpenChange,
+  } = useDisclosure();
+
+  const {
+    isOpen: isAthleteModalOpen,
+    onOpen: onAthleteModalOpen,
+    onOpenChange: onAthleteModalOpenChange,
+  } = useDisclosure();
+
   return (
     <MainLayout>
       <ContentContainer>
         <PageTitle title="Grupy" />
         <div className={styles.buttonsContainer}>
-          <Button endContent={<HomeAdd20Regular />} style={{backgroundColor: '#fff'}}>
+          <Button
+            onClick={onBranchModalOpen}
+            endContent={<HomeAdd20Regular />}
+            style={{backgroundColor: '#fff'}}
+          >
             Nowa sekcja
           </Button>
           <Button color="primary" endContent={<PeopleCommunityAdd20Filled />}>
             Nowa grupa
           </Button>
+          <NewBranchModal isOpen={isBranchModalOpen} onOpenChange={onBranchModalOpenChange} />
         </div>
+        <AddMemberModal isOpen={isAthleteModalOpen} onOpenChange={onAthleteModalOpenChange} />
         <Accordion selectionMode="multiple" defaultExpandedKeys="all">
           {example_sections.map(section => (
             <AccordionItem
@@ -133,6 +154,7 @@ const GroupsPage = () => {
                     coach={group.coach}
                     members={group.members}
                     openingTimes={group.openingTimes}
+                    onAddMemberClick={onAthleteModalOpen}
                   />
                 ))}
               </ul>
@@ -146,7 +168,7 @@ const GroupsPage = () => {
 
 export default GroupsPage;
 
-const GroupCard = ({id, name, color, members, openingTimes, coach}) => {
+const GroupCard = ({id, name, color, members, openingTimes, coach, onAddMemberClick}) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -162,8 +184,8 @@ const GroupCard = ({id, name, color, members, openingTimes, coach}) => {
         <p>{openingTimes}</p>
       </div>
       <div className={styles.groupButtonsContainer}>
-        <AddMemberButton />
-        <OptionsButton />
+        <AddMemberButton onClick={onAddMemberClick} />
+        <OptionsButton onAddMemberClick={onAddMemberClick} />
       </div>
     </li>
   );
@@ -172,14 +194,14 @@ const GroupCard = ({id, name, color, members, openingTimes, coach}) => {
 const AddMemberButton = ({onClick = () => {}}) => {
   return (
     <Tooltip content="Dodaj zawodnika" delay={700}>
-      <Button className={styles.addMemberButton} variant="light" isIconOnly>
+      <Button onClick={onClick} className={styles.addMemberButton} variant="light" isIconOnly>
         <PersonAdd20Regular />
       </Button>
     </Tooltip>
   );
 };
 
-const OptionsButton = () => {
+const OptionsButton = ({onAddMemberClick}) => {
   return (
     <Dropdown>
       <Tooltip content="Opcje" delay={700}>
@@ -192,7 +214,9 @@ const OptionsButton = () => {
         </div>
       </Tooltip>
       <DropdownMenu aria-label="Static Actions">
-        <DropdownItem key="add">Dodaj zawodnika</DropdownItem>
+        <DropdownItem onClick={onAddMemberClick} key="add">
+          Dodaj zawodnika
+        </DropdownItem>
         <DropdownItem key="edit">Edytuj grupę</DropdownItem>
         <DropdownItem key="delete" className="text-danger" color="danger">
           Usuń grupę

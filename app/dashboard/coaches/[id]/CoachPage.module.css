@@ -1,0 +1,62 @@
+.buttonsContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.sendMessageButton {
+  /* margin-left: auto; */
+  width: 100%;
+}
+
+.tabsContainer {
+  margin-top: 16px;
+}
+
+.base {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.tabList {
+  background: #fff;
+  border-radius: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
+  /* padding-left: 16px; */
+}
+
+.tab {
+  height: 40px;
+  /* text-transform: uppercase; */
+}
+
+.tabCursor {
+  height: 4px;
+  width: 100%;
+  border-radius: 2px;
+  margin-bottom: 4px;
+}
+
+.panel {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media screen and (min-width: 600px) {
+  .sendMessageButton {
+    width: auto;
+  }
+
+  .tabList {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .tabList {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}

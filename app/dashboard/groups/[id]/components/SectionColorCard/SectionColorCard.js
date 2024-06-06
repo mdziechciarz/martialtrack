@@ -4,12 +4,12 @@ import {useState} from 'react';
 import styles from './SectionColorCard.module.css';
 
 const SectionColorCard = ({clubBranches = [], color}) => {
-  const [isEditable, setIsEditable] = useState(true);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [pickedColor, setPickeColor] = useState(color);
 
   return (
-    <Card title="Sekcja i kolor">
-      {isEditable ? (
+    <Card title="Sekcja i kolor" isEditable isEditMode={isEditMode} setIsEditMode={setIsEditMode}>
+      {isEditMode ? (
         <EditableContent color={color} clubBranches={clubBranches} />
       ) : (
         <ReadOnlyContent color={color} />
