@@ -1,8 +1,21 @@
 .fab {
   position: fixed;
-  bottom: 40px;
-  right: 40px;
+  bottom: 35px;
+  right: 25px;
   border-radius: 50%;
   width: 52px;
   height: 52px;
+}
+
+@media screen and (min-width: 600px) {
+  .fab {
+    right: 30px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .fab {
+    right: 40px;
+    bottom: 40px;
+  }
 }

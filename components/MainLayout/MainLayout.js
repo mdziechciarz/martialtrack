@@ -10,6 +10,7 @@ import {
   Navigation16Filled,
   People12Filled,
   Person16Filled,
+  ReceiptMoney16Filled,
   Send16Filled,
   Settings16Filled,
   ShieldPerson20Filled,
@@ -95,6 +96,7 @@ const SideBar = ({isOpen, closeSideBar, openSideBar}) => {
         <SideBarButton icon={AppsList20Filled} text="Zawody" url="/dashboard/competitions" />
         <SideBarButton icon={Calendar12Filled} text="Harmonogram zajęć" url="/dashboard/schedule" />
         <SideBarButton icon={Cart16Filled} text="Zamówienia" url="/dashboard/orders" />
+        <SideBarButton icon={ReceiptMoney16Filled} text="Dotacje" url="/dashboard/subsidies" />
         <SideBarButton icon={Settings16Filled} text="Ustawienia" url="/dashboard/settings" />
       </ul>
     </div>

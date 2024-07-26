@@ -16,11 +16,13 @@ const Card = ({
 }) => {
   return (
     <div className={`${styles.container} ${className}`} style={style}>
-      {title && (
+      {(title || isEditable) && (
         <div className={styles.header}>
-          <div className={styles.titleContainer}>
-            <h3>{title}</h3>
-          </div>
+          {title && (
+            <div className={styles.titleContainer}>
+              <h3>{title}</h3>
+            </div>
+          )}
           {isEditable && (
             <div className={styles.editButtonsContainer}>
               {isEditMode ? (
@@ -35,7 +37,9 @@ const Card = ({
           )}
         </div>
       )}
-      <div className={styles.contentContainer}>{children}</div>
+      <div className={`${styles.contentContainer} ${classNames && classNames.contentContainer}`}>
+        {children}
+      </div>
     </div>
   );
 };
