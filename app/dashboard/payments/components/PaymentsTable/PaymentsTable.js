@@ -13,6 +13,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  useDisclosure,
 } from '@nextui-org/react';
 import React from 'react';
 // import {ChevronDownIcon} from './ChevronDownIcon';
@@ -24,11 +25,12 @@ import {
   MoreVertical20Filled as VerticalDotsIcon,
   WalletCreditCard16Filled,
 } from '@fluentui/react-icons';
-import {columns, groupsOptions, statusOptions, users} from './data';
+import {columns, groupsOptions, monthOptions, statusOptions, users} from './data';
 
 import Card from '@/components/Card/Card';
-import AvaratName from './compoenents/AvatarName';
-import RecordPaymentButton from './compoenents/RecordPaymentButton';
+import AvaratName from './components/AvatarName';
+import RecordPaymentButton from './components/RecordPaymentButton';
+import RecordPaymentModal from './components/RecordPaymentModal/RecordPaymentModal';
 
 import styles from './PaymentsTable.module.css';
 
@@ -44,6 +46,7 @@ const capitalize = str => {
 const INITIAL_VISIBLE_COLUMNS = [
   'name',
   'groups',
+  'month',
   'amountDue',
   'paymentMethod',
   'status',
@@ -59,12 +62,19 @@ export default function PaymentsTable({className = ''}) {
 }
 
 const MembersTable = () => {
+  const {
+    isOpen: isModalOpen,
+    onOpen: onModalOpen,
+    onOpenChange: onModalOpenChange,
+  } = useDisclosure();
+
   const [filterValue, setFilterValue] = React.useState('');
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState('all');
   const [groupsFilter, setGroupsFilter] = React.useState('all');
+  const [monthFilter, setMonthFilter] = React.useState('all');
 
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [sortDescriptor, setSortDescriptor] = React.useState({
@@ -93,6 +103,10 @@ const MembersTable = () => {
       filteredUsers = filteredUsers.filter(user => Array.from(statusFilter).includes(user.status));
     }
 
+    if (monthFilter !== 'all' && Array.from(statusFilter).length !== statusOptions.length) {
+      filteredUsers = filteredUsers.filter(user => user.month === monthFilter);
+    }
+
     if (groupsFilter !== 'all' && Array.from(groupsFilter).length !== groupsOptions.length) {
       filteredUsers = filteredUsers.filter(user => {
         const userGroups = user.groups.map(group => group.uid);
@@ -101,7 +115,7 @@ const MembersTable = () => {
     }
 
     return filteredUsers;
-  }, [users, filterValue, statusFilter, groupsFilter]);
+  }, [users, filterValue, statusFilter, groupsFilter, monthFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -202,6 +216,7 @@ const MembersTable = () => {
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
+        <RecordPaymentModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} />
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
@@ -213,6 +228,28 @@ const MembersTable = () => {
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
+            {/* MONTH FILTER DROPDOWN */}
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                  Miesiąc
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Month filter"
+                closeOnSelect={false}
+                selectedKeys={monthFilter}
+                selectionMode="multiple"
+                onSelectionChange={setMonthFilter}
+              >
+                {monthOptions.map(month => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {capitalize(month.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
             {/* GROUPS FILTER DROPDOWN */}
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
@@ -257,30 +294,7 @@ const MembersTable = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            {/* <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                  Kolumny
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns
-                  .filter(col => col.uid !== 'actions')
-                  .map(column => (
-                    <DropdownItem key={column.uid} className="capitalize">
-                      {capitalize(column.name)}
-                    </DropdownItem>
-                  ))}
-              </DropdownMenu>
-            </Dropdown> */}
-            <RecordPaymentButton />
+            <RecordPaymentButton onClick={onModalOpen} />
           </div>
         </div>
       </div>
@@ -294,6 +308,9 @@ const MembersTable = () => {
     users.length,
     onSearchChange,
     hasSearchFilter,
+    onModalOpen,
+    isModalOpen,
+    onModalOpenChange,
   ]);
 
   const bottomContent = React.useMemo(() => {

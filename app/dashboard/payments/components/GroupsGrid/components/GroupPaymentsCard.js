@@ -1,5 +1,20 @@
 import Card from '@/components/Card/Card';
-import {Chip, User} from '@nextui-org/react';
+import {
+  Dismiss16Filled,
+  MoreVertical24Filled,
+  TextPeriodAsterisk20Filled,
+  WalletCreditCard16Filled,
+} from '@fluentui/react-icons';
+import {
+  Button,
+  Chip,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  User,
+} from '@nextui-org/react';
+
 import styles from './GroupPaymentsCard.module.css';
 
 const GroupPaymentsCard = ({
@@ -69,15 +84,33 @@ const Payer = ({name, amount, isPaid}) => {
           },
         }}
       />
-      {isPaid ? (
-        <Chip color="success" variant="flat" className={styles.chip}>
-          {amount} PLN
-        </Chip>
-      ) : (
-        <Chip color="danger" variant="flat" className={styles.chip}>
-          -{amount} PLN
-        </Chip>
-      )}
+      <div>
+        {isPaid ? (
+          <Chip color="success" variant="flat" className={styles.chip}>
+            {amount} PLN
+          </Chip>
+        ) : (
+          <Chip color="danger" variant="flat" className={styles.chip}>
+            -{amount} PLN
+          </Chip>
+        )}
+        <Dropdown placement="bottom-end">
+          <DropdownTrigger>
+            <Button variant="light" isIconOnly size="sm" className={styles.payerOptionsButton}>
+              <MoreVertical24Filled />
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu>
+            <DropdownItem startContent={<WalletCreditCard16Filled />}>
+              Zaksięguj wpłatę
+            </DropdownItem>
+            <DropdownItem startContent={<Dismiss16Filled />}>Anuluj wpłatę wpłatę</DropdownItem>
+            <DropdownItem startContent={<TextPeriodAsterisk20Filled />}>
+              Zwolnij z płatności w tym miesiącu
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </div>
     </li>
   );
 };

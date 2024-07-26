@@ -67,6 +67,16 @@
   height: 24px;
 }
 
+.payer > div:last-of-type {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.payerOptionsButton {
+  display: flex;
+}
+
 @media screen and (min-width: 600px) {
   .card {
     padding: 24px 16px;
@@ -77,5 +87,11 @@
 @media screen and (min-width: 900px) {
   .groupName {
     font-size: 18px;
+  }
+  .payerOptionsButton {
+    display: none;
+  }
+  .payer:hover .payerOptionsButton {
+    display: block;
   }
 }
