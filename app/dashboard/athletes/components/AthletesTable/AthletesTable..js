@@ -45,7 +45,13 @@ const INITIAL_VISIBLE_COLUMNS = ['name', 'birthdate', 'medical_checkups', 'actio
 
 export default function AthletesTable({className = ''}) {
   return (
-    <Card title="Zawodnicy" className={`${styles.cardContainer} ${className}`}>
+    <Card
+      title="Zawodnicy"
+      className={`${styles.cardContainer} ${className}`}
+      classNames={{
+        contentContainer: styles.cardContentContainer,
+      }}
+    >
       <MembersTable />
     </Card>
   );
@@ -373,7 +379,7 @@ const MembersTable = () => {
       bottomContentPlacement="outside"
       className={styles.table}
       classNames={{
-        wrapper: `max-h-[380px] ${styles.tableWrapper}`,
+        wrapper: `${styles.tableWrapper}`,
       }}
       selectedKeys={selectedKeys}
       selectionMode="multiple"

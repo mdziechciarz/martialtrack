@@ -1,0 +1,66 @@
+.container {
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+  max-width: 100%;
+  /* width: 100%; */
+  overflow-x: auto;
+}
+
+.titleContainer {
+  margin-bottom: 8px;
+  padding-right: 8%;
+  width: fit-content;
+  border-bottom: 2px solid #5ab8fb;
+}
+
+.titleContainer h3 {
+  display: inline-block;
+  font-size: 14px;
+  color: #5ab8fb;
+  text-transform: uppercase;
+  /* font-weight: 600; */
+}
+
+.contentContainer {
+}
+
+.grid {
+  width: 100%;
+  display: grid;
+  row-gap: 8px;
+  column-gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.entry {
+  min-width: 40%;
+}
+
+.entry .key {
+  color: #4a4a4a;
+  font-size: 13px;
+}
+
+.entry .value {
+  color: #000;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+@media screen and (min-width: 600px) {
+  .container {
+    padding: 24px;
+  }
+
+  .entry .key,
+  .entry .value {
+    font-size: 14px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .container {
+    padding: 32px;
+  }
+}

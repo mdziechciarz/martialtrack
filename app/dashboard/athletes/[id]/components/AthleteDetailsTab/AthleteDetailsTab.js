@@ -1,8 +1,18 @@
-import styles from './AthleteDetailsTab.module.css';
+import {useEffect, useState} from 'react';
+
 import AvatarCard from './components/AvatarCard/AvatarCard';
-import Card from './components/Card/Card';
+// import Card from './components/Card/Card';
+import Card from '@/components/Card/Card';
+import AddressCard from './components/AddressCard/AddressCard';
+import ContactCard from './components/ContactCard/ContactCard';
 import GroupsCard from './components/GroupsCard/GroupsCard';
+import OtherDetailsCard from './components/OtherDetailsCard/OtherDetailsCard';
+import PersonalDetailsCard from './components/PersonalDetailsCard/PersonalDetailsCard';
 import examplePhoto from './example_photo.png';
+
+import styles from './AthleteDetailsTab.module.css';
+import GradingsCard from './components/GradingsCard/GradingsCard';
+import LicensesCard from './components/LicensesCard/LicensesCard';
 
 const exampleGroups = [
   {
@@ -24,55 +34,38 @@ const exampleGroups = [
 ];
 
 const AthleteDetailsView = () => {
+  const [userAvatar, setUserAvatar] = useState(
+    localStorage.getItem('croppedImage') || examplePhoto
+  );
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUserAvatar(localStorage.getItem('croppedImage') || examplePhoto);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   return (
     <div className={styles.mainContainer}>
-      <AvatarCard className={styles.avatarCard} name="Karolina Kowalska" imgSrc={examplePhoto} />
-      <Card
-        title="Dane zawodnika"
-        entries={{
-          Płeć: 'Kobieta',
-          'Data urodzenia': '2000-06-23',
-          PESEL: '12345678901',
-          'Miejsce urodzenia': 'Warszawa',
-        }}
-      />
-      <Card
-        title="Adres zamieszkania"
-        className={styles.addressCard}
-        entries={{
-          Ulica: 'Kwiatowa',
-          'Numer domu/mieszkania': '12',
-          Miasto: 'Warszawa',
-          'Kod pocztowy': '12-345',
-        }}
-      />
-      <Card
-        title="Dane kontaktowe"
-        className={styles.contactCard}
-        entries={{
-          Telefon: '123456789',
-          Email: 'karolina.kowalska@gmail.com',
-        }}
-      />
+      <AvatarCard className={styles.avatarCard} name="Karolina Kowalska" imgSrc={userAvatar} />
+      <PersonalDetailsCard />
+      <AddressCard />
+      <ContactCard />
       <GroupsCard className={styles.groupsCard} groups={exampleGroups} />
-      <Card
-        title="Stopnie"
-        entries={{
-          Kickboxing: 'U3',
-          Taekwondo: '4 cup',
-        }}
-      />
-      <Card
+      <GradingsCard />
+      {/* <Card
         title="Badania i licencje"
         className={styles.licensesCard}
         entries={{'Licencja PZKB': 'Ważna do 24.12.2023 \t ARE/2017/SDFSD/124'}}
-      />
-      <Card
-        title="Inne"
-        entries={{
-          'Data przyjęcia': '2021-01-01',
-        }}
-      />
+      /> */}
+      <LicensesCard />
+      <OtherDetailsCard />
       <Card
         className={styles.medicalDataCard}
         title="Dane medyczne"

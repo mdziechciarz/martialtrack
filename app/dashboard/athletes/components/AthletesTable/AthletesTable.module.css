@@ -1,42 +1,26 @@
-@media screen and (min-width: 600px) {
-  .tableContainer {
-    /* padding: 24px 8px; */
-    padding: 24px;
-  }
-
-  .newOrderButton {
-    width: unset;
-    margin-left: auto;
-  }
+.cardContainer {
+  flex-grow: 1;
+  /* flex-shrink: 1; */
+}
+.cardContentContainer {
+  overflow-y: hidden;
+  flex-grow: 1;
 }
 
-@media screen and (min-width: 1200px) {
-  .tableContainer {
-    padding: 32px;
-  }
-  .tableWrapper::-webkit-scrollbar {
-    width: 6px; /* Mostly for vertical scrollbars */
-    height: 6px; /* Mostly for horizontal scrollbars */
-  }
-  .tableWrapper::-webkit-scrollbar-thumb {
-    /* Foreground */
-    background: #4ba7e8;
-    border-radius: 8px;
-  }
-  .tableWrapper::-webkit-scrollbar-track {
-    /* Background */
-    background: #f0f0f0;
-    margin: 16px;
-    border-radius: 14px;
-  }
+.table {
+  height: 100%;
+}
+
+.tableWrapper {
+  overflow-y: auto;
 }
 
 .cardContainer {
   margin-top: 16px;
 }
 
-.table {
-  margin-top: 16px;
+.tableWrapper {
+  flex-grow: 1;
 }
 
 .medicalCheckupsCell svg {
@@ -71,17 +55,22 @@
   text-decoration: underline;
 }
 
-.statusChipContainer {
-  display: flex;
-  align-items: center;
-  /* justify-content: flex-end; */
-  flex-direction: row;
-  cursor: pointer;
-}
-
-.statusChipContainer:hover .statusChevronContainer {
-  /* display: block; */
-  visibility: visible;
+@media screen and (min-width: 600px) {
+  .tableWrapper::-webkit-scrollbar {
+    width: 6px; /* Mostly for vertical scrollbars */
+    height: 6px; /* Mostly for horizontal scrollbars */
+  }
+  .tableWrapper::-webkit-scrollbar-thumb {
+    /* Foreground */
+    background: #4ba7e8;
+    border-radius: 8px;
+  }
+  .tableWrapper::-webkit-scrollbar-track {
+    /* Background */
+    background: #f0f0f0;
+    margin: 16px;
+    border-radius: 14px;
+  }
 }
 
 @media screen and (min-width: 1200px) {

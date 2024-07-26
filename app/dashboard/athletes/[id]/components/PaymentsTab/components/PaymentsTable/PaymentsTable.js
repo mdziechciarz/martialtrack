@@ -12,6 +12,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  useDisclosure,
 } from '@nextui-org/react';
 import React from 'react';
 // import {ChevronDownIcon} from './ChevronDownIcon';
@@ -30,6 +31,7 @@ import AvaratName from './compoenents/AvatarName';
 import RecordPaymentButton from './compoenents/RecordPaymentButton';
 
 import styles from './PaymentsTable.module.css';
+import RecordPaymentModal from './compoenents/RecordPaymentModal/RecordPaymentModal';
 
 const statusColorMap = {
   Opłacone: 'success',
@@ -58,6 +60,12 @@ export default function PaymentsTable({className = ''}) {
 }
 
 const MembersTable = () => {
+  const {
+    isOpen: isModalOpen,
+    onOpen: onModalOpen,
+    onOpenChange: onModalOpenChange,
+  } = useDisclosure();
+
   const [filterValue, setFilterValue] = React.useState('');
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
@@ -168,7 +176,7 @@ const MembersTable = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem startContent={<WalletCreditCard16Filled />}>
+                <DropdownItem onClick={onModalOpen} startContent={<WalletCreditCard16Filled />}>
                   Zaksięguj wpłatę
                 </DropdownItem>
                 <DropdownItem startContent={<Dismiss16Filled />}>Anuluj wpłatę</DropdownItem>
@@ -207,6 +215,7 @@ const MembersTable = () => {
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
+        <RecordPaymentModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} />
         <div className="flex justify-between gap-3 items-end">
           {/* <Input
             isClearable
@@ -287,7 +296,7 @@ const MembersTable = () => {
                   ))}
               </DropdownMenu>
             </Dropdown> */}
-            <RecordPaymentButton />
+            <RecordPaymentButton onClick={onModalOpen} />
           </div>
         </div>
       </div>
@@ -302,6 +311,9 @@ const MembersTable = () => {
     users.length,
     onSearchChange,
     hasSearchFilter,
+    onModalOpen,
+    isModalOpen,
+    onModalOpenChange,
   ]);
 
   const bottomContent = React.useMemo(() => {
@@ -337,7 +349,16 @@ const MembersTable = () => {
         </div>
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [
+    selectedKeys,
+    items.length,
+    page,
+    pages,
+    hasSearchFilter,
+    onModalOpen,
+    isModalOpen,
+    onModalOpenChange,
+  ]);
 
   return (
     <Table

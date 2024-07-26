@@ -18,7 +18,7 @@ const RecordPaymentButton = ({onClick = () => {}}) => {
     );
   } else {
     return (
-      <Button color="primary" endContent={<WalletCreditCard16Filled />}>
+      <Button onClick={onClick} color="primary" endContent={<WalletCreditCard16Filled />}>
         Zaksięguj wpłatę
       </Button>
     );
