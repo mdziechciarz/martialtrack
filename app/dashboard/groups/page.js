@@ -4,6 +4,7 @@ import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
 import PageTitle from '@/components/PageTitle/PageTitle';
 import {
+  Delete16Filled,
   HomeAdd20Regular,
   MoreVertical24Filled,
   PeopleCommunityAdd20Filled,
@@ -21,10 +22,11 @@ import {
   useDisclosure,
 } from '@nextui-org/react';
 import {useRouter} from 'next/navigation';
-import styles from './GroupsPage.module.css';
 import AddMemberModal from './components/AddMemberModal/AddMemberModal';
 import CoachCard from './components/AvatarCard/CoachCard';
 import NewBranchModal from './components/NewBranchModal/NewBranchModal';
+
+import styles from './GroupsPage.module.css';
 
 const example_sections = [
   {
@@ -143,6 +145,9 @@ const GroupsPage = () => {
             <AccordionItem
               key={section.title}
               title={`${section.title} (${section.groups.length})`}
+              classNames={{
+                base: styles.accordionItemBase,
+              }}
             >
               <ul className={styles.sectionContainer}>
                 {section.groups.map(group => (
@@ -158,6 +163,11 @@ const GroupsPage = () => {
                   />
                 ))}
               </ul>
+              <Tooltip content="Usuń sekcję i jej grupy" delay={700}>
+                <Button variant="light" isIconOnly fullWidth className={styles.deleteBranchButton}>
+                  <Delete16Filled />
+                </Button>
+              </Tooltip>
             </AccordionItem>
           ))}
         </Accordion>

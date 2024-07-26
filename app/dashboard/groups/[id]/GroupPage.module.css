@@ -1,3 +1,10 @@
+.pageHeader {
+  column-gap: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .pageTitle {
   border-left: 6px solid transparent;
   padding-left: 6px;

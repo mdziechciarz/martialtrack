@@ -9,8 +9,11 @@
   flex-grow: 1;
 }
 
+.accordionItemBase {
+}
+
 .sectionContainer {
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   list-style: none;
 
   display: grid;
@@ -64,6 +67,13 @@
   font-size: 14px;
 }
 
+.deleteBranchButton {
+  margin-bottom: 16px;
+  display: block;
+  color: #a6a6a6;
+  width: 100%;
+}
+
 @media screen and (min-width: 600px) {
   .sectionContainer {
     grid-template-columns: repeat(2, 1fr);
@@ -92,5 +102,11 @@
 
   .addMemberButton {
     display: block;
+  }
+  .deleteBranchButton {
+    opacity: 0;
+  }
+  .accordionItemBase:hover .deleteBranchButton {
+    opacity: 1;
   }
 }

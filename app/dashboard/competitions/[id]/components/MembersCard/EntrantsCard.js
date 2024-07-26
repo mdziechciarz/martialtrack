@@ -21,6 +21,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  useDisclosure,
 } from '@nextui-org/react';
 import Image from 'next/image';
 import React, {useEffect, useState} from 'react';
@@ -28,6 +29,8 @@ import {columns, statusOptions, users} from './data';
 
 import Card from '@/components/Card/Card';
 import {useRouter} from 'next/navigation';
+import AddMemberModal from './components/AddMemberModal/AddMemberModal';
+
 import styles from './MembersCard.module.css';
 
 const statusColorMap = {
@@ -66,7 +69,7 @@ const AddNewMemberButton = ({onClick = () => {}}) => {
     );
   } else {
     return (
-      <Button color="primary" endContent={<PersonAdd20Filled />}>
+      <Button onClick={onClick} color="primary" endContent={<PersonAdd20Filled />}>
         Nowy zawodnik
       </Button>
     );
@@ -166,6 +169,12 @@ const MembersTable = () => {
 
     return filteredUsers;
   }, [users, filterValue, statusFilter]);
+
+  const {
+    isOpen: isModalOpen,
+    onOpen: onModalOpen,
+    onOpenChange: onModalOpenChange,
+  } = useDisclosure();
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -278,6 +287,7 @@ const MembersTable = () => {
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
+        <AddMemberModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} />
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
@@ -310,7 +320,7 @@ const MembersTable = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <AddNewMemberButton />
+            <AddNewMemberButton onClick={onModalOpen} />
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -338,6 +348,9 @@ const MembersTable = () => {
     users.length,
     onSearchChange,
     hasSearchFilter,
+    onModalOpen,
+    isModalOpen,
+    onModalOpenChange,
   ]);
 
   const bottomContent = React.useMemo(() => {
