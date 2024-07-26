@@ -1,0 +1,53 @@
+.cardContainer {
+  flex-grow: 1;
+  /* flex-shrink: 1; */
+}
+.cardContentContainer {
+  overflow-y: hidden;
+  flex-grow: 1;
+}
+
+.table {
+  height: 100%;
+}
+
+.tableWrapper {
+  overflow-y: auto;
+}
+
+.tableWrapper {
+  flex-grow: 1;
+}
+
+.avatarNameContainer:hover .name {
+  text-decoration: underline;
+}
+
+@media screen and (min-width: 600px) {
+  .tableWrapper::-webkit-scrollbar {
+    width: 6px; /* Mostly for vertical scrollbars */
+    height: 6px; /* Mostly for horizontal scrollbars */
+  }
+  .tableWrapper::-webkit-scrollbar-thumb {
+    /* Foreground */
+    background: #4ba7e8;
+    border-radius: 8px;
+  }
+  .tableWrapper::-webkit-scrollbar-track {
+    /* Background */
+    background: #f0f0f0;
+    margin: 16px;
+    border-radius: 14px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .statusChevronContainer {
+    visibility: hidden;
+  }
+}

@@ -7,6 +7,8 @@ import {Tab, Tabs} from '@nextui-org/react';
 
 import styles from './MessagesPage.module.css';
 import NewMessageTab from './components/NewMessageTab/NewMessageTab';
+import ScheduledMessagesTab from './components/ScheduledMessagesTab/ScheduledMessagesTab';
+import SentHistoryTab from './components/SentHistoryTab/SentHistoryTab';
 
 const MessagesPage = () => {
   return (
@@ -29,10 +31,10 @@ const MessagesPage = () => {
             <NewMessageTab />
           </Tab>
           <Tab key="sentMessages" title="Wysłane">
-            <p>Wysłane</p>
+            <SentHistoryTab />
           </Tab>
-          <Tab key="scheduled" tille="Zaplanowane">
-            <p>Zaplanowane</p>
+          <Tab key="scheduled" title="Zaplanowane">
+            <ScheduledMessagesTab />
           </Tab>
         </Tabs>
       </ContentContainer>

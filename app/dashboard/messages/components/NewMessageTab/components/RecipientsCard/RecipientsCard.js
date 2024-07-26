@@ -2,6 +2,7 @@ import Card from '@/components/Card/Card';
 import {Add16Filled, Dismiss16Filled} from '@fluentui/react-icons';
 import {Accordion, AccordionItem, Input} from '@nextui-org/react';
 import Image from 'next/image';
+
 import styles from './RecipientsCard.module.css';
 
 const RecipientsCard = (className = '') => {
@@ -12,7 +13,7 @@ const RecipientsCard = (className = '') => {
           <Input label="Dodaj odbiorcę" />
         </div>
         <div className={styles.suggestedContainer}>
-          <Accordion isCompact className={styles.accordion} defaultExpandedKeys={['1']}>
+          <Accordion isCompact className={styles.accordion}>
             <AccordionItem
               key="1"
               title="Sugerowani"

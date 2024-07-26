@@ -11,17 +11,29 @@ import {
   Select,
   SelectItem,
   Textarea,
+  useDisclosure,
 } from '@nextui-org/react';
 import RecipientsCard from './components/RecipientsCard/RecipientsCard';
 
 import styles from './NewMessageTab.module.css';
+import ScheduleSendingModal from './components/ScheduleSendingModal/ScheduleSendingModal';
 
 const NewMessageTab = () => {
+  const {
+    isOpen: isScheduleSendingModalOpen,
+    onOpen: onScheduleSendingModalOpen,
+    onOpenChange: onScheduleSendingModalOpenChange,
+  } = useDisclosure();
+
   return (
     <div className={styles.container}>
       <div className={styles.buttonsContainer}>
         <Button className={styles.cancelButton}>Anuluj</Button>
-        <Buttons />
+        <Buttons onScheduleSendingClick={onScheduleSendingModalOpen} />
+        <ScheduleSendingModal
+          isOpen={isScheduleSendingModalOpen}
+          onOpenChange={onScheduleSendingModalOpenChange}
+        />
       </div>
       <div className={styles.grid}>
         <MessageTypeSelectorCard />
@@ -58,7 +70,7 @@ const MessageContentCard = () => {
   );
 };
 
-const Buttons = () => {
+const Buttons = ({onScheduleSendingClick = () => {}}) => {
   return (
     <ButtonGroup className={styles.buttonsGroup} color="primary">
       <Button className={styles.mainButton} startContent={<Send16Filled />}>
@@ -71,11 +83,15 @@ const Buttons = () => {
           </Button>
         </DropdownTrigger>
         <DropdownMenu className="max-w-[300px]">
-          <DropdownItem key="1" startContent={<Calendar16Regular />}>
+          <DropdownItem
+            key="1"
+            startContent={<Calendar16Regular />}
+            onClick={onScheduleSendingClick}
+          >
             Zaplanuj wysłanie
           </DropdownItem>
-          <DropdownItem key="2">Opcja 2</DropdownItem>
-          <DropdownItem key="3">Opcja 3</DropdownItem>
+          {/* <DropdownItem key="2">Opcja 2</DropdownItem> */}
+          {/* <DropdownItem key="3">Opcja 3</DropdownItem> */}
         </DropdownMenu>
       </Dropdown>
     </ButtonGroup>
