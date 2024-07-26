@@ -15,33 +15,6 @@ import LicensesCard from './components/LicensesCard/LicensesCard';
 
 import styles from './CoachDetailsTab.module.css';
 
-const exampleGroups = [
-  {
-    id: '123',
-    color: 'yellow',
-    groupName: 'Kickboxing  - Grupa 2',
-    coachName: 'Adam Zieliński',
-    days: 'Wtorek, Czwartek',
-    hours: '18:30 - 20:00',
-  },
-  {
-    id: '456',
-    color: 'royalblue',
-    groupName: 'Boks',
-    coachName: 'Martyna Błachowic',
-    days: 'Poniedziałek',
-    hours: '19:00 - 20:00',
-  },
-  {
-    id: '46546',
-    color: 'red',
-    groupName: 'K1',
-    coachName: 'Szymon Nowak',
-    days: 'Poniedziałek',
-    hours: '19:00 - 20:00',
-  },
-];
-
 const CoachDetailsTab = () => {
   const [userAvatar, setUserAvatar] = useState(
     localStorage.getItem('croppedImage') || examplePhoto
@@ -66,17 +39,8 @@ const CoachDetailsTab = () => {
       <PersonalDetailsCard />
       <AddressCard />
       <ContactCard />
-      <GroupsCard
-        className={styles.groupsCard}
-        groupsAsCoach={exampleGroups.slice(0, -1)}
-        groupsAsAssistant={exampleGroups.slice(-1)}
-      />
+      <GroupsCard className={styles.groupsCard} />
       <GradingsCard />
-      {/* <Card
-        title="Badania i licencje"
-        className={styles.licensesCard}
-        entries={{'Licencja PZKB': 'Ważna do 24.12.2023 \t ARE/2017/SDFSD/124'}}
-      /> */}
       <LicensesCard />
       <OtherDetailsCard />
       <Card

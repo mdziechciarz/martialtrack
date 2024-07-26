@@ -6,11 +6,27 @@
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  position: relative;
 }
 
 .container:hover {
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
   /* background-color: #f7f7f7; */
+}
+
+.optionsButton {
+  display: none;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+.optionsButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+.container:hover .optionsButton {
+  display: block;
 }
 
 .avatarWrapper {

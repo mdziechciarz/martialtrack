@@ -2,7 +2,7 @@
 
 import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
-import {Delete16Filled, MoreVertical16Filled, Send16Filled} from '@fluentui/react-icons';
+import {Checkmark20Filled, MoreVertical16Filled} from '@fluentui/react-icons';
 import {
   Button,
   ButtonGroup,
@@ -13,15 +13,18 @@ import {
   Tab,
   Tabs,
 } from '@nextui-org/react';
-import CoachDetailstab from './components/CoachDetailsTab/CoachDetailsTab';
+import CoachDetailsTab from './components/CoachDetailsTab/CoachDetailsTab';
 
 import styles from './CoachPage.module.css';
 
-const CoachPage = () => {
+const NewCoachPage = () => {
   return (
     <MainLayout>
       <ContentContainer>
         <div className={styles.buttonsContainer}>
+          {/* <Button color="primary" endContent={<Send16Filled />}>
+            Wiadomość
+          </Button> */}
           <Buttons />
         </div>
         <Tabs
@@ -39,7 +42,7 @@ const CoachPage = () => {
           className={styles.tabsContainer}
         >
           <Tab key="details" title="Dane podstawowe">
-            <CoachDetailstab />
+            <CoachDetailsTab />
           </Tab>
         </Tabs>
       </ContentContainer>
@@ -50,8 +53,8 @@ const CoachPage = () => {
 const Buttons = () => {
   return (
     <ButtonGroup className={styles.buttonsGroup} color="primary">
-      <Button color="primary" startContent={<Send16Filled />}>
-        Wiadomość
+      <Button color="primary" startContent={<Checkmark20Filled />}>
+        Zapisz trenera
       </Button>
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
@@ -60,13 +63,11 @@ const Buttons = () => {
           </Button>
         </DropdownTrigger>
         <DropdownMenu className="max-w-[300px]">
-          <DropdownItem key="1" endContent={<Delete16Filled />}>
-            Usuń profil trenera
-          </DropdownItem>
+          <DropdownItem key="1">Opcja 1</DropdownItem>
         </DropdownMenu>
       </Dropdown>
     </ButtonGroup>
   );
 };
 
-export default CoachPage;
+export default NewCoachPage;

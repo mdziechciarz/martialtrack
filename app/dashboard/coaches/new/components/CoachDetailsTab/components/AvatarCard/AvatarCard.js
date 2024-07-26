@@ -18,10 +18,10 @@ import NewAvatarModal from './components/NewAvatarModal/NewAvatarModal';
 // };
 
 const AvatarCard = ({children, className = '', name, imgSrc}) => {
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(true);
 
   return (
-    <Card isEditable isEditMode={isEditMode} setIsEditMode={setIsEditMode}>
+    <Card isEditMode={isEditMode} setIsEditMode={setIsEditMode}>
       {isEditMode ? (
         <EditModeContent name={name} imgSrc={imgSrc} />
       ) : (
@@ -63,7 +63,7 @@ const EditModeContent = ({name, imgSrc}) => {
           </Button>
         </Tooltip>
       </div>
-      <Input placeholder="Imię i nazwisko" defaultValue={name} className={styles.nameInput} />
+      <Input placeholder="Imię i nazwisko" className={styles.nameInput} />
     </div>
   );
 };

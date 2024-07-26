@@ -1,7 +1,15 @@
-import {Call16Filled, Mail24Filled} from '@fluentui/react-icons';
-import {Chip} from '@nextui-org/react';
+import {Call16Filled, Mail24Filled, MoreVertical16Filled} from '@fluentui/react-icons';
+import {
+  Button,
+  Chip,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from '@nextui-org/react';
 import Image from 'next/image';
 import {useRouter} from 'next/navigation';
+
 import styles from './CoachCard.module.css';
 
 const CoachCard = ({name, groups = [], imgSrc, phoneNumber, email}) => {
@@ -13,6 +21,7 @@ const CoachCard = ({name, groups = [], imgSrc, phoneNumber, email}) => {
 
   return (
     <li className={styles.container} onClick={handleClick}>
+      <OptionsButton />
       <div className={styles.avatarWrapper}>
         <Image className={styles.avatar} src={imgSrc} alt="Avatar" width={300} height={300} />
       </div>
@@ -45,3 +54,18 @@ const CoachCard = ({name, groups = [], imgSrc, phoneNumber, email}) => {
 };
 
 export default CoachCard;
+
+const OptionsButton = ({onClick}) => {
+  return (
+    <Dropdown>
+      <DropdownTrigger>
+        <Button className={styles.optionsButton} variant="light" isIconOnly>
+          <MoreVertical16Filled />
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu>
+        <DropdownItem>Usuń</DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
+  );
+};
