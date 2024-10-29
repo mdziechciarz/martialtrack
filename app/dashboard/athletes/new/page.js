@@ -21,9 +21,12 @@ import {
 import AthleteDetailsTab from './components/AthleteDetailsTab/AthleteDetailsTab';
 import ParentDetailsTab from './components/ParentDetailsTab/ParentDetailsTab';
 
+import {useState} from 'react';
 import styles from './AthletePage.module.css';
 
 const AthletePage = () => {
+  const [fullName, setFullName] = useState('');
+
   return (
     <MainLayout>
       <ContentContainer>

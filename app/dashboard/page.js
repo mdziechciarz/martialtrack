@@ -9,9 +9,16 @@ import clubLogo from './components/Header/logo.png';
 import StatsSection from './components/StatsSection/StatsSection';
 
 import FAB from '@/components/FAB/FAB';
+import {createClient} from '@/utils/supabase/server';
 import styles from './StartPage.module.css';
 
-const StartPage = () => {
+const StartPage = async () => {
+  const supabase = createClient();
+  const {
+    data: {user},
+  } = await supabase.auth.getUser();
+  console.log(user);
+
   return (
     <MainLayout>
       <Header bannerSrc={banner} clubLogosrc={clubLogo} />

@@ -44,13 +44,17 @@ const Card = ({
   );
 };
 
-export const CardEntries = ({className = '', style = {}, entries = {}}) => {
+export const CardEntries = ({className = '', style = {}, entries = {}, nonTextValues = false}) => {
   return (
     <div className={`${styles.grid} ${className}`} style={style}>
       {Object.entries(entries).map(([key, value]) => (
         <div key={key} className={styles.entry}>
           <p className={styles.key}>{key}</p>
-          <p className={styles.value}>{value}</p>
+          {nonTextValues ? (
+            <div className={styles.value}>{value}</div>
+          ) : (
+            <p className={styles.value}>{value}</p>
+          )}
         </div>
       ))}
     </div>

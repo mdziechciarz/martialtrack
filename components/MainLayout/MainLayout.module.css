@@ -20,6 +20,7 @@
 
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding-left: 16px;
   padding-right: 16px;
 }
@@ -127,6 +128,19 @@
   overflow-y: auto;
   /* display: flex;
   flex-direction: column; */
+}
+
+.userProfileButton {
+  margin-left: auto;
+}
+
+.userProfileButtonContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* align-items: center; */
+  /* justify-content: flex-end; */
+  /* flex-grow: 1; */
 }
 
 @media (max-width: 600px) {

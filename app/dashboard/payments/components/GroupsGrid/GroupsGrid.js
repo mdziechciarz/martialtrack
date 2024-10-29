@@ -18,6 +18,28 @@ const GroupsGrid = ({}) => {
   return (
     <div className={styles.container}>
       <div className={styles.buttonsContainer}>
+        <div className={styles.filterButtons}>
+          <Dropdown>
+            <DropdownTrigger className="hidden sm:flex" style={{backgroundColor: 'white'}}>
+              <Button endContent={<ChevronDown16Filled className="text-small" />} variant="flat">
+                Miesiąc
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              disallowEmptySelection
+              aria-label="Month filter"
+              // closeOnSelect={false}
+              // selectedKeys={monthFilter}
+              // onSelectionChange={setMonthFilter}
+            >
+              {['Styczeń 2024', 'Luty 2024', 'Marzec 2024', 'Kwiecień 2024'].map(month => (
+                <DropdownItem key={month} className="capitalize">
+                  {month}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        </div>
         <Buttons />
       </div>
       <div className={styles.grid}>

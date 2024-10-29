@@ -1,9 +1,11 @@
 'use client';
 
+import {useState} from 'react';
 import {
   AppsList20Filled,
   Calendar12Filled,
   Cart16Filled,
+  ChevronDown16Filled,
   ClipboardTaskListLtr20Filled,
   Dismiss16Filled,
   Home16Filled,
@@ -15,15 +17,22 @@ import {
   Settings16Filled,
   ShieldPerson20Filled,
   Wallet16Filled,
-} from '@fluentui/react-icons';
-import {useState} from 'react';
+} from '../icons.js';
 
 // import {ReactComponent as MartialTrackLogo} from './logo_white.svg';
 
-import {Button} from '@nextui-org/react';
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from '@nextui-org/react';
 import Image from 'next/image';
 import {usePathname, useRouter} from 'next/navigation';
 import styles from './MainLayout.module.css';
+import {logOut} from './actions.ts';
 
 const MainLayout = ({children}) => {
   // const [isSideBarOpen, setIsSideBarOpen] = useState(false);
@@ -52,10 +61,33 @@ const MainLayout = ({children}) => {
 export default MainLayout;
 
 const TopBar = ({openSideBar, isSideBarOpen}) => {
+  const handleLogout = async () => {
+    logOut();
+  };
+
   return (
     <div className={styles.topBarContainer}>
       {!isSideBarOpen && <HamburgerButton openSideBar={openSideBar} />}
+      <UserProfileButton handleLogout={handleLogout} />
     </div>
+  );
+};
+
+const UserProfileButton = ({handleLogout}) => {
+  return (
+    <Dropdown>
+      <DropdownTrigger>
+        <Button variant="light" className={styles.userProfileButton}>
+          <div className={styles.userProfileButtonContainer}>
+            <Avatar src="https://randomuser.me/api/portraits/thumb/men/75.jpg" size="sm" />
+            <ChevronDown16Filled />
+          </div>
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu>
+        <DropdownItem onClick={handleLogout}>Wyloguj</DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
   );
 };
 

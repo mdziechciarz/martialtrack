@@ -7,21 +7,8 @@ const PersonalDetailsCard = () => {
 
   return (
     <Card title="Dane podstawowe" isEditMode={isEditMode} setIsEditMode={setIsEditMode}>
-      {isEditMode ? <EditModeContent /> : <ReadOnlyContent />}
+      <EditModeContent />
     </Card>
-  );
-};
-
-const ReadOnlyContent = () => {
-  return (
-    <CardEntries
-      entries={{
-        Płeć: 'Kobieta',
-        'Data urodzenia': '2000-06-23',
-        PESEL: '12345678901',
-        'Miejsce urodzenia': 'Warszawa',
-      }}
-    />
   );
 };
 
@@ -30,8 +17,8 @@ const EditModeContent = () => {
     <CardEntries
       entries={{
         Płeć: <GenderSelect />,
-        'Data urodzenia': <DatePicker disableAnimation />,
-        PESEL: <Input placeholder="PESEL" />,
+        'Data urodzenia': <DatePicker disableAnimation showMonthAndYearPickers />,
+        PESEL: <Input placeholder="PESEL" type="number" />,
         'Miejsce urodzenia': <Input placeholder="Miejsce urodzenia" />,
       }}
     />

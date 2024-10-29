@@ -1,3 +1,4 @@
+import {createClient} from '@/utils/supabase/client';
 import {ReceiptAdd20Filled} from '@fluentui/react-icons';
 import {
   Autocomplete,
@@ -12,6 +13,7 @@ import {
   ModalHeader,
   Textarea,
 } from '@nextui-org/react';
+import {useEffect, useState} from 'react';
 
 const exampleAthletes = [
   {id: 1, name: 'Jan Kowalski', avatar: 'https://i.pravatar.cc/150'},
@@ -22,6 +24,26 @@ const exampleAthletes = [
 ];
 
 export default function NewOrderModal({isOpen, onOpenChange}) {
+  const [athletes, setAthletes] = useState([]);
+
+  useEffect(() => {
+    // Get all athletes
+    const supabase = createClient();
+
+    console.log('Fetching athletes...');
+    const fetchAthletes = async () => {
+      const {data, error} = await supabase.from('athletes').select('*');
+      if (error) {
+        setAthletes([]);
+      }
+      setAthletes(data);
+    };
+
+    fetchAthletes();
+  }, []);
+
+  console.log(athletes);
+
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
       <ModalContent>
@@ -31,7 +53,7 @@ export default function NewOrderModal({isOpen, onOpenChange}) {
             <ModalBody>
               <div className="flex flex-col gap-2">
                 <Autocomplete
-                  defaultItems={exampleAthletes}
+                  defaultItems={athletes}
                   // variant="bordered"
                   label="Zamawiający"
                   placeholder="Dla kogo?"
@@ -39,16 +61,16 @@ export default function NewOrderModal({isOpen, onOpenChange}) {
                   // className="max-w-xs"
                 >
                   {user => (
-                    <AutocompleteItem key={user.id} textValue={user.name}>
+                    <AutocompleteItem key={user.id} textValue={user.full_name}>
                       <div className="flex gap-2 items-center">
                         <Avatar
-                          alt={user.name}
+                          alt={user.full_name}
                           className="flex-shrink-0"
                           size="sm"
                           src={user.avatar}
                         />
                         <div className="flex flex-col">
-                          <span className="text-small">{user.name}</span>
+                          <span className="text-small">{user.full_name}</span>
                         </div>
                       </div>
                     </AutocompleteItem>

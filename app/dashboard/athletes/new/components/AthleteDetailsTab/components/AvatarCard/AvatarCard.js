@@ -21,7 +21,7 @@ const AvatarCard = ({children, className = '', name, imgSrc}) => {
   const [isEditMode, setIsEditMode] = useState(true);
 
   return (
-    <Card isEditMode={isEditMode} setIsEditMode={setIsEditMode}>
+    <Card isEditMode={true}>
       {isEditMode ? (
         <EditModeContent name={name} imgSrc={imgSrc} />
       ) : (
