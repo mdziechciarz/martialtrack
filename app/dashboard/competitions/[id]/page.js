@@ -1,13 +1,14 @@
 'use client';
 
-import Card, {CardEntries} from '@/components/Card/Card';
 import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
 import PageTitle from '@/components/PageTitle/PageTitle';
 import {Tab, Tabs} from '@nextui-org/react';
+import DetailsCard from './components/DetailsCard/DetailsCard';
 import MainInfoCard from './components/MainInfoCard/MainInfoCard';
+import ParticipantsCard from './components/ParticipantsCard/ParticipantsCard';
 
-import styles from './GroupPage.module.css';
+import styles from './CompetitionPage.module.css';
 
 const competitionData = {
   name: 'Mistrzostwa Polski Pointfighting, Light Contact Juniorów, Seniorów i Weteranów',
@@ -42,27 +43,13 @@ const GroupPage = () => {
           <Tab key="generalInfo" title="Informacje o zawodach">
             <div className={styles.grid}>
               <MainInfoCard
-                className={styles.branchAndColorCard}
+                className={styles.mainInfoCard}
                 color={competitionData.color}
                 dates={competitionData.dates}
                 location={competitionData.location}
               />
-              <Card
-                className={styles.scheduleCard}
-                title="Informacje dodatkowe"
-                style={{gridRow: 'span 2 / 4'}}
-              >
-                {/* 1fr column, row span 2 / 4 */}
-                <CardEntries
-                  style={{gridTemplateColumns: '1fr'}}
-                  entries={{
-                    'Opis zawodów':
-                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-                    Regulamin: 'regulamin_pzkb.pdf',
-                  }}
-                />
-              </Card>
-              <Card title="Uczestnicy" className={styles.athletesCard} />
+              <DetailsCard className={styles.detailsCard} />
+              <ParticipantsCard className={styles.participantsCard} />
             </div>
           </Tab>
           <Tab key="results" title="Wyniki">

@@ -18,7 +18,7 @@ import styles from './MainInfoCard.module.css';
 //   );
 // };
 
-const MainInfoCard = ({dates, location, color}) => {
+const MainInfoCard = ({className, dates, location, color}) => {
   const [isEditMode, setIsEditMode] = useState(false);
 
   return (
@@ -27,6 +27,7 @@ const MainInfoCard = ({dates, location, color}) => {
       isEditable
       isEditMode={isEditMode}
       setIsEditMode={setIsEditMode}
+      className={`${className || ''}`}
     >
       {isEditMode ? (
         <EditableContent color={color} />

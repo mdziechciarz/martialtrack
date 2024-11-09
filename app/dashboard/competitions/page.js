@@ -4,7 +4,9 @@ import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
 import PageTitle from '@/components/PageTitle/PageTitle';
 import {People12Filled} from '@fluentui/react-icons';
-import {Button, Tab, Tabs} from '@nextui-org/react';
+import {Button, Ripple, Tab, Tabs, useRipple} from '@nextui-org/react';
+import {useRouter} from 'next/navigation';
+import {useRef} from 'react';
 import styles from './CompetitionsPage.module.css';
 
 const CompetitionsPage = () => {
@@ -110,8 +112,24 @@ const CompetitionCard = ({
   entrantsTotal,
   entrantsConfirmed,
 }) => {
+  const router = useRouter();
+
+  const domRef = useRef(null);
+  const {onClick: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
+
+  const handleClick = e => {
+    domRef.current && onRippleClickHandler(e);
+    router.push(`/dashboard/competitions/123}`);
+  };
+
   return (
-    <div className={styles.competitionCardContainer}>
+    <div
+      className={styles.competitionCardContainer}
+      style={{borderLeftColor: color, position: 'relative', overflow: 'hidden'}}
+      ref={domRef}
+      onClick={handleClick}
+    >
+      <Ripple onClear={onRippleClear} ripples={ripples} />
       <div className={styles.detailsContainer} style={{borderLeftColor: color}}>
         <h3 className={styles.competitionName}>{name}</h3>
         <p className={styles.competitionDate}>

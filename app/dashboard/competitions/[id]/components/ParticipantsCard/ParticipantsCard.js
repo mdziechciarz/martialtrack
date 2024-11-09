@@ -1,3 +1,7 @@
+import Image from 'next/image';
+import {useRouter} from 'next/navigation';
+import React, {useEffect, useState} from 'react';
+
 import {
   CheckboxChecked20Filled,
   ChevronDown20Regular as ChevronDownIcon,
@@ -23,37 +27,37 @@ import {
   TableRow,
   useDisclosure,
 } from '@nextui-org/react';
-import Image from 'next/image';
-import React, {useEffect, useState} from 'react';
-import {columns, statusOptions, users} from './data';
+import {columns, groupOptions, users} from './data';
 
 import Card from '@/components/Card/Card';
-import {useRouter} from 'next/navigation';
-import AddMemberModal from './components/AddMemberModal/AddMemberModal';
+import AddParticipantModal from './components/AddParticipantModal/AddParticipantModal';
 
-import styles from './MembersCard.module.css';
-
-const statusColorMap = {
-  Zrealizowane: 'success',
-  Nieopłacone: 'danger',
-  Opłacone: 'warning',
-};
+import styles from './ParticipantsCard.module.css';
 
 const capitalize = str => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-const INITIAL_VISIBLE_COLUMNS = ['name', 'birthdate', 'medical_checkups', 'actions'];
+const INITIAL_VISIBLE_COLUMNS = [
+  'name',
+  'formulas',
+  'payment',
+  'consent',
+  'medical_checkups',
+  'weight',
+  'height',
+  'actions',
+];
 
-export default function MembersCard({className = ''}) {
+export default function ParticipantsCard({className = ''}) {
   return (
-    <Card title="Zawodnicy" className={`${styles.cardContainer} ${className}`}>
-      <MembersTable />
+    <Card title="Uczestnicy" className={`${styles.cardContainer} ${className}`}>
+      <ParticipantsTable />
     </Card>
   );
 }
 
-const AddNewMemberButton = ({onClick = () => {}}) => {
+const AddParticipantButton = ({onClick = () => {}}) => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -70,7 +74,7 @@ const AddNewMemberButton = ({onClick = () => {}}) => {
   } else {
     return (
       <Button onClick={onClick} color="primary" endContent={<PersonAdd20Filled />}>
-        Nowy zawodnik
+        Nowy uczestnik
       </Button>
     );
   }
@@ -91,58 +95,14 @@ const AvaratName = ({id, imgSrc, name}) => {
   );
 };
 
-const StatusChip = ({status}) => {
-  const [selectedStatus, setSelectedStatus] = React.useState(status);
-
-  console.log('selectedStatus', selectedStatus);
-
-  return (
-    <Dropdown>
-      <DropdownTrigger className="hidden sm:flex">
-        <div className={styles.statusChipContainer}>
-          <Chip
-            className="capitalize"
-            color={statusColorMap[selectedStatus]}
-            size="sm"
-            variant="flat"
-          >
-            {selectedStatus}
-          </Chip>
-          <div className={styles.statusChevronContainer}>
-            <ChevronDownIcon className={styles.statusChevronIcon} />
-          </div>
-        </div>
-      </DropdownTrigger>
-      <DropdownMenu
-        disallowEmptySelection
-        aria-label="Table Columns"
-        closeOnSelect
-        selectedKeys={selectedStatus}
-        selectionMode="single"
-        onAction={setSelectedStatus}
-      >
-        <DropdownItem key={'Zrealizowane'} className="capitalize">
-          Zrealizowane
-        </DropdownItem>
-        <DropdownItem key={'Opłacone'} className="capitalize">
-          Opłacone
-        </DropdownItem>
-        <DropdownItem key={'Nieopłacone'} className="capitalize">
-          Nieopłacone
-        </DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
-  );
-};
-
-const MembersTable = () => {
+const ParticipantsTable = () => {
   const [filterValue, setFilterValue] = React.useState('');
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState('all');
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: 'age',
+    column: 'name',
     direction: 'ascending',
   });
   const [page, setPage] = React.useState(1);
@@ -217,19 +177,52 @@ const MembersTable = () => {
             )}
           </p>
         );
-      case 'role':
+      case 'payment':
         return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400">{user.team}</p>
-          </div>
+          <p className={styles.medicalCheckupsCell}>
+            {cellValue ? (
+              <CheckboxChecked20Filled style={{color: '#7BD879'}} />
+            ) : (
+              <DismissCircle16Filled style={{color: '#FF5151'}} />
+            )}
+          </p>
         );
-      case 'status':
+      case 'consent':
         return (
-          // <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-          //   {cellValue}
-          // </Chip>
-          <StatusChip status={cellValue} />
+          <p className={styles.medicalCheckupsCell}>
+            {cellValue ? (
+              <CheckboxChecked20Filled style={{color: '#7BD879'}} />
+            ) : (
+              <DismissCircle16Filled style={{color: '#FF5151'}} />
+            )}
+          </p>
+        );
+      case 'groups':
+        return (
+          <ul className={styles.groupsList}>
+            {user.groups.map(group => (
+              <li key={group.uid} className={styles.group}>
+                <Chip
+                  variant="dot"
+                  classNames={{base: styles.chipBase, dot: styles.chipDot}}
+                  style={{'--dot-color': groupOptions.find(g => g.uid === group.uid).color}}
+                >
+                  {group.name}
+                </Chip>
+              </li>
+            ))}
+          </ul>
+        );
+      case 'formulas':
+        // return <p style={{whiteSpace: 'pre'}}>{cellValue}</p>;
+        return (
+          <ul className={styles.groupsList}>
+            {cellValue.split('\n').map(formula => (
+              <li key={formula}>
+                <Chip variant="flat">{formula}</Chip>
+              </li>
+            ))}
+          </ul>
         );
       case 'actions':
         return (
@@ -287,7 +280,7 @@ const MembersTable = () => {
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <AddMemberModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} />
+        <AddParticipantModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} />
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
@@ -320,10 +313,10 @@ const MembersTable = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <AddNewMemberButton onClick={onModalOpen} />
+            <AddParticipantButton onClick={onModalOpen} />
           </div>
         </div>
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">Łącznie {users.length} zawodników</span>
           <label className="flex items-center text-default-400 text-small">
             Wyświetlaj:
@@ -337,7 +330,7 @@ const MembersTable = () => {
               <option value="50">50</option>
             </select>
           </label>
-        </div>
+        </div> */}
       </div>
     );
   }, [
