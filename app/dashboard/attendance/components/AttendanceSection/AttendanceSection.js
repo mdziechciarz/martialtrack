@@ -10,8 +10,17 @@ import {
 
 import styles from './AttendanceSection.module.css';
 
-import {Button, Calendar, Popover, PopoverContent, PopoverTrigger} from '@nextui-org/react';
+import {
+  Button,
+  Calendar,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Ripple,
+  useRipple,
+} from '@nextui-org/react';
 import {useRouter} from 'next/navigation';
+import {useRef} from 'react';
 import exampleAttendanceLists from './exampleData';
 
 const AttendanceSection = () => {
@@ -56,16 +65,22 @@ const DayColumn = ({dayName: dayOfWeek, isComplete = false, attendanceLists = []
 const AttendanceCard = ({name, color, times, attendanceList = null}) => {
   const router = useRouter();
 
-  const handleClick = () => {
+  const handleClick = e => {
+    domRef.current && onRippleClickHandler(e);
     router.push(`/dashboard/attendance/${name}`);
   };
+
+  const domRef = useRef(null);
+  const {onClick: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
 
   return (
     <div
       onClick={handleClick}
       className={styles.attendanceCardContainer}
-      style={{borderLeftColor: color}}
+      style={{borderLeftColor: color, position: 'relative', overflow: 'hidden'}}
+      ref={domRef}
     >
+      <Ripple onClear={onRippleClear} ripples={ripples} />
       <div className={styles.classDetailsContainer}>
         <p>{name}</p>
         <p>{times}</p>

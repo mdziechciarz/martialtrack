@@ -1,6 +1,9 @@
-import Card, {CardEntries} from '@/components/Card/Card';
-import {Input, Select, SelectItem} from '@nextui-org/react';
 import {useState} from 'react';
+import {useFormContext} from 'react-hook-form';
+
+import {Input, Select, SelectItem} from '@nextui-org/react';
+
+import Card, {CardEntries, CardGrid} from '@/components/Card/Card';
 
 const ParentCard = () => {
   const [isEditMode, setIsEditMode] = useState(true);
@@ -30,19 +33,29 @@ const ReadOnlyContent = () => {
 };
 
 const EditModeContent = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+  } = useFormContext();
+
   return (
-    <CardEntries
-      entries={{
-        Imię: <Input placeholder="Imię" />,
-        Nazwisko: <Input placeholder="Nazwisko" />,
-        'Nr telefonu': <Input placeholder="Nr telefonu" />,
-        'E-mail': <Input placeholder="E-mail" />,
-        Ulica: <Input placeholder="Ulica" />,
-        'Nr domu/mieszkania': <Input placeholder="Nr domu/mieszkania" />,
-        Miejscowość: <Input placeholder="Miejscowość" />,
-        'Kod pocztowy': <Input placeholder="Kod pocztowy" />,
-      }}
-    />
+    <CardGrid>
+      <Input
+        label="Imię"
+        labelPlacement="outside"
+        placeholder="Imię"
+        {...register('parentOne.name', {required: true})}
+        isInvalid={!!errors.parentOne?.name}
+      />
+      <Input label="Nazwisko" labelPlacement="outside" placeholder="Nazwisko" />
+      <Input label="Nr telefonu" labelPlacement="outside" placeholder="Nr telefonu" />
+      <Input label="E-mail" labelPlacement="outside" placeholder="E-mail" />
+      <Input label="Ulica" labelPlacement="outside" placeholder="Ulica" />
+      <Input label="Nr domu/mieszkania" labelPlacement="outside" placeholder="Nr domu/mieszkania" />
+      <Input label="Miejscowość" labelPlacement="outside" placeholder="Miejscowość" />
+      <Input label="Kod pocztowy" labelPlacement="outside" placeholder="Kod pocztowy" />
+    </CardGrid>
   );
 };
 

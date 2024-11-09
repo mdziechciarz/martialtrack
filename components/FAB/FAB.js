@@ -52,7 +52,7 @@ const FAB = () => {
             onClick={() => router.push('/dashboard/athletes/new')}
             startContent={<Person16Filled />}
           >
-            Nowy zawodnikę
+            Nowy zawodnik
           </DropdownItem>
           <DropdownItem onClick={onPaymentModalOpen} startContent={<Wallet16Filled />}>
             Wpłata

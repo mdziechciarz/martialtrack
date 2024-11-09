@@ -11,7 +11,10 @@
 
 .container:hover {
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
-  /* background-color: #f7f7f7; */
+  background-color: #fafafa;
+}
+
+.groupCard:hover {
 }
 
 .optionsButton {

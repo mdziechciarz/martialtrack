@@ -1,7 +1,9 @@
 'use client';
 
 import {Checkmark12Regular} from '@fluentui/react-icons';
+import {Ripple, useRipple} from '@nextui-org/react';
 import {useRouter} from 'next/navigation';
+import {useRef} from 'react';
 import styles from './AttendanceSection.module.css';
 
 // Example attendanceLists array
@@ -196,7 +198,11 @@ const DayColumn = ({dayName: dayOfWeek, isComplete = false, attendanceLists = []
 const AttendanceCard = ({name, color, times, attendanceList = null}) => {
   const router = useRouter();
 
-  const handleClick = () => {
+  const domRef = useRef(null);
+  const {onClick: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
+
+  const handleClick = e => {
+    domRef.current && onRippleClickHandler(e);
     router.push(`/dashboard/attendance/${name}`);
   };
 
@@ -204,8 +210,10 @@ const AttendanceCard = ({name, color, times, attendanceList = null}) => {
     <div
       onClick={handleClick}
       className={styles.attendanceCardContainer}
-      style={{borderLeftColor: color}}
+      style={{borderLeftColor: color, position: 'relative', overflow: 'hidden'}}
+      ref={domRef}
     >
+      <Ripple onClear={onRippleClear} ripples={ripples} />
       <div className={styles.classDetailsContainer}>
         <p>{name}</p>
         <p>{times}</p>

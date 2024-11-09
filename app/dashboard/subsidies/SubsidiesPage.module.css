@@ -1,0 +1,59 @@
+/* TABS */
+.tabsBase {
+  margin-top: 16px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.tabList {
+  background: #fff;
+  border-radius: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
+  /* padding-left: 16px; */
+}
+
+.tab {
+  height: 40px;
+}
+
+.tabCursor {
+  height: 4px;
+  width: 100%;
+  border-radius: 2px;
+  margin-bottom: 4px;
+}
+
+.tabPanel {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+/* TABS END */
+
+.subsidiesList {
+  margin: 24px 0;
+
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+}
+
+@media screen and (min-width: 600px) {
+  .addCompetitionButton {
+    width: unset;
+  }
+
+  .tabsBase {
+    margin-top: 16px;
+  }
+
+  .tabList {
+    padding: 8px 24px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .tabList {
+    padding: 8px 32px;
+  }
+}

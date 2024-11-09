@@ -1,6 +1,8 @@
-import Card from '@/components/Card/Card';
 import {useState} from 'react';
+import {Controller, useFormContext} from 'react-hook-form';
+import {v4} from 'uuid';
 
+import Card from '@/components/Card/Card';
 import {Add16Filled, Dismiss16Filled} from '@fluentui/react-icons';
 import {Button, DatePicker, Input} from '@nextui-org/react';
 import styles from './LicensesCard.module.css';
@@ -45,10 +47,17 @@ const ReadOnlyContent = () => {
 const EditModeContent = ({entries: savedEntries = []}) => {
   const [entries, setEntries] = useState(savedEntries);
 
+  const {
+    register,
+    unregister,
+    control,
+    formState: {errors},
+  } = useFormContext();
+
   const handleAddNewEntry = () => {
     // Check if there are empty entries
-    if (entries.some(entry => entry.key === '' || entry.value === '')) return;
-    setEntries([...entries, {key: '', value: ''}]);
+    if (entries.some(entry => entry.key === '' || entry.date === '')) return;
+    setEntries([...entries, {id: v4(), key: '', value: '', date: ''}]);
   };
 
   return (
@@ -56,11 +65,15 @@ const EditModeContent = ({entries: savedEntries = []}) => {
       <div style={{display: 'flex', flexDirection: 'column', rowGap: '12px'}}>
         {entries.map((entry, index) => (
           <Entry
-            key={index}
+            key={entry.id}
+            id={entry.id}
             index={index}
             setEntries={setEntries}
             entryName={entry.key}
             entryValue={entry.value}
+            register={register}
+            errors={errors}
+            control={control}
           />
         ))}
       </div>
@@ -73,7 +86,11 @@ const EditModeContent = ({entries: savedEntries = []}) => {
 
 export default LicensesCard;
 
-const Entry = ({index, entryName, entryValue, setEntries}) => {
+const Entry = ({id, index, entryName, entryValue, setEntries, register, errors, control}) => {
+  const handleRemoveEntry = () => {
+    setEntries(prev => prev.filter(entry => entry.id !== id));
+  };
+
   return (
     <div className={styles.entry}>
       <div className={styles.key} style={{marginBottom: 4}}>
@@ -81,28 +98,69 @@ const Entry = ({index, entryName, entryValue, setEntries}) => {
           label="Nazwa badania/licencji"
           placeholder="Np. Badania lekarskie"
           size="sm"
-          defaultValue={entryName}
+          isRequired
+          // defaultValue={entryName}
           onChange={e =>
             setEntries(prev =>
-              prev.map((entry, i) => (i === index ? {...entry, key: e.target.value} : entry))
+              prev.map(entry => (entry.id === id ? {...entry, key: e.target.value} : entry))
             )
           }
+          register={register(`licenses.${id}].key`, {
+            required: true,
+          })}
+          isInvalid={!!errors?.licenses?.[id]?.key}
         />
       </div>
       <div style={{display: 'flex', columnGap: '4px'}}>
         <Input
-          label="Numer"
+          label="Numer (opcjonalnie)"
           placeholder="Np. ARE/2017/124"
           defaultValue={entryValue}
           onChange={e =>
             setEntries(prev =>
-              prev.map((entry, i) => (i === index ? {...entry, value: e.target.value} : entry))
+              prev.map(entry => (entry.id === id ? {...entry, value: e.target.value} : entry))
             )
           }
+          register={register(`licenses.${id}].value`)}
+          isInvalid={!!errors?.licenses?.[id]?.value}
         />
-        <DatePicker label="Data ważności" disableAnimation />
+        <Controller
+          control={control}
+          name={`licenses.${id}].date`}
+          rules={{required: true}}
+          render={({field}) => (
+            <DatePicker
+              label="Data ważności"
+              isRequired
+              disableAnimation
+              // onChange={field.onChange}
+              onChange={date => {
+                field.onChange(date);
+                setEntries(prev =>
+                  prev.map(entry => (entry.id === id ? {...entry, date: date} : entry))
+                );
+              }}
+              value={field.value}
+              isInvalid={!!errors?.licenses?.[id]?.date}
+            />
+          )}
+        />
+        {/* <DatePicker
+          label="Data ważności"
+          isRequired
+          disableAnimation
+          onChange={date =>
+            setEntries(prev =>
+              prev.map(entry => (entry.id === id ? {...entry, date: date} : entry))
+            )
+          }
+          register={register(`licenses.${id}].date`, {
+            required: true,
+          })}
+          isInvalid={!!errors?.licenses?.[id]?.date}
+        /> */}
       </div>
-      <RemoveEntryButton />
+      <RemoveEntryButton onClick={handleRemoveEntry} />
     </div>
   );
 };

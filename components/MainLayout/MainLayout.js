@@ -31,8 +31,9 @@ import {
 } from '@nextui-org/react';
 import Image from 'next/image';
 import {usePathname, useRouter} from 'next/navigation';
-import styles from './MainLayout.module.css';
 import {logOut} from './actions.ts';
+
+import styles from './MainLayout.module.css';
 
 const MainLayout = ({children}) => {
   // const [isSideBarOpen, setIsSideBarOpen] = useState(false);

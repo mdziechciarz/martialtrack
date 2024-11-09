@@ -104,7 +104,7 @@ const Payer = ({name, amount, isPaid}) => {
             <DropdownItem startContent={<WalletCreditCard16Filled />}>
               Zaksięguj wpłatę
             </DropdownItem>
-            <DropdownItem startContent={<Dismiss16Filled />}>Anuluj wpłatę wpłatę</DropdownItem>
+            <DropdownItem startContent={<Dismiss16Filled />}>Anuluj wpłatę</DropdownItem>
             <DropdownItem startContent={<TextPeriodAsterisk20Filled />}>
               Zwolnij z płatności w tym miesiącu
             </DropdownItem>

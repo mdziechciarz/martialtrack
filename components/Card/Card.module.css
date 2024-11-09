@@ -11,7 +11,7 @@
 
 .header {
   position: relative;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .titleContainer {
@@ -47,9 +47,13 @@
 .grid {
   width: 100%;
   display: grid;
-  row-gap: 8px;
+  row-gap: 16px;
   column-gap: 16px;
   grid-template-columns: repeat(2, 1fr);
+}
+
+.grid.oneColumn {
+  grid-template-columns: 1fr;
 }
 
 .entry {

@@ -6,21 +6,34 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Ripple,
+  useRipple,
 } from '@nextui-org/react';
 import Image from 'next/image';
 import {useRouter} from 'next/navigation';
 
+import {useRef} from 'react';
 import styles from './CoachCard.module.css';
 
 const CoachCard = ({name, groups = [], imgSrc, phoneNumber, email}) => {
   const router = useRouter();
 
-  const handleClick = () => {
+  const domRef = useRef(null);
+  const {onClick: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
+
+  const handleClick = e => {
+    domRef.current && onRippleClickHandler(e);
     router.push('/dashboard/coaches/1');
   };
 
   return (
-    <li className={styles.container} onClick={handleClick}>
+    <li
+      className={styles.container}
+      onClick={handleClick}
+      style={{position: 'relative', overflow: 'hidden'}}
+      ref={domRef}
+    >
+      <Ripple onClear={onRippleClear} ripples={ripples} />
       <OptionsButton />
       <div className={styles.avatarWrapper}>
         <Image className={styles.avatar} src={imgSrc} alt="Avatar" width={300} height={300} />

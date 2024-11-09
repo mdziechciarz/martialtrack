@@ -18,14 +18,13 @@ import {
 
 import {ReceiptAdd20Filled} from '@fluentui/react-icons';
 
-export default function NewOrderModal({isOpen, onOpenChange}) {
+export default function EditOrderModal({isOpen, onOpenChange, editedOrder = {}, onClose}) {
   const [athletes, setAthletes] = useState([]);
 
   useEffect(() => {
     // Get all athletes
     const supabase = createClient();
 
-    console.log('Fetching athletes...');
     const fetchAthletes = async () => {
       const {data, error} = await supabase.from('athletes').select('*');
       if (error) {
@@ -37,22 +36,33 @@ export default function NewOrderModal({isOpen, onOpenChange}) {
     fetchAthletes();
   }, []);
 
+  let defaultValues = {};
+  if (editedOrder) {
+    defaultValues = {
+      recipient: editedOrder.recipientId,
+      amount: editedOrder.amount,
+      order: editedOrder.order,
+    };
+  }
+
   const {
     register,
     handleSubmit,
     reset,
     control,
     formState: {errors},
-  } = useForm();
+  } = useForm({
+    defaultValues,
+  });
 
   const onSubmit = data => {
-    console.log('Submitted');
+    console.log('Edit saved');
     console.log(data);
   };
 
   const handleCancel = () => {
-    console.log('closing modal');
     reset();
+    // onClose();
   };
 
   return (
@@ -60,7 +70,7 @@ export default function NewOrderModal({isOpen, onOpenChange}) {
       <ModalContent>
         {onClose => (
           <form onSubmit={handleSubmit(onSubmit)}>
-            <ModalHeader className="flex flex-col gap-1">Dodaj nowe zamówienie</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">Edytuj zamówienie</ModalHeader>
             <ModalBody>
               <div className="flex flex-col gap-2">
                 <Controller
@@ -126,7 +136,7 @@ export default function NewOrderModal({isOpen, onOpenChange}) {
                 Anuluj
               </Button>
               <Button color="primary" type="submit" endContent={<ReceiptAdd20Filled />}>
-                Dodaj
+                Zapisz
               </Button>
             </ModalFooter>
           </form>

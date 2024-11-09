@@ -1,0 +1,33 @@
+.modalTitle {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  line-clamp: 1;
+  /* line-height: normal; */
+}
+
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+}
+
+.sectionTitle {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.textInputsContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.requiredDocumentsList {
+  white-space: pre-wrap;
+}
+
+.fileInputContainer {
+  margin-top: 8px;
+}

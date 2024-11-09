@@ -48,7 +48,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000;
+  z-index: 10;
 
   background: linear-gradient(185.4deg, #28354d 0%, #10203e 100.71%);
 

@@ -1,40 +1,72 @@
-import Card, {CardEntries} from '@/components/Card/Card';
+import {useFormContext} from 'react-hook-form';
+
+import Card, {CardGrid} from '@/components/Card/Card';
 import {Input} from '@nextui-org/react';
-import {useState} from 'react';
 
 const AddressCard = () => {
-  const [isEditMode, setIsEditMode] = useState(true);
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+  } = useFormContext();
 
   return (
-    <Card title="Adres zamieszkania" isEditMode={isEditMode} setIsEditMode={setIsEditMode}>
-      {isEditMode ? <EditModeContent /> : <ReadOnlyContent />}
+    <Card title="Adres zamieszkania">
+      <CardGrid>
+        <Input
+          isRequired
+          label="Ulica"
+          labelPlacement="outside"
+          placeholder="Np. Kwiatowa"
+          isInvalid={!!errors.streetName}
+          {...register('streetName', {
+            required: {
+              value: true,
+              message: 'Ulica jest wymagana',
+            },
+          })}
+        />
+        <Input
+          isRequired
+          label="Nr domu/mieszkania"
+          labelPlacement="outside"
+          placeholder="Np. 12"
+          isInvalid={!!errors.houseAndApartmentNumber}
+          {...register('houseAndApartmentNumber', {
+            required: {
+              value: true,
+              message: 'Nr domu/mieszkania jest wymagany',
+            },
+          })}
+        />
+        <Input
+          isRequired
+          label="Miasto"
+          labelPlacement="outside"
+          placeholder="Np. Warszawa"
+          isInvalid={!!errors.cityName}
+          {...register('cityName', {
+            required: {
+              value: true,
+              message: 'Miasto jest wymagane',
+            },
+          })}
+        />
+        <Input
+          isRequired
+          label="Kod pocztowy"
+          labelPlacement="outside"
+          placeholder="Np. 12-345"
+          isInvalid={!!errors.postalCode}
+          {...register('postalCode', {
+            required: {
+              value: true,
+              message: 'Kod pocztowy jest wymagany',
+            },
+          })}
+        />
+      </CardGrid>
     </Card>
-  );
-};
-
-const ReadOnlyContent = () => {
-  return (
-    <CardEntries
-      entries={{
-        Ulica: 'Kwiatowa',
-        'Numer domu/mieszkania': '12',
-        Miasto: 'Warszawa',
-        'Kod pocztowy': '12-345',
-      }}
-    />
-  );
-};
-
-const EditModeContent = () => {
-  return (
-    <CardEntries
-      entries={{
-        Ulica: <Input placeholder="Np. Kwiatowa" />,
-        'Numer domu/mieszkania': <Input placeholder="Np. 12" />,
-        Miasto: <Input placeholder="Np. Warszawa" />,
-        'Kod pocztowy': <Input placeholder="Np. 12-345" />,
-      }}
-    />
   );
 };
 

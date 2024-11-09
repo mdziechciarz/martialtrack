@@ -18,14 +18,17 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Ripple,
   Tooltip,
   useDisclosure,
+  useRipple,
 } from '@nextui-org/react';
 import {useRouter} from 'next/navigation';
 import AddMemberModal from './components/AddMemberModal/AddMemberModal';
 import CoachCard from './components/AvatarCard/CoachCard';
 import NewBranchModal from './components/NewBranchModal/NewBranchModal';
 
+import {useRef} from 'react';
 import styles from './GroupsPage.module.css';
 
 const example_sections = [
@@ -181,12 +184,22 @@ export default GroupsPage;
 const GroupCard = ({id, name, color, members, openingTimes, coach, onAddMemberClick}) => {
   const router = useRouter();
 
-  const handleClick = () => {
+  const domRef = useRef(null);
+  const {onClick: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
+
+  const handleClick = e => {
+    domRef.current && onRippleClickHandler(e);
     router.push(`/dashboard/groups/${id}`);
   };
 
   return (
-    <li onClick={handleClick} className={styles.groupCard} style={{borderLeftColor: color}}>
+    <li
+      className={styles.groupCard}
+      style={{borderLeftColor: color, position: 'relative', overflow: 'hidden'}}
+      ref={domRef}
+      onClick={handleClick}
+    >
+      <Ripple onClear={onRippleClear} ripples={ripples} />
       <div className={styles.groupContentContainer}>
         <h3 className={styles.groupTitle}>{name}</h3>
         <CoachCard name={coach.name} imgSrc={coach.imgsrc} />

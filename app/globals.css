@@ -18,3 +18,10 @@ body {
 button {
   font-family: 'Roboto', sans-serif;
 }
+
+@keyframes ripple-effect {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}

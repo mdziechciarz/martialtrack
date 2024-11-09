@@ -1,7 +1,8 @@
 'use client';
 
 import {People12Filled} from '@fluentui/react-icons';
-import {Tooltip} from '@nextui-org/react';
+import {Ripple, Tooltip, useRipple} from '@nextui-org/react';
+import {useRef} from 'react';
 import styles from './CompetitionsSection.module.css';
 
 const CompetitionsSection = () => {
@@ -52,8 +53,21 @@ const CompetitionCard = ({
   entrantsTotal,
   entrantsConfirmed,
 }) => {
+  const domRef = useRef(null);
+  const {onClick: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
+
+  const handleClick = e => {
+    domRef.current && onRippleClickHandler(e);
+  };
+
   return (
-    <div className={styles.competitionCardContainer} style={{borderLeftColor: color}}>
+    <div
+      className={styles.competitionCardContainer}
+      style={{borderLeftColor: color, position: 'relative', overflow: 'hidden'}}
+      ref={domRef}
+      onClick={handleClick}
+    >
+      <Ripple onClear={onRippleClear} ripples={ripples} />
       <div className={styles.detailsContainer}>
         <h3 className={styles.competitionName}>{name}</h3>
         <p className={styles.competitionDate}>

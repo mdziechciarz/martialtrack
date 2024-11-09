@@ -1,3 +1,13 @@
+import Image from 'next/image';
+import React, {useEffect, useState} from 'react';
+
+import {
+  ChevronDown20Regular as ChevronDownIcon,
+  ReceiptAdd20Filled,
+  Search16Filled as SearchIcon,
+  MoreVertical20Filled as VerticalDotsIcon,
+} from '@fluentui/react-icons';
+
 import {
   Button,
   Chip,
@@ -13,15 +23,13 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  useDisclosure,
 } from '@nextui-org/react';
-import React from 'react';
-// import {ChevronDownIcon} from './ChevronDownIcon';
-import {
-  ChevronDown20Regular as ChevronDownIcon,
-  Search16Filled as SearchIcon,
-  MoreVertical20Filled as VerticalDotsIcon,
-} from '@fluentui/react-icons';
-import Image from 'next/image';
+import {Toaster} from 'sonner';
+
+import EditOrderModal from './EditOrderModal/EditOrderModal';
+import NewOrderModal from './NewOrderModal/NewOrderModal';
+
 import {columns, statusOptions, users} from './data';
 import {capitalize} from './utils';
 
@@ -33,7 +41,7 @@ const statusColorMap = {
   Opłacone: 'warning',
 };
 
-const INITIAL_VISIBLE_COLUMNS = ['name', 'date', 'order', 'status', 'actions'];
+const INITIAL_VISIBLE_COLUMNS = ['name', 'date', 'order', 'status', 'amount', 'actions'];
 
 const AvaratName = ({imgSrc, name}) => (
   <div className={styles.avatarNameContainer}>
@@ -42,10 +50,8 @@ const AvaratName = ({imgSrc, name}) => (
   </div>
 );
 
-const StatusChip = ({status}) => {
+const StatusChip = ({updateOrderStatus, status}) => {
   const [selectedStatus, setSelectedStatus] = React.useState(status);
-
-  console.log('selectedStatus', selectedStatus);
 
   return (
     <Dropdown>
@@ -70,7 +76,10 @@ const StatusChip = ({status}) => {
         closeOnSelect
         selectedKeys={selectedStatus}
         selectionMode="single"
-        onAction={setSelectedStatus}
+        onAction={status => {
+          console.log('Selection change: ', status);
+          setSelectedStatus(status);
+        }}
       >
         <DropdownItem key={'Zrealizowane'} className="capitalize">
           Zrealizowane
@@ -86,16 +95,40 @@ const StatusChip = ({status}) => {
   );
 };
 
+const NewOrderButton = ({onClick = () => {}}) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const isMobile = window.matchMedia('(max-width: 599px)').matches;
+    setIsMobile(isMobile);
+  }, []);
+
+  if (isMobile) {
+    return (
+      <Button isIconOnly onClick={onClick} color="primary">
+        <ReceiptAdd20Filled />
+      </Button>
+    );
+  } else {
+    return (
+      <Button color="primary" endContent={<ReceiptAdd20Filled />} onClick={onClick}>
+        Dodaj zamówienie
+      </Button>
+    );
+  }
+};
+
 export default function OrdersTable() {
   const [filterValue, setFilterValue] = React.useState('');
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState('all');
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: 'age',
+    column: 'status',
     direction: 'ascending',
   });
+
   const [page, setPage] = React.useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
@@ -140,17 +173,12 @@ export default function OrdersTable() {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
+  const renderCell = React.useCallback((order, columnKey) => {
+    const cellValue = order[columnKey];
 
     switch (columnKey) {
       case 'name':
-        return (
-          // <User avatarProps={{src: user.avatar}} description={user.email} name={cellValue}>
-          //   {user.email}
-          // </User>
-          <AvaratName imgSrc={user.avatar} name={user.name} />
-        );
+        return <AvaratName imgSrc={order.avatar} name={order.name} />;
       case 'role':
         return (
           <div className="flex flex-col">
@@ -159,12 +187,7 @@ export default function OrdersTable() {
           </div>
         );
       case 'status':
-        return (
-          // <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-          //   {cellValue}
-          // </Chip>
-          <StatusChip status={cellValue} />
-        );
+        return <StatusChip status={cellValue} handleUpdateStatus={() => {}} />;
       case 'actions':
         return (
           <div className="relative flex justify-end items-center gnap-2">
@@ -175,9 +198,13 @@ export default function OrdersTable() {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+                {/* <DropdownItem>View</DropdownItem> */}
+                <DropdownItem
+                  onClick={() => handleEditClick(order.id, order.name, order.amount, order.order)}
+                >
+                  Edytuj
+                </DropdownItem>
+                <DropdownItem onClick={() => handleRemoveClick(order.id)}>Usuń</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -186,18 +213,6 @@ export default function OrdersTable() {
         return cellValue;
     }
   }, []);
-
-  const onNextPage = React.useCallback(() => {
-    if (page < pages) {
-      setPage(page + 1);
-    }
-  }, [page, pages]);
-
-  const onPreviousPage = React.useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page]);
 
   const onRowsPerPageChange = React.useCallback(e => {
     setRowsPerPage(Number(e.target.value));
@@ -218,9 +233,44 @@ export default function OrdersTable() {
     setPage(1);
   }, []);
 
+  const {
+    isOpen: isEditModalOpen,
+    onOpen: onEditModalOpen,
+    onOpenChange: onEditModalOpenChange,
+  } = useDisclosure();
+
+  const {
+    isOpen: isCreationModalOpen,
+    onOpen: onCreationModalOpen,
+    onOpenChange: onCreationModalOpenChange,
+  } = useDisclosure();
+
+  const [editedOrder, setEditedOrder] = React.useState(null);
+
+  const handleUpdateStatus = (id, newStatus) => {};
+
+  const handleEditClick = (orderId, recipientId, amount, order) => {
+    setEditedOrder({orderId, recipientId, amount, order});
+    onEditModalOpen();
+  };
+
+  const handleRemoveClick = orderId => {
+    toast('Zamówienie zostało usunięte', {type: 'success'});
+  };
+
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
+        <Toaster richColors closeButton position="bottom-center" />
+        <NewOrderModal isOpen={isCreationModalOpen} onOpenChange={onCreationModalOpenChange} />
+        {editedOrder && (
+          <EditOrderModal
+            isOpen={isEditModalOpen}
+            onOpenChange={onEditModalOpenChange}
+            editedOrder={editedOrder}
+            onClose={() => setEditedOrder(null)}
+          />
+        )}
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
@@ -274,25 +324,24 @@ export default function OrdersTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            {/* <Button color="primary" endContent={<PlusIcon />}>
-              Add New
-            </Button> */}
+            <NewOrderButton onClick={onCreationModalOpen} />
           </div>
         </div>
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">Łącznie {users.length} zamówień</span>
           <label className="flex items-center text-default-400 text-small">
             Wyświetlaj:
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
+              defaultValue={rowsPerPage}
             >
-              <option value="5">5</option>
               <option value="10">10</option>
-              <option value="15">15</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
             </select>
           </label>
-        </div>
+        </div> */}
       </div>
     );
   }, [
@@ -303,6 +352,13 @@ export default function OrdersTable() {
     users.length,
     onSearchChange,
     hasSearchFilter,
+    onEditModalOpen,
+    isEditModalOpen,
+    onEditModalOpenChange,
+    isCreationModalOpen,
+    onCreationModalOpen,
+    onCreationModalOpenChange,
+    editedOrder,
   ]);
 
   const bottomContent = React.useMemo(() => {
@@ -322,14 +378,7 @@ export default function OrdersTable() {
           total={pages}
           onChange={setPage}
         />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          {/* <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
-            Previous
-          </Button>
-          <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
-            Next
-          </Button> */}
-        </div>
+        <div className="hidden sm:flex w-[30%] justify-end gap-2"></div>
       </div>
     );
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
@@ -341,7 +390,7 @@ export default function OrdersTable() {
       bottomContent={bottomContent}
       bottomContentPlacement="outside"
       classNames={{
-        wrapper: 'max-h-[382px]',
+        wrapper: 'max-h-[450px]',
       }}
       selectedKeys={selectedKeys}
       selectionMode="multiple"

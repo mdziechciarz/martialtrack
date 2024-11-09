@@ -2,7 +2,7 @@ import {Checkmark16Filled, Dismiss16Filled, Edit16Filled} from '@fluentui/react-
 import {Button} from '@nextui-org/react';
 import styles from './Card.module.css';
 
-const Card = ({
+export default function Card({
   children,
   className = '',
   classNames = {
@@ -13,7 +13,7 @@ const Card = ({
   isEditable,
   isEditMode,
   setIsEditMode = () => {},
-}) => {
+}) {
   return (
     <div className={`${styles.container} ${className}`} style={style}>
       {(title || isEditable) && (
@@ -42,7 +42,7 @@ const Card = ({
       </div>
     </div>
   );
-};
+}
 
 export const CardEntries = ({className = '', style = {}, entries = {}, nonTextValues = false}) => {
   return (
@@ -61,7 +61,16 @@ export const CardEntries = ({className = '', style = {}, entries = {}, nonTextVa
   );
 };
 
-export default Card;
+export const CardGrid = ({children, className = '', style = {}, oneColumn = false}) => {
+  return (
+    <div
+      className={`${styles.grid} ${className} ${oneColumn ? styles.oneColumn : ''}`}
+      style={style}
+    >
+      {children}
+    </div>
+  );
+};
 
 const EditButton = ({onClick}) => {
   return (

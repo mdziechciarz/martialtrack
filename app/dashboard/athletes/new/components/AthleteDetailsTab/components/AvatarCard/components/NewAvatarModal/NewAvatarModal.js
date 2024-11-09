@@ -8,7 +8,7 @@ import 'react-image-crop/dist/ReactCrop.css';
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
 
-export default function NewAvatarModal({isOpen, onOpenChange}) {
+export default function NewAvatarModal({isOpen, onOpenChange, setAvatarSrc}) {
   const imgRef = useRef(null);
   const inputRef = useRef(null);
   const [imgSrc, setImgSrc] = useState('');
@@ -84,6 +84,7 @@ export default function NewAvatarModal({isOpen, onOpenChange}) {
 
     const croppedImage = canvas.toDataURL('image/jpeg');
     localStorage.setItem('croppedImage', croppedImage);
+    setAvatarSrc(croppedImage);
     // console.log(croppedImage);
     handleCloseModal();
   };
