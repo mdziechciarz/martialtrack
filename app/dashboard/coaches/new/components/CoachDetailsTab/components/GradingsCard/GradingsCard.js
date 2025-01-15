@@ -1,96 +1,115 @@
-import Card, {CardEntries} from '@/components/Card/Card';
 import {useState} from 'react';
+import {useFormContext} from 'react-hook-form';
+import {v4} from 'uuid';
 
-import {Add16Filled} from '@fluentui/react-icons';
+import {Add16Filled, Dismiss16Filled} from '@fluentui/react-icons';
 import {Button, Input} from '@nextui-org/react';
+
+import Card, {CardGrid} from '@/components/Card/Card';
+
 import styles from './GradingsCard.module.css';
 
 const GradingsCard = () => {
-  const [isEditMode, setIsEditMode] = useState(true);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: {errors},
+    reset,
+    unregister,
+  } = useFormContext();
 
   return (
-    <Card title="Stopnie" isEditMode={isEditMode} setIsEditMode={setIsEditMode}>
-      {isEditMode ? <EditModeContent /> : <ReadOnlyContent />}
+    <Card title="Stopnie">
+      <EditModeContent
+        register={register}
+        control={control}
+        errors={errors}
+        unregister={unregister}
+      />
     </Card>
   );
 };
 
-const ReadOnlyContent = () => {
-  return (
-    <CardEntries
-      entries={{
-        Kickboxing: 'U3',
-        Taekwondo: '4 cup',
-      }}
-    />
-  );
-};
-
-const EditModeContent = ({entries: savedEntries = []}) => {
-  const [entries, setEntries] = useState(savedEntries);
+const EditModeContent = ({register, unregister, errors, control, currentEntries}) => {
+  const [entries, setEntries] = useState(currentEntries || []);
 
   const handleAddNewEntry = () => {
-    // Check if there are empty entries
-    if (entries.some(entry => entry.key === '' || entry.value === '')) return;
-    setEntries([...entries, {key: '', value: ''}]);
+    setEntries([...entries, {id: v4(), label: '', value: ''}]);
+  };
+
+  const handleRemoveEntry = id => {
+    setEntries(prev => prev.filter(entry => entry.id !== id));
+    unregister(`levels.${id}`);
   };
 
   return (
-    <div>
-      <div className={styles.grid}>
-        {entries.map((entry, index) => (
-          <GradingEntry
-            key={index}
-            index={index}
-            setEntries={setEntries}
-            entryName={entry.key}
-            entryValue={entry.value}
-          />
-        ))}
-      </div>
+    <CardGrid oneColumn>
+      {entries.map(entry => (
+        <Entry
+          key={entry.id}
+          id={entry.id}
+          handleRemoveEntry={() => handleRemoveEntry(entry.id)}
+          label={entry.label}
+          value={entry.value}
+          register={register}
+          errors={errors}
+          control={control}
+        />
+      ))}
       <div className={styles.newEntryButtonContainer}>
-        <AddNewEntryButton onClick={handleAddNewEntry} styles={{marginTop: 16}} />
+        <AddNewEntryButton onClick={handleAddNewEntry} />
       </div>
-    </div>
-  );
-};
-
-export default GradingsCard;
-
-const GradingEntry = ({index, entryName, entryValue, setEntries}) => {
-  return (
-    <div className={styles.entry}>
-      <div className={styles.key} style={{marginBottom: 4}}>
-        <Input
-          placeholder="Np. Taekwon-do"
-          size="sm"
-          defaultValue={entryName}
-          onChange={e =>
-            setEntries(prev =>
-              prev.map((entry, i) => (i === index ? {...entry, key: e.target.value} : entry))
-            )
-          }
-        />
-      </div>
-      <div className={styles.value}>
-        <Input
-          placeholder="Np. III Dan"
-          defaultValue={entryValue}
-          onChange={e =>
-            setEntries(prev =>
-              prev.map((entry, i) => (i === index ? {...entry, value: e.target.value} : entry))
-            )
-          }
-        />
-      </div>
-    </div>
+    </CardGrid>
   );
 };
 
 const AddNewEntryButton = ({onClick}) => {
   return (
-    <Button className={styles.addTimeButton} size="sm" fullWidth onClick={onClick} variant="light">
+    <Button size="sm" fullWidth onClick={onClick} variant="light">
       <Add16Filled />
     </Button>
   );
 };
+
+const RemoveEntryButton = ({onClick}) => {
+  return (
+    <Button
+      className={styles.removeEntryButton}
+      size="sm"
+      onClick={onClick}
+      isIconOnly
+      variant="light"
+    >
+      <Dismiss16Filled />
+    </Button>
+  );
+};
+
+const Entry = ({id, handleRemoveEntry, register, errors, control, label, value}) => {
+  return (
+    <div className={styles.entry}>
+      <Input
+        label="Dyscyplina"
+        placeholder="Np. Taekwondo"
+        isRequired
+        isInvalid={!!errors?.levels?.[id]?.label}
+        defaultValue={label}
+        {...register(`levels.${id}.label`, {required: true})}
+      />
+      <Input
+        label="Stopień"
+        placeholder="Np. III Dan"
+        isRequired
+        isInvalid={!!errors?.levels?.[id]?.value}
+        defaultValue={value}
+        {...register(`levels.${id}.value`, {required: true})}
+      />
+      <RemoveEntryButton onClick={handleRemoveEntry} />
+    </div>
+  );
+};
+
+export default GradingsCard;

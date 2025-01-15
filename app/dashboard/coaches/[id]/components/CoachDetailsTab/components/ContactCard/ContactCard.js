@@ -1,11 +1,45 @@
-import Card, {CardEntries} from '@/components/Card/Card';
 import {useState} from 'react';
+import {useForm} from 'react-hook-form';
 
 import {Input} from '@nextui-org/react';
+
+import Card, {CardEntries, CardGrid} from '@/components/Card/Card';
+
 import styles from './ContactCard.module.css';
+
+const exampleContactData = {
+  phoneNumber: '123456789',
+  email: 'karolina.kowalska@email.com',
+};
 
 const ContactCard = () => {
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: {errors},
+    reset,
+  } = useForm();
+
+  const handleSaveChanges = handleSubmit(data => {
+    console.log('Changes saved');
+    console.log(data);
+    reset();
+    setIsEditMode(false);
+  });
+
+  const handleCancelChanges = () => {
+    console.log('Changes canceled');
+    reset();
+    setIsEditMode(false);
+  };
+
+  const handleEdit = () => {
+    console.log('Editing');
+    setIsEditMode(true);
+  };
 
   return (
     <Card
@@ -13,9 +47,21 @@ const ContactCard = () => {
       title="Dane kontaktowe"
       isEditable
       isEditMode={isEditMode}
-      setIsEditMode={setIsEditMode}
+      onSaveClick={handleSaveChanges}
+      onCancelClick={handleCancelChanges}
+      onEditClick={handleEdit}
     >
-      {isEditMode ? <EditModeContent /> : <ReadOnlyContent />}
+      {isEditMode ? (
+        <EditModeContent
+          register={register}
+          errors={errors}
+          control={control}
+          currentPhoneNumber={exampleContactData.phoneNumber}
+          currentEmail={exampleContactData.email}
+        />
+      ) : (
+        <ReadOnlyContent />
+      )}
     </Card>
   );
 };
@@ -24,23 +70,33 @@ const ReadOnlyContent = () => {
   return (
     <CardEntries
       entries={{
-        Telefon: '123456789',
-        'E-mail': 'karolina.kowalska@gmail.com',
+        Telefon: exampleContactData.phoneNumber,
+        'E-mail': exampleContactData.email,
       }}
     />
   );
 };
 
-const EditModeContent = () => {
+const EditModeContent = ({register, errors, control, currentPhoneNumber, currentEmail}) => {
   return (
-    <CardEntries
-      entries={{
-        Telefon: <Input placeholder="Telefon" defaultValue="123456789" />,
-        'E-mail': (
-          <Input type="email" placeholder="E-mail" defaultValue="karolina.kowalska@gmail.com" />
-        ),
-      }}
-    />
+    <CardGrid>
+      <Input
+        {...register('phoneNumber', {required: true})}
+        label="Telefon"
+        placeholder="Telefon"
+        isInvalid={!!errors.phoneNumber}
+        isRequired
+        defaultValue={currentPhoneNumber}
+      />
+      <Input
+        {...register('email', {required: true})}
+        label="E-mail"
+        placeholder="E-mail"
+        isInvalid={!!errors.email}
+        isRequired
+        defaultValue={currentEmail}
+      />
+    </CardGrid>
   );
 };
 

@@ -1,0 +1,44 @@
+.contentContainer {
+  margin-top: 16px;
+  width: 100%;
+  display: grid;
+
+  row-gap: 16px;
+  column-gap: 24px;
+}
+
+.entry {
+  /* min-width: 40%; */
+  display: grid;
+  grid-template-columns: 35fr 65fr;
+  align-items: center;
+}
+
+.entry .key {
+  color: #4a4a4a;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.entry .value {
+  color: #000;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+.timeInputsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.addTimeButton svg {
+  color: gray;
+}
+
+@media screen and (min-width: 600px) {
+  .contentContainer {
+    /* grid-template-columns: repeat(2, 1fr); */
+  }
+}

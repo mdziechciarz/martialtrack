@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react';
 
 import AvatarCard from './components/AvatarCard/AvatarCard';
 // import Card from './components/Card/Card';
-import Card from '@/components/Card/Card';
 import AddressCard from './components/AddressCard/AddressCard';
 import ContactCard from './components/ContactCard/ContactCard';
 import GroupsCard from './components/GroupsCard/GroupsCard';
@@ -72,22 +71,8 @@ const CoachDetailsTab = () => {
         groupsAsAssistant={exampleGroups.slice(-1)}
       />
       <GradingsCard />
-      {/* <Card
-        title="Badania i licencje"
-        className={styles.licensesCard}
-        entries={{'Licencja PZKB': 'Ważna do 24.12.2023 \t ARE/2017/SDFSD/124'}}
-      /> */}
       <LicensesCard />
       <OtherDetailsCard />
-      <Card
-        className={styles.medicalDataCard}
-        title="Dane medyczne"
-        entries={{
-          'Grupa krwi': '0+',
-          'Choroby przewlekłe': 'brak',
-          Alergie: 'brak',
-        }}
-      />
     </div>
   );
 };

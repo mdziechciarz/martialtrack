@@ -1,20 +1,23 @@
-import Card, {CardEntries} from '@/components/Card/Card';
-import {useState} from 'react';
+import {useFormContext} from 'react-hook-form';
 
 import {Input} from '@nextui-org/react';
+
+import Card, {CardEntries, CardGrid} from '@/components/Card/Card';
+
 import styles from './ContactCard.module.css';
 
 const ContactCard = () => {
-  const [isEditMode, setIsEditMode] = useState(true);
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: {errors},
+    reset,
+  } = useFormContext();
 
   return (
-    <Card
-      className={styles.contactCard}
-      title="Dane kontaktowe"
-      isEditMode={isEditMode}
-      setIsEditMode={setIsEditMode}
-    >
-      {isEditMode ? <EditModeContent /> : <ReadOnlyContent />}
+    <Card className={styles.contactCard} title="Dane kontaktowe">
+      <EditModeContent register={register} errors={errors} control={control} />
     </Card>
   );
 };
@@ -23,21 +26,35 @@ const ReadOnlyContent = () => {
   return (
     <CardEntries
       entries={{
-        Telefon: '123456789',
-        'E-mail': 'karolina.kowalska@gmail.com',
+        Telefon: exampleContactData.phoneNumber,
+        'E-mail': exampleContactData.email,
       }}
     />
   );
 };
 
-const EditModeContent = () => {
+const EditModeContent = ({register, errors, control, currentPhoneNumber, currentEmail}) => {
   return (
-    <CardEntries
-      entries={{
-        Telefon: <Input placeholder="Telefon" />,
-        'E-mail': <Input type="email" placeholder="Adres e-mail" />,
-      }}
-    />
+    <CardGrid>
+      <Input
+        {...register('phoneNumber', {required: true})}
+        label="Telefon"
+        labelPlacement="outside"
+        placeholder="Telefon"
+        isInvalid={!!errors.phoneNumber}
+        isRequired
+        defaultValue={currentPhoneNumber}
+      />
+      <Input
+        {...register('email', {required: true})}
+        label="E-mail"
+        labelPlacement="outside"
+        placeholder="E-mail"
+        isInvalid={!!errors.email}
+        isRequired
+        defaultValue={currentEmail}
+      />
+    </CardGrid>
   );
 };
 

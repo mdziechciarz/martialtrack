@@ -2,7 +2,6 @@
 
 import {useState} from 'react';
 import {
-  AppsList20Filled,
   Calendar12Filled,
   Cart16Filled,
   ChevronDown16Filled,
@@ -33,6 +32,7 @@ import Image from 'next/image';
 import {usePathname, useRouter} from 'next/navigation';
 import {logOut} from './actions.ts';
 
+import {Trophy16Filled} from '@fluentui/react-icons';
 import styles from './MainLayout.module.css';
 
 const MainLayout = ({children}) => {
@@ -126,7 +126,7 @@ const SideBar = ({isOpen, closeSideBar, openSideBar}) => {
         <SideBarButton icon={Wallet16Filled} text="Płatności" url="/dashboard/payments" />
         <SideBarButton icon={Send16Filled} text="Wiadomości" url="/dashboard/messages" />
         <SideBarButton icon={ShieldPerson20Filled} text="Trenerzy" url="/dashboard/coaches" />
-        <SideBarButton icon={AppsList20Filled} text="Zawody" url="/dashboard/competitions" />
+        <SideBarButton icon={Trophy16Filled} text="Zawody" url="/dashboard/competitions" />
         <SideBarButton icon={Calendar12Filled} text="Harmonogram zajęć" url="/dashboard/schedule" />
         <SideBarButton icon={Cart16Filled} text="Zamówienia" url="/dashboard/orders" />
         <SideBarButton icon={ReceiptMoney16Filled} text="Dotacje" url="/dashboard/subsidies" />

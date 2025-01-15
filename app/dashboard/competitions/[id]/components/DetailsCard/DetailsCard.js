@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {useForm} from 'react-hook-form';
 
 import {Input, Textarea} from '@nextui-org/react';
 
@@ -6,8 +7,30 @@ import Card, {CardEntries, CardGrid} from '@/components/Card/Card';
 
 import styles from './DetailsCard.module.css';
 
-const DetailsCard = ({className}) => {
+const DetailsCard = ({className, description, website}) => {
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: {errors},
+  } = useForm();
+
+  const handleEdit = () => {
+    setIsEditMode(true);
+  };
+
+  const handleSaveChanges = handleSubmit(data => {
+    console.log(data);
+    console.log('Changes saved');
+    setIsEditMode(false);
+  });
+
+  const handleCancelChanges = () => {
+    console.log('Changes canceled');
+    setIsEditMode(false);
+  };
 
   return (
     <Card
@@ -15,35 +38,53 @@ const DetailsCard = ({className}) => {
       title="Informacje dodatkowe"
       isEditable
       isEditMode={isEditMode}
-      setIsEditMode={setIsEditMode}
+      onSaveClick={handleSaveChanges}
+      onCancelClick={handleCancelChanges}
+      onEditClick={handleEdit}
     >
-      {isEditMode ? <EditModeContent /> : <ReadOnlyContent />}
+      {isEditMode ? (
+        <EditModeContent
+          description={description}
+          website={website}
+          register={register}
+          errors={errors}
+        />
+      ) : (
+        <ReadOnlyContent description={description} website={website} />
+      )}
     </Card>
   );
 };
 
-const ReadOnlyContent = () => {
+const ReadOnlyContent = ({description, website}) => {
   return (
     <CardEntries
-      nonTextValues
+      // nonTextValues
       style={{gridTemplateColumns: '1fr'}}
       entries={{
-        'Opis zawodów':
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-        Regulamin: 'regulamin_pzkb.pdf',
+        'Opis zawodów': description,
+        'Adres internetowy': website,
       }}
     />
   );
 };
 
-const EditModeContent = () => {
+const EditModeContent = ({register, errors, description, website}) => {
   return (
     <CardGrid oneColumn>
-      <Textarea label="Opis" labelPlacement="outside" placeholder="Opis zawodów" />
+      <Textarea
+        label="Opis"
+        labelPlacement="outside"
+        placeholder="Opis zawodów"
+        defaultValue={description}
+        {...register('description')}
+      />
       <Input
         label="Adres internetowy"
         labelPlacement="outside"
         placeholder="Adres do strony zawodów"
+        defaultValue={website}
+        {...register('website')}
       />
     </CardGrid>
   );

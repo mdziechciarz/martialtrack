@@ -84,8 +84,6 @@ const EditModeContent = ({entries: savedEntries = []}) => {
   );
 };
 
-export default LicensesCard;
-
 const Entry = ({id, index, entryName, entryValue, setEntries, register, errors, control}) => {
   const handleRemoveEntry = () => {
     setEntries(prev => prev.filter(entry => entry.id !== id));
@@ -145,20 +143,6 @@ const Entry = ({id, index, entryName, entryValue, setEntries, register, errors, 
             />
           )}
         />
-        {/* <DatePicker
-          label="Data ważności"
-          isRequired
-          disableAnimation
-          onChange={date =>
-            setEntries(prev =>
-              prev.map(entry => (entry.id === id ? {...entry, date: date} : entry))
-            )
-          }
-          register={register(`licenses.${id}].date`, {
-            required: true,
-          })}
-          isInvalid={!!errors?.licenses?.[id]?.date}
-        /> */}
       </div>
       <RemoveEntryButton onClick={handleRemoveEntry} />
     </div>
@@ -186,3 +170,5 @@ const RemoveEntryButton = ({onClick}) => {
     </Button>
   );
 };
+
+export default LicensesCard;

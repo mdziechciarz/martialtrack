@@ -9,6 +9,7 @@ const columns = [
   {name: 'BADANIA LEKARSKIE', uid: 'medical_checkups', sortable: true},
   {name: 'STOPIEŃ', uid: 'level', sortable: true},
   {name: 'GRUPY  ', uid: 'groups'},
+  {name: 'KATEGORIE', uid: 'categories'},
   {name: '', uid: 'actions'},
 ];
 
@@ -38,6 +39,13 @@ const users = [
     ],
     level: '4 cup',
     avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026024d',
+    categories: [
+      {
+        ageCategory: 'Junior',
+        formula: 'Light-Contact',
+        weightAndHeightCategory: '-75kg',
+      },
+    ],
   },
   {
     id: 2,
@@ -52,6 +60,13 @@ const users = [
     groups: [{name: 'Yoga', uid: 'Yoga'}],
     level: '5 cup',
     avatar: 'https://i.pravatar.cc/149',
+    categories: [
+      {
+        ageCategory: 'Junior',
+        formula: 'Light-Contact',
+        weightAndHeightCategory: '-75kg',
+      },
+    ],
   },
   {
     id: 3,
@@ -66,6 +81,13 @@ const users = [
     groups: [{name: 'Kickboxing Juniorzy', uid: 'Kickboxing Juniorzy'}],
     level: '3 cup',
     avatar: 'https://i.pravatar.cc/148',
+    categories: [
+      {
+        ageCategory: 'Junior',
+        formula: 'Light-Contact',
+        weightAndHeightCategory: '-75kg',
+      },
+    ],
   },
   {
     id: 4,
@@ -80,6 +102,13 @@ const users = [
     groups: [{name: 'Pilates', uid: 'Pilates'}],
     level: '1 cup',
     avatar: 'https://i.pravatar.cc/147',
+    categories: [
+      {
+        ageCategory: 'Junior',
+        formula: 'Light-Contact',
+        weightAndHeightCategory: '-75kg',
+      },
+    ],
   },
   {
     id: 5,
@@ -97,6 +126,13 @@ const users = [
     ],
     level: '6 cup',
     avatar: 'https://i.pravatar.cc/146',
+    categories: [
+      {
+        ageCategory: 'Junior',
+        formula: 'Light-Contact',
+        weightAndHeightCategory: '-75kg',
+      },
+    ],
   },
   {
     id: 6,
@@ -111,6 +147,13 @@ const users = [
     groups: [{name: 'Kickboxing Dinusie', uid: 'Kickboxing Dinusie'}],
     level: '2 cup',
     avatar: 'https://i.pravatar.cc/145',
+    categories: [
+      {
+        ageCategory: 'Junior',
+        formula: 'Light-Contact',
+        weightAndHeightCategory: '-75kg',
+      },
+    ],
   },
   {
     id: 7,
@@ -125,6 +168,13 @@ const users = [
     groups: [{name: 'Kickboxing Seniorzy', uid: 'Kickboxing Seniorzy'}],
     level: '4 cup',
     avatar: 'https://i.pravatar.cc/144',
+    categories: [
+      {
+        ageCategory: 'Junior',
+        formula: 'Light-Contact',
+        weightAndHeightCategory: '-75kg',
+      },
+    ],
   },
   {
     id: 8,
@@ -139,6 +189,13 @@ const users = [
     groups: [{name: 'Kickboxing Kadeci', uid: 'Kickboxing Kadeci'}],
     level: '1 cup',
     avatar: 'https://i.pravatar.cc/143',
+    categories: [
+      {
+        ageCategory: 'Junior',
+        formula: 'Light-Contact',
+        weightAndHeightCategory: '-75kg',
+      },
+    ],
   },
   {
     id: 9,
@@ -153,6 +210,13 @@ const users = [
     groups: [{name: 'Yoga', uid: 'Yoga'}],
     level: '5 cup',
     avatar: 'https://i.pravatar.cc/142',
+    categories: [
+      {
+        ageCategory: 'Junior',
+        formula: 'Light-Contact',
+        weightAndHeightCategory: '-75kg',
+      },
+    ],
   },
   {
     id: 10,
@@ -170,6 +234,13 @@ const users = [
     ],
     level: '3 cup',
     avatar: 'https://i.pravatar.cc/141',
+    categories: [
+      {
+        ageCategory: 'Junior',
+        formula: 'Light-Contact',
+        weightAndHeightCategory: '-75kg',
+      },
+    ],
   },
   {
     id: 11,
@@ -184,6 +255,13 @@ const users = [
     groups: [{name: 'Kickboxing Seniorzy', uid: 'Kickboxing Seniorzy'}],
     level: '7 cup',
     avatar: 'https://i.pravatar.cc/140',
+    categories: [
+      {
+        ageCategory: 'Junior',
+        formula: 'Light-Contact',
+        weightAndHeightCategory: '-75kg',
+      },
+    ],
   },
 ];
 

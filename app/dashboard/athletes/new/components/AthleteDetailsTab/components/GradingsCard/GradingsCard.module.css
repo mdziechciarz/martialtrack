@@ -90,10 +90,8 @@
 .removeEntryButton {
   opacity: 0;
   position: absolute;
-  top: 50%;
-  /* left: 100%; */
+  top: 12px;
   right: 0;
-  transform: translateY(-50%);
 }
 
 .entry:hover {

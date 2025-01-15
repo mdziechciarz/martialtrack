@@ -1,46 +1,101 @@
-import Card, {CardEntries} from '@/components/Card/Card';
-import {DatePicker, Input, Select, SelectItem} from '@nextui-org/react';
+import {getLocalTimeZone, today} from '@internationalized/date';
 import {useState} from 'react';
+import {Controller, useFormContext} from 'react-hook-form';
+
+import {DatePicker, Input, Select, SelectItem} from '@nextui-org/react';
+
+import Card, {CardGrid} from '@/components/Card/Card';
 
 const PersonalDetailsCard = () => {
-  const [isEditMode, setIsEditMode] = useState(true);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: {errors},
+    reset,
+  } = useFormContext();
 
   return (
-    <Card title="Dane podstawowe" isEditMode={isEditMode} setIsEditMode={setIsEditMode}>
-      {isEditMode ? <EditModeContent /> : <ReadOnlyContent />}
+    <Card title="Dane podstawowe">
+      <EditModeContent register={register} errors={errors} control={control} />
     </Card>
   );
 };
 
-const ReadOnlyContent = () => {
+const EditModeContent = ({register, errors, control}) => {
   return (
-    <CardEntries
-      entries={{
-        Płeć: 'Kobieta',
-        'Data urodzenia': '2000-06-23',
-        PESEL: '12345678901',
-        'Miejsce urodzenia': 'Warszawa',
-      }}
-    />
+    <CardGrid>
+      <GenderSelect register={register} errors={errors} />
+
+      <Controller
+        name="dateOfBirth"
+        control={control}
+        rules={{required: 'Data urodzenia jest wymagana'}}
+        render={({field}) => (
+          <DatePicker
+            {...field}
+            label="Data urodzenia"
+            labelPlacement="outside"
+            showMonthAndYearPickers
+            isRequired
+            disableAnimation
+            maxValue={today(getLocalTimeZone())}
+            isInvalid={!!errors.dateOfBirth}
+            // errorMessage={errors.birthDate?.message}
+          />
+        )}
+      />
+      <Input
+        label="PESEL"
+        placeholder="PESEL"
+        labelPlacement="outside"
+        isRequired
+        isInvalid={!!errors.pesel}
+        errorMessage={errors.pesel?.message}
+        type="number"
+        {...register('pesel', {
+          required: {
+            value: true,
+            message: 'PESEL jest wymagany',
+          },
+        })}
+      />
+      <Input
+        isRequired
+        label="Miejsce urodzenia"
+        labelPlacement="outside"
+        placeholder="np. Warszawa"
+        isInvalid={!!errors.placeOfBirth}
+        // errorMessage={errors.birthPlace?.message}
+        {...register('placeOfBirth', {
+          required: {
+            value: true,
+            message: 'Miejsce urodzenia jest wymagane',
+          },
+        })}
+      />
+    </CardGrid>
   );
 };
 
-const EditModeContent = () => {
+const GenderSelect = ({errors, register}) => {
   return (
-    <CardEntries
-      entries={{
-        Płeć: <GenderSelect />,
-        'Data urodzenia': <DatePicker disableAnimation />,
-        PESEL: <Input placeholder="PESEL" />,
-        'Miejsce urodzenia': <Input placeholder="Miejsce urodzenia" />,
-      }}
-    />
-  );
-};
-
-const GenderSelect = () => {
-  return (
-    <Select placeholder="Płeć" size="sm" defaultSelectedKeys="1">
+    <Select
+      label="Płeć"
+      labelPlacement="outside"
+      isRequired
+      placeholder="Płeć"
+      defaultSelectedKeys="1"
+      isInvalid={!!errors.sex}
+      {...register('sex', {
+        required: {
+          value: true,
+          message: 'Płeć jest wymagana',
+        },
+      })}
+    >
       <SelectItem key="1">Kobieta</SelectItem>
       <SelectItem key="2">Mężczyzna</SelectItem>
     </Select>

@@ -1,20 +1,28 @@
 'use client';
 
+import {Tab, Tabs} from '@nextui-org/react';
+
 import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
 import PageTitle from '@/components/PageTitle/PageTitle';
-import {Tab, Tabs} from '@nextui-org/react';
 import DetailsCard from './components/DetailsCard/DetailsCard';
 import MainInfoCard from './components/MainInfoCard/MainInfoCard';
 import ParticipantsCard from './components/ParticipantsCard/ParticipantsCard';
+import ResultsCard from './components/ResultsCard/ResultsCard';
 
 import styles from './CompetitionPage.module.css';
 
 const competitionData = {
   name: 'Mistrzostwa Polski Pointfighting, Light Contact Juniorów, Seniorów i Weteranów',
-  dates: '11 - 13.06.2024',
+  dates: {
+    start: '2021-11-20',
+    end: '2021-11-21',
+  },
   location: 'Katowice',
   color: '#79dd36',
+  level: 'worldCup',
+  description: `Mistrzostwa Polski Pointfighting, Light Contact Juniorów, Seniorów i Weteranów to najważniejsze zawody w Polsce w tych kategoriach wiekowych. W zawodach mogą wziąć udział zawodnicy zrzeszeni w Polskim Związku Kickboxingu.`,
+  website: 'https://www.pzkickboxing.pl/',
 };
 
 const GroupPage = () => {
@@ -47,13 +55,18 @@ const GroupPage = () => {
                 color={competitionData.color}
                 dates={competitionData.dates}
                 location={competitionData.location}
+                level={competitionData.level}
               />
-              <DetailsCard className={styles.detailsCard} />
+              <DetailsCard
+                className={styles.detailsCard}
+                description={competitionData.description}
+                website={competitionData.website}
+              />
               <ParticipantsCard className={styles.participantsCard} />
             </div>
           </Tab>
           <Tab key="results" title="Wyniki">
-            <p>Wyniki medalowe</p>
+            <ResultsCard />
           </Tab>
         </Tabs>
       </ContentContainer>

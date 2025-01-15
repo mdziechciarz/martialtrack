@@ -1,21 +1,73 @@
-import Card, {CardEntries} from '@/components/Card/Card';
 import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {v4} from 'uuid';
 
-import {Add16Filled} from '@fluentui/react-icons';
+import {Add16Filled, Dismiss16Filled} from '@fluentui/react-icons';
 import {Button, Input} from '@nextui-org/react';
+
+import Card, {CardEntries, CardGrid} from '@/components/Card/Card';
+
 import styles from './GradingsCard.module.css';
+
+const exampleEntries = [
+  {
+    id: '123',
+    label: 'Taekwondo',
+    value: 'III Dan',
+  },
+  {
+    id: '456',
+    label: 'Kickboxing',
+    value: 'II Dan',
+  },
+];
 
 const GradingsCard = () => {
   const [isEditMode, setIsEditMode] = useState(false);
 
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: {errors},
+    reset,
+    unregister,
+  } = useForm();
+
+  const handleSaveChanges = handleSubmit(data => {
+    console.log('Changes saved');
+    console.log(data);
+    reset();
+    setIsEditMode(false);
+  });
+
+  const handleCancelChanges = () => {
+    console.log('Changes canceled');
+    reset();
+    setIsEditMode(false);
+  };
+
+  const handleEdit = () => {
+    console.log('Editing');
+    setIsEditMode(true);
+  };
+
   return (
-    <Card title="Stopnie" isEditable isEditMode={isEditMode} setIsEditMode={setIsEditMode}>
+    <Card
+      title="Stopnie"
+      isEditable
+      isEditMode={isEditMode}
+      onSaveClick={handleSaveChanges}
+      onCancelClick={handleCancelChanges}
+      onEditClick={handleEdit}
+    >
       {isEditMode ? (
         <EditModeContent
-          entries={[
-            {key: 'Kickboxing', value: 'U3'},
-            {key: 'Taekwondo', value: '4 cup'},
-          ]}
+          register={register}
+          control={control}
+          errors={errors}
+          unregister={unregister}
+          currentEntries={exampleEntries}
         />
       ) : (
         <ReadOnlyContent />
@@ -27,79 +79,91 @@ const GradingsCard = () => {
 const ReadOnlyContent = () => {
   return (
     <CardEntries
-      entries={{
-        Kickboxing: 'U3',
-        Taekwondo: '4 cup',
-      }}
+      entries={exampleEntries.reduce((result, item) => {
+        result[item.label] = item.value;
+        return result;
+      }, {})}
     />
   );
 };
 
-const EditModeContent = ({entries: savedEntries = []}) => {
-  const [entries, setEntries] = useState(savedEntries);
+const EditModeContent = ({register, unregister, errors, control, currentEntries}) => {
+  const [entries, setEntries] = useState(currentEntries || []);
 
   const handleAddNewEntry = () => {
-    // Check if there are empty entries
-    if (entries.some(entry => entry.key === '' || entry.value === '')) return;
-    setEntries([...entries, {key: '', value: ''}]);
+    setEntries([...entries, {id: v4(), label: '', value: ''}]);
+  };
+
+  const handleRemoveEntry = id => {
+    setEntries(prev => prev.filter(entry => entry.id !== id));
+    unregister(`${id}`);
   };
 
   return (
-    <div>
-      <div className={styles.grid}>
-        {entries.map((entry, index) => (
-          <GradingEntry
-            key={index}
-            index={index}
-            setEntries={setEntries}
-            entryName={entry.key}
-            entryValue={entry.value}
-          />
-        ))}
-      </div>
+    <CardGrid oneColumn>
+      {entries.map(entry => (
+        <Entry
+          key={entry.id}
+          id={entry.id}
+          handleRemoveEntry={() => handleRemoveEntry(entry.id)}
+          label={entry.label}
+          value={entry.value}
+          register={register}
+          errors={errors}
+          control={control}
+        />
+      ))}
       <div className={styles.newEntryButtonContainer}>
-        <AddNewEntryButton onClick={handleAddNewEntry} styles={{marginTop: 16}} />
+        <AddNewEntryButton onClick={handleAddNewEntry} />
       </div>
-    </div>
-  );
-};
-
-export default GradingsCard;
-
-const GradingEntry = ({index, entryName, entryValue, setEntries}) => {
-  return (
-    <div className={styles.entry}>
-      <div className={styles.key} style={{marginBottom: 4}}>
-        <Input
-          placeholder="Np. Taekwon-do"
-          size="sm"
-          defaultValue={entryName}
-          onChange={e =>
-            setEntries(prev =>
-              prev.map((entry, i) => (i === index ? {...entry, key: e.target.value} : entry))
-            )
-          }
-        />
-      </div>
-      <div className={styles.value}>
-        <Input
-          placeholder="Np. III Dan"
-          defaultValue={entryValue}
-          onChange={e =>
-            setEntries(prev =>
-              prev.map((entry, i) => (i === index ? {...entry, value: e.target.value} : entry))
-            )
-          }
-        />
-      </div>
-    </div>
+    </CardGrid>
   );
 };
 
 const AddNewEntryButton = ({onClick}) => {
   return (
-    <Button className={styles.addTimeButton} size="sm" fullWidth onClick={onClick} variant="light">
+    <Button size="sm" fullWidth onClick={onClick} variant="light">
       <Add16Filled />
     </Button>
   );
 };
+
+const RemoveEntryButton = ({onClick}) => {
+  return (
+    <Button
+      className={styles.removeEntryButton}
+      size="sm"
+      onClick={onClick}
+      isIconOnly
+      variant="light"
+    >
+      <Dismiss16Filled />
+    </Button>
+  );
+};
+
+const Entry = ({id, handleRemoveEntry, register, errors, control, label, value}) => {
+  return (
+    <div className={styles.entry}>
+      <Input
+        label="Dyscyplina"
+        placeholder="Np. Taekwondo"
+        isRequired
+        isInvalid={!!errors?.[id]?.label}
+        defaultValue={label}
+        {...register(`${id}.label`, {required: true})}
+      />
+      <Input
+        label="Stopień"
+        placeholder="Np. III Dan"
+        isRequired
+        isInvalid={!!errors?.[id]?.value}
+        defaultValue={value}
+        {...register(`${id}.value`, {required: true})}
+      />
+      <RemoveEntryButton onClick={handleRemoveEntry} />
+    </div>
+  );
+};
+
+export default GradingsCard;

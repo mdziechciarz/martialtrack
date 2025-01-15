@@ -1,69 +1,99 @@
-import Card from '@/components/Card/Card';
-import {CameraEdit20Filled, Delete16Filled} from '@fluentui/react-icons';
-import {Button, Input, Tooltip, useDisclosure} from '@nextui-org/react';
 import Image from 'next/image';
 import {useState} from 'react';
-import styles from './AvatarCard.module.css';
-import NewAvatarModal from './components/NewAvatarModal/NewAvatarModal';
+import {useFormContext} from 'react-hook-form';
 
-// const AvatarCard = ({children, className = '', name, imgSrc}) => {
-//   return (
-//     <div className={`${styles.container} ${className}`}>
-//       <div className={styles.avatarWrapper}>
-//         <Image className={styles.avatar} src={imgSrc} alt="Avatar" width={300} height={300} />
-//       </div>
-//       <h2 className={styles.name}>{name}</h2>
-//     </div>
-//   );
-// };
+import {CameraEdit20Filled, Delete16Filled} from '@fluentui/react-icons';
+import {Button, Input, Tooltip, useDisclosure} from '@nextui-org/react';
+
+import Card from '@/components/Card/Card';
+import NewAvatarModal from './components/NewAvatarModal/NewAvatarModal';
+import userAvatarPlaceholder from './user avatar placeholder.svg';
+
+import styles from './AvatarCard.module.css';
 
 const AvatarCard = ({children, className = '', name, imgSrc}) => {
-  const [isEditMode, setIsEditMode] = useState(true);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: {errors},
+    setValue,
+    reset,
+  } = useFormContext();
 
   return (
-    <Card isEditMode={isEditMode} setIsEditMode={setIsEditMode}>
-      {isEditMode ? (
-        <EditModeContent name={name} imgSrc={imgSrc} />
-      ) : (
-        <ReadOnlyContent name={name} imgSrc={imgSrc} />
-      )}
+    <Card>
+      <EditModeContent register={register} errors={errors} setValue={setValue} />
     </Card>
   );
 };
 
-const ReadOnlyContent = ({name, imgSrc}) => {
-  return (
-    <div>
-      <div className={styles.avatarWrapper}>
-        <Image className={styles.avatar} src={imgSrc} alt="Avatar" width={300} height={300} />
-      </div>
-      <h2 className={styles.name}>{name}</h2>
-    </div>
-  );
-};
+const EditModeContent = ({currentName, currentImgSrc, register, errors, setValue}) => {
+  const [avatarSrc, setAvatarSrc] = useState(currentImgSrc || null);
 
-const EditModeContent = ({name, imgSrc}) => {
   const {
     isOpen: isModalOpen,
     onOpen: onModalOpen,
     onOpenChange: onModalOpenChange,
   } = useDisclosure();
 
+  const handleRemoveAvatar = () => {
+    setValue('avatar', null);
+    setAvatarSrc(null);
+  };
+
+  const handleSelectAvatar = avatar => {
+    setValue('avatar', avatar);
+    setAvatarSrc(avatar);
+  };
+
   return (
     <div className={styles.editModeContentContainer}>
-      <NewAvatarModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} />
+      <NewAvatarModal
+        isOpen={isModalOpen}
+        onOpenChange={onModalOpenChange}
+        setAvatarSrc={handleSelectAvatar}
+      />
       <div className={styles.avatarWrapper}>
-        <Image className={styles.avatar} src={imgSrc} alt="Avatar" width={300} height={300} />
+        <Image
+          className={styles.avatar}
+          src={avatarSrc || userAvatarPlaceholder}
+          alt="Avatar"
+          width={300}
+          height={300}
+        />
         <div className={styles.overlay} onClick={onModalOpen}>
           <CameraEdit20Filled />
         </div>
-        <Tooltip content="Usuń zdjęcie" delay={500}>
-          <Button isIconOnly className={styles.removePhotoButton} size="sm">
-            <Delete16Filled />
-          </Button>
-        </Tooltip>
+        {avatarSrc && (
+          <Tooltip content="Usuń zdjęcie" delay={500}>
+            <Button
+              isIconOnly
+              className={styles.removePhotoButton}
+              size="sm"
+              onClick={handleRemoveAvatar}
+            >
+              <Delete16Filled />
+            </Button>
+          </Tooltip>
+        )}
       </div>
-      <Input placeholder="Imię i nazwisko" className={styles.nameInput} />
+      <Input
+        label="Imię i nazwisko"
+        isRequired
+        isInvalid={!!errors.fullName}
+        errorMessage={errors.fullName?.message}
+        defaultValue={currentName}
+        {...register('fullName', {
+          required: {
+            value: true,
+            message: 'Imię i nazwisko jest wymagane',
+          },
+        })}
+        className={styles.nameInput}
+      />
     </div>
   );
 };

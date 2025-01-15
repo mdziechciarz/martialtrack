@@ -1,12 +1,43 @@
-import Card, {CardEntries} from '@/components/Card/Card';
-import {Add16Filled} from '@fluentui/react-icons';
-import {Button, TimeInput} from '@nextui-org/react';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
+import {Controller, useForm} from 'react-hook-form';
+import {v4} from 'uuid';
+
+import {Add16Filled, Dismiss16Filled} from '@fluentui/react-icons';
+import {Button, Select, SelectItem, TimeInput} from '@nextui-org/react';
+
+import Card, {CardEntries, CardGrid} from '@/components/Card/Card';
 
 import styles from './ScheduleCard.module.css';
 
 export default function ScheduleCard({className}) {
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    unregister,
+    reset,
+    formState: {errors},
+  } = useForm();
+
+  const handleSaveChanges = handleSubmit(data => {
+    console.log(data);
+    console.log('Changes saved');
+    reset();
+    setIsEditMode(false);
+  });
+
+  const handleCancelChanges = () => {
+    console.log('Changes canceled');
+    reset();
+    setIsEditMode(false);
+  };
+
+  const handleEdit = () => {
+    console.log('Editing');
+    setIsEditMode(true);
+  };
 
   return (
     <Card
@@ -14,88 +45,159 @@ export default function ScheduleCard({className}) {
       title="Harmonogram zajęć"
       isEditable
       isEditMode={isEditMode}
+      onSaveClick={handleSaveChanges}
+      onCancelClick={handleCancelChanges}
+      onEditClick={handleEdit}
       setIsEditMode={setIsEditMode}
     >
-      {isEditMode ? <EditModeContent /> : <ReadOnlyModeContent />}
+      {isEditMode ? (
+        <EditModeContent
+          register={register}
+          unregister={unregister}
+          errors={errors}
+          control={control}
+        />
+      ) : (
+        <ReadOnlyModeContent />
+      )}
     </Card>
   );
 }
 
-const EditModeContent = () => {
-  const [activatedDay, setActivatedDay] = useState(null);
+const EditModeContent = ({register, unregister, errors, control}) => {
+  const [entries, setEntries] = useState([]);
 
-  const handleDeactivate = event => {
-    if (!event.target.closest(`.${styles.entry}`)) {
-      setActivatedDay(null);
-    }
+  const handleAddNewEntry = () => {
+    setEntries([...entries, {id: v4(), dayOfWeek: '', start: null, end: null}]);
   };
 
-  useEffect(() => {
-    if (activatedDay !== null) {
-      document.addEventListener('mousedown', handleDeactivate);
-    } else {
-      document.removeEventListener('mousedown', handleDeactivate);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleDeactivate);
-    };
-  }, [activatedDay]);
+  const handleRemoveEntry = id => {
+    setEntries(prev => prev.filter(entry => entry.id !== id));
+    unregister(`${id}`);
+  };
 
   return (
-    <div className={styles.contentContainer}>
-      {['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'].map(day => (
-        <DayTimeInput
-          key={day}
-          day={day}
-          isActivated={activatedDay === day}
-          // isActivated={true}
-          setActivatedDay={setActivatedDay}
+    <CardGrid oneColumn>
+      {entries.map(entry => (
+        <Entry
+          key={entry.id}
+          id={entry.id}
+          handleRemoveEntry={() => handleRemoveEntry(entry.id)}
+          dayOfWeek={entry.dayOfWeek}
+          start={entry.start}
+          end={entry.end}
+          register={register}
+          errors={errors}
+          control={control}
         />
       ))}
-    </div>
+      <div className={styles.newEntryButtonContainer}>
+        <AddNewEntryButton onClick={handleAddNewEntry} />
+      </div>
+    </CardGrid>
   );
 };
 
-const DayTimeInput = ({day, isActivated, setActivatedDay}) => {
-  const [startValue, setStartValue] = useState(null);
-  const [endValue, setEndValue] = useState(null);
+const AddNewEntryButton = ({onClick}) => {
+  return (
+    <Button size="sm" fullWidth onClick={onClick} variant="light">
+      <Add16Filled />
+    </Button>
+  );
+};
 
-  const formatTime = value => {
-    if (!value) return '';
-    const hours = String(value.hour).padStart(2, '0');
-    const minutes = String(value.minute).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  };
+const RemoveEntryButton = ({onClick}) => {
+  return (
+    <Button
+      className={styles.removeEntryButton}
+      size="sm"
+      onClick={onClick}
+      isIconOnly
+      variant="light"
+    >
+      <Dismiss16Filled />
+    </Button>
+  );
+};
 
+const Entry = ({id, dayOfWeek, start, end, handleRemoveEntry, register, errors, control}) => {
   return (
     <div className={styles.entry}>
-      <p className={styles.key}>{day}</p>
-      {isActivated ? (
-        <div className={styles.timeInputsContainer}>
-          <TimeInput label={null} value={startValue} onChange={setStartValue} />
-          -
-          <TimeInput label={null} value={endValue} onChange={setEndValue} />
-        </div>
-      ) : startValue && endValue ? (
-        <p
-          className={styles.value}
-          style={{textAlign: 'center', cursor: 'pointer'}}
-          onClick={() => setActivatedDay(day)}
-        >
-          {formatTime(startValue)} - {formatTime(endValue)}
-        </p>
-      ) : (
-        <Button
-          className={styles.addTimeButton}
-          size="sm"
-          fullWidth
-          onClick={() => setActivatedDay(day)}
-          variant="light"
-        >
-          <Add16Filled />
-        </Button>
-      )}
+      <Controller
+        control={control}
+        name={`${id}.dayOfWeek`}
+        rules={{required: true}}
+        render={({field}) => (
+          <Select
+            isRequired
+            isInvalid={!!errors?.[id]?.dayOfWeek}
+            style={{marginRight: 8}}
+            label="Dzień tygodnia"
+            defaultSelectedKeys={[dayOfWeek]}
+            disallowEmptySelection
+            {...field}
+          >
+            <SelectItem key="monday">Poniedziałek</SelectItem>
+            <SelectItem key="tuesday">Wtorek</SelectItem>
+            <SelectItem key="wednesday">Środa</SelectItem>
+            <SelectItem key="thursday">Czwartek</SelectItem>
+            <SelectItem key="friday">Piątek</SelectItem>
+            <SelectItem key="saturday">Sobota</SelectItem>
+            <SelectItem key="sunday">Niedziela</SelectItem>
+          </Select>
+        )}
+      />
+      {/* <Select
+        isRequired
+        isInvalid={!!errors?.[id]?.dayOfWeek}
+        style={{marginRight: 8}}
+        label="Dzień tygodnia"
+        defaultSelectedKeys={[dayOfWeek]}
+        disallowEmptySelection
+        {...register(`${id}.dayOfWeek`, {required: true})}
+      >
+        <SelectItem key="monday">Poniedziałek</SelectItem>
+        <SelectItem key="tuesday">Wtorek</SelectItem>
+        <SelectItem key="wednesday">Środa</SelectItem>
+        <SelectItem key="thursday">Czwartek</SelectItem>
+        <SelectItem key="friday">Piątek</SelectItem>
+        <SelectItem key="saturday">Sobota</SelectItem>
+        <SelectItem key="sunday">Niedziela</SelectItem>
+      </Select> */}
+      <div className={styles.timeInputsContainer}>
+        <Controller
+          control={control}
+          name={`${id}.start`}
+          rules={{required: true}}
+          render={({field}) => (
+            <TimeInput
+              label="Start"
+              defaultValue={start || null}
+              isRequired
+              isInvalid={!!errors?.[id]?.start}
+              {...field}
+              onChange={e => field.onChange(e)}
+            />
+          )}
+        />
+        -
+        <Controller
+          control={control}
+          name={`${id}.end`}
+          rules={{required: true}}
+          render={({field}) => (
+            <TimeInput
+              label="Koniec"
+              defaultValue={end || null}
+              isRequired
+              isInvalid={!!errors?.[id]?.end}
+              {...field}
+              onChange={e => field.onChange(e)}
+            />
+          )}
+        />
+      </div>
+      <RemoveEntryButton onClick={handleRemoveEntry} />
     </div>
   );
 };

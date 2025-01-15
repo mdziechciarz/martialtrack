@@ -15,13 +15,14 @@ import styles from './GroupPage.module.css';
 const groupData = {
   name: 'Kickboxing Zawodnicy',
   color: '#79dd36',
+  clubBranch: {id: 'x', name: 'Katowice'},
 };
 
 const availableClubBranches = [
-  {id: 1, name: 'Katowice'},
-  {id: 2, name: 'Warszawa'},
-  {id: 3, name: 'Kraków'},
-  {id: 4, name: 'Wrocław'},
+  {id: 'x', name: 'Katowice'},
+  {id: 'd', name: 'Warszawa'},
+  {id: 'c', name: 'Kraków'},
+  {id: 'g', name: 'Wrocław'},
 ];
 
 const GroupPage = () => {
@@ -52,6 +53,7 @@ const GroupPage = () => {
             className={styles.branchAndColorCard}
             color={groupData.color}
             clubBranches={availableClubBranches}
+            clubBranch={groupData.clubBranch}
           />
           <CoachAssistantsCard className={styles.coachAndAssitantsCard} />
           <ScheduleCard className={styles.scheduleCard} />

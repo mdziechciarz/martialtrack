@@ -1,0 +1,76 @@
+.buttonsContainer {
+  display: flex;
+  column-gap: 8px;
+  padding-bottom: 16px;
+}
+
+.buttonsContainer > button {
+  flex-grow: 1;
+}
+
+.grid {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 16px;
+}
+
+@media screen and (min-width: 600px) {
+  .grid {
+    grid-template-columns: 35fr 65fr;
+    grid-template-rows: repeat(3, auto);
+  }
+
+  .branchAndColorCard {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .coachAndAssitantsCard {
+    grid-row: 1;
+    grid-column: 2;
+  }
+
+  .scheduleCard {
+    grid-row: 2;
+    grid-column: 1 / span 2;
+  }
+
+  .athletesCard {
+    grid-row: 3;
+    grid-column: 1 / span 2;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .topPanel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .buttonsContainer {
+    padding-bottom: 0;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .branchAndColorCard {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .coachAndAssitantsCard {
+    grid-row: 2;
+    grid-column: 1;
+  }
+
+  .scheduleCard {
+    grid-row: 3;
+    grid-column: 1;
+  }
+
+  .athletesCard {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+  }
+}

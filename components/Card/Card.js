@@ -12,7 +12,10 @@ export default function Card({
   title,
   isEditable,
   isEditMode,
-  setIsEditMode = () => {},
+  // setIsEditMode = () => {},
+  onSaveClick = () => {},
+  onCancelClick = () => {},
+  onEditClick = () => {},
 }) {
   return (
     <div className={`${styles.container} ${className}`} style={style}>
@@ -27,11 +30,11 @@ export default function Card({
             <div className={styles.editButtonsContainer}>
               {isEditMode ? (
                 <>
-                  <SaveChangesButton onClick={() => setIsEditMode(false)} />
-                  <CancelChangesButton onClick={() => setIsEditMode(false)} />
+                  <SaveChangesButton onClick={onSaveClick} />
+                  <CancelChangesButton onClick={onCancelClick} />
                 </>
               ) : (
-                <EditButton onClick={() => setIsEditMode(true)} />
+                <EditButton onClick={onEditClick} />
               )}
             </div>
           )}

@@ -1,0 +1,9 @@
+.card {
+  margin-bottom: 16px;
+}
+
+@media screen and (min-width: 1200px) {
+  .textarea textarea {
+    font-size: 16px;
+  }
+}

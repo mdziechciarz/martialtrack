@@ -1,9 +1,5 @@
 'use client';
 
-import ContentContainer from '@/components/ContentContainer/ContentContainer';
-import MainLayout from '@/components/MainLayout/MainLayout';
-import PageTitle from '@/components/PageTitle/PageTitle';
-
 import {
   ArrowDownload20Filled,
   Checkmark20Filled,
@@ -19,9 +15,15 @@ import {
   DropdownTrigger,
 } from '@nextui-org/react';
 import {useState} from 'react';
-import styles from './AttendanceCheckPage.module.css';
+
+import ContentContainer from '@/components/ContentContainer/ContentContainer';
+import MainLayout from '@/components/MainLayout/MainLayout';
+import PageTitle from '@/components/PageTitle/PageTitle';
 import AttendanceCheckSection from './components/AttendanceCheckSection/AttendanceCheckSection';
 import ClassDescription from './components/ClassDescription/ClassDescription';
+import ClassSummarySection from './components/ClassSummarySection/ClassSummarySection';
+
+import styles from './AttendanceCheckPage.module.css';
 
 const AttendanceCheckPage = () => {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -49,6 +51,7 @@ const AttendanceCheckPage = () => {
         ) : (
           <ViewModeButtons handleEdit={handleEdit} />
         )}
+        <ClassSummarySection isEditMode={isEditMode} />
         <AttendanceCheckSection isEditMode={isEditMode} />
       </ContentContainer>
     </MainLayout>

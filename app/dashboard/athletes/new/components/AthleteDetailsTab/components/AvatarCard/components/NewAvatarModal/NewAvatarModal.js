@@ -85,7 +85,6 @@ export default function NewAvatarModal({isOpen, onOpenChange, setAvatarSrc}) {
     const croppedImage = canvas.toDataURL('image/jpeg');
     localStorage.setItem('croppedImage', croppedImage);
     setAvatarSrc(croppedImage);
-    // console.log(croppedImage);
     handleCloseModal();
   };
 

@@ -22,6 +22,8 @@
   word-wrap: break-word;
 }
 
+/* Readonly color input */
+
 .colorInput {
   appearance: none;
   -moz-appearance: none;
@@ -33,10 +35,6 @@
   padding: 0;
 }
 
-.editable .colorInput:hover {
-  filter: brightness(0.8);
-}
-
 .colorInput::-webkit-color-swatch-wrapper {
   padding: 0;
 }
@@ -46,15 +44,36 @@
   border-radius: 12px;
 }
 
+/* Editmode color input */
+
+.editColorInputWrapper {
+  padding: 0;
+}
+
+.editColorInput input {
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  /* width: 80px; */
+  /* height: 40px; */
+  border: 0;
+  padding: 0;
+}
+
+.editColorInput:hover input {
+  filter: brightness(0.9);
+}
+
+.editColorInput input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.editColorInput input::-webkit-color-swatch {
+  border: 0;
+  border-radius: 12px;
+}
+
 .cardEntries {
   grid-template-columns: 1fr;
 }
-
-/* ::-moz-color-swatch,
-::-moz-focus-inner {
-  border: 0;
-}
-
-::-moz-focus-inner {
-  padding: 0;
-} */
