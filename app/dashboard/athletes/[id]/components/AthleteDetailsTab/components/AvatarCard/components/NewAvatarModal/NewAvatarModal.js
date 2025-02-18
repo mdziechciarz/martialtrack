@@ -8,7 +8,7 @@ import 'react-image-crop/dist/ReactCrop.css';
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
 
-export default function NewAvatarModal({isOpen, onOpenChange}) {
+export default function NewAvatarModal({isOpen, onOpenChange, setAvatarSrc}) {
   const imgRef = useRef(null);
   const inputRef = useRef(null);
   const [imgSrc, setImgSrc] = useState('');
@@ -84,7 +84,7 @@ export default function NewAvatarModal({isOpen, onOpenChange}) {
 
     const croppedImage = canvas.toDataURL('image/jpeg');
     localStorage.setItem('croppedImage', croppedImage);
-    // console.log(croppedImage);
+    setAvatarSrc(croppedImage);
     handleCloseModal();
   };
 
@@ -119,7 +119,7 @@ export default function NewAvatarModal({isOpen, onOpenChange}) {
                   endContent={<ImageAdd20Filled />}
                   fullWidth
                   color="secondary"
-                  onClick={() => inputRef.current.click()}
+                  onPress={() => inputRef.current.click()}
                 >
                   Wybierz zdjęcie
                 </Button>

@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import {useState} from 'react';
 import {useForm} from 'react-hook-form';
@@ -107,6 +109,7 @@ const EditModeCOntent = ({register, errors, currentMainCoach, currentAssistants}
         isInvalid={!!errors.mainCoach}
         defaultSelectedKeys={[currentMainCoach.id]}
         {...register('mainCoach', {required: 'Trener główny jest wymagany'})}
+        validationBehavior="aria"
         renderValue={items => {
           return items.map(item => (
             <div key={item.key} className="flex items-center gap-2">
@@ -142,6 +145,7 @@ const EditModeCOntent = ({register, errors, currentMainCoach, currentAssistants}
         selectionMode="multiple"
         isInvalid={!!errors.assistants}
         {...register('assistants')}
+        validationBehavior="aria"
         defaultSelectedKeys={currentAssistants.map(coach => coach.id)}
       >
         {coach => (

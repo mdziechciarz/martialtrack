@@ -19,8 +19,38 @@
   flex-grow: 1;
 }
 
+.avatarBase {
+  min-width: 24px;
+  min-height: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.name {
+  margin-left: 4px;
+  font-size: 14px;
+}
+
+.avatarNameContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  width: fit-content;
+  cursor: pointer;
+}
+
 .avatarNameContainer:hover .name {
   text-decoration: underline;
+}
+
+.recipientsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  max-height: 160px;
+  overflow-y: auto;
 }
 
 @media screen and (min-width: 600px) {
@@ -38,16 +68,5 @@
     background: #f0f0f0;
     margin: 16px;
     border-radius: 14px;
-  }
-}
-
-@media screen and (min-width: 1200px) {
-  .avatar {
-    width: 32px;
-    height: 32px;
-  }
-
-  .statusChevronContainer {
-    visibility: hidden;
   }
 }

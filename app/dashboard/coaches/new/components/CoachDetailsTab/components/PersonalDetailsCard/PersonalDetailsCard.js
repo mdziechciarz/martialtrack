@@ -43,6 +43,7 @@ const EditModeContent = ({register, errors, control}) => {
             disableAnimation
             maxValue={today(getLocalTimeZone())}
             isInvalid={!!errors.dateOfBirth}
+            validationBehavior="aria"
             // errorMessage={errors.birthDate?.message}
           />
         )}
@@ -61,6 +62,7 @@ const EditModeContent = ({register, errors, control}) => {
             message: 'PESEL jest wymagany',
           },
         })}
+        validationBehavior="aria"
       />
       <Input
         isRequired
@@ -75,6 +77,7 @@ const EditModeContent = ({register, errors, control}) => {
             message: 'Miejsce urodzenia jest wymagane',
           },
         })}
+        validationBehavior="aria"
       />
     </CardGrid>
   );
@@ -95,6 +98,7 @@ const GenderSelect = ({errors, register}) => {
           message: 'Płeć jest wymagana',
         },
       })}
+      validationBehavior="aria"
     >
       <SelectItem key="1">Kobieta</SelectItem>
       <SelectItem key="2">Mężczyzna</SelectItem>

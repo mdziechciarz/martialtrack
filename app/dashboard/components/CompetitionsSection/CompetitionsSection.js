@@ -1,16 +1,34 @@
 'use client';
 
-import {People12Filled} from '@fluentui/react-icons';
 import {Ripple, Tooltip, useRipple} from '@nextui-org/react';
-import {useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
+
+import {People12Filled} from '@fluentui/react-icons';
+
+import {fetchCompetitions} from '../../competitions/actions';
+
 import styles from './CompetitionsSection.module.css';
 
 const CompetitionsSection = () => {
+  const [competitions, setCompetitions] = useState([]);
+
+  const getCompetitions = async () => {
+    const response = await fetchCompetitions();
+
+    if (response.success) {
+      setCompetitions(response.data);
+    }
+  };
+
+  useEffect(() => {
+    getCompetitions();
+  }, []);
+
   return (
     <div className={styles.container}>
       <h3 className={styles.sectionTitle}>Nadchodzące zawody</h3>
       <ul className={styles.competitionsList}>
-        <CompetitionCard
+        {/* <CompetitionCard
           color="red"
           name="Mistrzostwa Polski Kick Light Juniorów, Seniorów i Weteranów"
           dateStart="2024-03-02"
@@ -36,7 +54,24 @@ const CompetitionsSection = () => {
           location="Warszawa"
           entrantsConfirmed={15}
           entrantsTotal={20}
-        />
+        /> */}
+        {/* Sort by date_start and choose first 3 */}
+        {/* {competitions.map(competition => ( */}
+
+        {competitions
+          .sort((a, b) => new Date(a.date_start) - new Date(b.date_start))
+          .slice(0, 3)
+          .map(competition => (
+            <CompetitionCard
+              key={competition.id}
+              color={competition.color}
+              name={competition.name}
+              dateStart={competition.date_start}
+              dateEnd={competition.date_end}
+              location={competition.location}
+              participantsCount={competition?.competition_participants?.length}
+            />
+          ))}
       </ul>
     </div>
   );
@@ -50,11 +85,12 @@ const CompetitionCard = ({
   dateStart,
   dateEnd,
   location,
-  entrantsTotal,
-  entrantsConfirmed,
+  // entrantsTotal,
+  // entrantsConfirmed,
+  participantsCount,
 }) => {
   const domRef = useRef(null);
-  const {onClick: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
+  const {onPress: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
 
   const handleClick = e => {
     domRef.current && onRippleClickHandler(e);
@@ -81,13 +117,11 @@ const CompetitionCard = ({
           <People12Filled />
         </div>
         <Tooltip
-          content={`${entrantsConfirmed} zawodników potwierdzonych z ${entrantsTotal} zaproszonych`}
-          delay={700}
+          content={`${participantsCount} zawodników bierze udział`}
+          delay={500}
           placement="bottom"
         >
-          <p className={styles.entrantsText}>
-            {entrantsConfirmed}/{entrantsTotal}
-          </p>
+          <p className={styles.entrantsText}>{participantsCount}</p>
         </Tooltip>
       </div>
     </div>

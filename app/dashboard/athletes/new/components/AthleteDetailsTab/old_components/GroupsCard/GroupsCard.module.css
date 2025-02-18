@@ -1,0 +1,80 @@
+.contentContainer {
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.groupsList {
+  max-height: 300px;
+  margin-top: 16px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.groupsList::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.groupsList::-webkit-scrollbar-thumb {
+  /* Foreground */
+  background: #4ba7e8;
+  border-radius: 8px;
+}
+.groupsList::-webkit-scrollbar-track {
+  /* Background */
+  background: #f0f0f0;
+  margin: 16px;
+  border-radius: 14px;
+}
+
+.groupTileContainer {
+  padding: 8px 16px;
+  display: block;
+  border-radius: 8px;
+  border-left: 10px solid transparent;
+  background: linear-gradient(87.27deg, #efefef 47.85%, rgba(239, 239, 239, 0) 100%);
+  border-top: 1px solid #e8e8e8;
+  border-right: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.groupName {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.coachName {
+  font-size: 13px;
+}
+
+.days,
+.hours {
+  text-align: right;
+  font-size: 13px;
+}
+
+.newGroupButtonContainer {
+  margin-top: 16px;
+}
+
+@media screen and (min-width: 600px) {
+  .groupTileContainer {
+    border-left-width: 12px;
+  }
+
+  .newGroupButtonContainer {
+    margin-top: 24px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .groupTileContainer {
+    border-left-width: 14px;
+  }
+}

@@ -13,15 +13,6 @@ const columns = [
   {name: '', uid: 'actions'},
 ];
 
-const groupOptions = [
-  {name: 'Kickboxing Dinusie', uid: 'Kickboxing Dinusie', color: '#FFC107'},
-  {name: 'Kickboxing Juniorzy', uid: 'Kickboxing Juniorzy', color: '#FF5722'},
-  {name: 'Kickboxing Seniorzy', uid: 'Kickboxing Seniorzy', color: '#4CAF50'},
-  {name: 'Kickboxing Kadeci', uid: 'Kickboxing Kadeci', color: '#2196F3'},
-  {name: 'Yoga', uid: 'Yoga', color: '#9C27B0'},
-  {name: 'Pilates', uid: 'Pilates', color: '#E91E63'},
-];
-
 const users = [];
 
 export {columns, groupOptions, users};

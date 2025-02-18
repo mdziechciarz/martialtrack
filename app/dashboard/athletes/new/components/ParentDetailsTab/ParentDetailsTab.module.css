@@ -4,6 +4,11 @@
   grid-row-gap: 16px;
 }
 
+.addParentButton {
+  height: 100%;
+  border-radius: 12px;
+}
+
 @media screen and (min-width: 600px) {
   .mainContainer {
     grid-template-columns: repeat(2, 1fr);

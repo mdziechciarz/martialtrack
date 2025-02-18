@@ -40,7 +40,7 @@ export default function EditOrderModal({isOpen, onOpenChange, editedOrder = {}, 
   if (editedOrder) {
     defaultValues = {
       recipient: editedOrder.recipientId,
-      amount: editedOrder.amount,
+      price: editedOrder.price,
       order: editedOrder.order,
     };
   }
@@ -85,6 +85,7 @@ export default function EditOrderModal({isOpen, onOpenChange, editedOrder = {}, 
                       label="Zamawiający"
                       placeholder="Dla kogo?"
                       isRequired
+                      validationBehavior="aria"
                       isInvalid={!!errors.recipient}
                       errorMessage={errors.recipient?.message}
                     >
@@ -109,9 +110,10 @@ export default function EditOrderModal({isOpen, onOpenChange, editedOrder = {}, 
 
                 <Input
                   isRequired
-                  {...register('amount', {required: 'Pole należność jest wymagane'})}
-                  isInvalid={!!errors.amount}
-                  errorMessage={errors.amount?.message}
+                  {...register('price', {required: 'Pole należność jest wymagane'})}
+                  validationBehavior="aria"
+                  isInvalid={!!errors.price}
+                  errorMessage={errors.price?.message}
                   type="number"
                   label="Należność"
                   placeholder="0.00"
@@ -124,6 +126,7 @@ export default function EditOrderModal({isOpen, onOpenChange, editedOrder = {}, 
                 <Textarea
                   isRequired
                   {...register('order', {required: 'Pole zamaówienie jest wymagane'})}
+                  validationBehavior="aria"
                   isInvalid={!!errors.order}
                   errorMessage={errors.order?.message}
                   label="Zamówienie"

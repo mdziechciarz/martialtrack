@@ -8,6 +8,7 @@ export {
   ClipboardTaskListLtr20Filled,
   Dismiss16Filled,
   Home16Filled,
+  MoreVertical24Filled,
   Navigation16Filled,
   People12Filled,
   Person16Filled,

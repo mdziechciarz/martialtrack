@@ -38,11 +38,6 @@ import silverMedalIcon from './silver-medal.svg';
 import Image from 'next/image';
 import styles from './ResultsCard.module.css';
 
-const statusColorMap = {
-  Opłacone: 'success',
-  Nieopłacone: 'danger',
-};
-
 const capitalize = str => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
@@ -54,26 +49,117 @@ const INITIAL_VISIBLE_COLUMNS = [
   'weight_or_height_category',
   'result',
   // 'groups',
-  'actions',
+  // 'actions',
 ];
 
-const EditButtons = ({isEditMode = false, setIsEditMode = () => {}}) => {
-  if (isEditMode) {
+const ResultCell = ({result}) => {
+  const getResultComponent = result => {
+    if (result === 'gold')
+      return (
+        <div
+          style={{
+            width: 24,
+            height: 24,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Image src={goldMedalIcon} alt="gold medal" width={20} height={20} />
+        </div>
+      );
+    if (result === 'silver')
+      return (
+        <div
+          style={{
+            width: 24,
+            height: 24,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Image src={silverMedalIcon} alt="silver` medal" width={20} height={20} />
+        </div>
+      );
+    if (result === 'bronze')
+      return (
+        <div
+          style={{
+            width: 24,
+            height: 24,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Image src={bronzeMedalIcon} alt="bronze medal" width={20} height={20} />
+        </div>
+      );
     return (
-      <div className="flex gap-2">
-        <Button variant="flat" onClick={() => setIsEditMode(false)}>
-          Anuluj
-        </Button>
-        <Button color="primary" onClick={() => setIsEditMode(false)}>
-          Zapisz
-        </Button>
+      <div
+        style={{
+          width: 24,
+          height: 24,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        -
       </div>
     );
-  }
+  };
+
+  const [selectedMedal, setSelectedMedal] = React.useState(result);
+
   return (
-    <Button variant="flat" onClick={() => setIsEditMode(true)}>
-      Edytuj
-    </Button>
+    <Dropdown>
+      <DropdownTrigger className="hidden sm:flex">
+        <div className={styles.medalContainer}>
+          {getResultComponent(selectedMedal)}
+          <div className={styles.medalChevronContainer}>
+            <ChevronDownIcon className={styles.medalChevronIcon} />
+          </div>
+        </div>
+      </DropdownTrigger>
+      <DropdownMenu
+        disallowEmptySelection
+        aria-label="Table Columns"
+        closeOnSelect
+        selectedKeys={selectedMedal}
+        selectionMode="single"
+        onAction={medal => {
+          setSelectedMedal(medal);
+        }}
+      >
+        <DropdownItem key={'none'} className="capitalize">
+          Brak medalu
+        </DropdownItem>
+        <DropdownItem
+          key={'gold'}
+          className="capitalize"
+          style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+          endContent={getResultComponent('gold')}
+        >
+          Złoto
+        </DropdownItem>
+        <DropdownItem
+          key={'silver'}
+          className="capitalize"
+          endContent={getResultComponent('silver')}
+        >
+          Srebro
+        </DropdownItem>
+        <DropdownItem
+          key={'bronze'}
+          className="capitalize"
+          endContent={getResultComponent('bronze')}
+        >
+          Brąz
+        </DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
   );
 };
 
@@ -170,89 +256,61 @@ const ResultsTable = () => {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
+  const renderCell = React.useCallback(
+    (user, columnKey) => {
+      const cellValue = user[columnKey];
 
-    switch (columnKey) {
-      case 'name':
-        return <AvaratName id={user.id} imgSrc={user.avatar} name={user.name} />;
-      case 'groups':
-        return (
-          <ul className={styles.groupsList}>
-            {user.groups.map(group => (
-              <li key={group.uid} className={styles.group}>
-                <Chip
-                  variant="dot"
-                  classNames={{base: styles.chipBase, dot: styles.chipDot}}
-                  style={{'--dot-color': groupsOptions.find(g => g.uid === group.uid).color}}
-                >
-                  {group.name}
-                </Chip>
-              </li>
-            ))}
-          </ul>
-        );
-      case 'result':
-        if (user.result === 1)
+      switch (columnKey) {
+        case 'name':
+          return <AvaratName id={user.id} imgSrc={user.avatar} name={user.name} />;
+        case 'groups':
           return (
-            <div
-              style={{
-                width: 20,
-                height: 20,
-              }}
-            >
-              <Image src={goldMedalIcon} alt="gold medal" width={20} height={20} />
-            </div>
+            <ul className={styles.groupsList}>
+              {user.groups.map(group => (
+                <li key={group.uid} className={styles.group}>
+                  <Chip
+                    variant="dot"
+                    classNames={{base: styles.chipBase, dot: styles.chipDot}}
+                    style={{'--dot-color': groupsOptions.find(g => g.uid === group.uid).color}}
+                  >
+                    {group.name}
+                  </Chip>
+                </li>
+              ))}
+            </ul>
           );
-        if (user.result === 2)
-          return (
-            <div
-              style={{
-                width: 20,
-                height: 20,
-              }}
-            >
-              <Image src={silverMedalIcon} alt="silver` medal" width={20} height={20} />
-            </div>
-          );
-        if (user.result === 3)
-          return (
-            <div
-              style={{
-                width: 20,
-                height: 20,
-              }}
-            >
-              <Image src={bronzeMedalIcon} alt="bronze medal" width={20} height={20} />
-            </div>
-          );
-        return user.result || <p style={{width: 20, height: 20, textAlign: 'center'}}>-</p>;
+        case 'result':
+          return <ResultCell result={user.result} />;
 
-      case 'actions':
-        return (
-          <div className="relative flex justify-end items-center gnap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <VerticalDotsIcon className="text-default-300" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem startContent={<WalletCreditCard16Filled />}>
-                  Zaksięguj wpłatę
-                </DropdownItem>
-                <DropdownItem startContent={<Dismiss16Filled />}>Anuluj wpłatę wpłatę</DropdownItem>
-                <DropdownItem startContent={<TextPeriodAsterisk20Regular />}>
-                  Zwolnij z płatności w tym miesiącu
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return cellValue;
-    }
-  }, []);
+        case 'actions':
+          return (
+            <div className="relative flex justify-end items-center gnap-2">
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button isIconOnly size="sm" variant="light">
+                    <VerticalDotsIcon className="text-default-300" />
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu>
+                  <DropdownItem startContent={<WalletCreditCard16Filled />}>
+                    Zaksięguj wpłatę
+                  </DropdownItem>
+                  <DropdownItem startContent={<Dismiss16Filled />}>
+                    Anuluj wpłatę wpłatę
+                  </DropdownItem>
+                  <DropdownItem startContent={<TextPeriodAsterisk20Regular />}>
+                    Zwolnij z płatności w tym miesiącu
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </div>
+          );
+        default:
+          return cellValue;
+      }
+    },
+    [isEditMode, setIsEditMode]
+  );
 
   const onRowsPerPageChange = React.useCallback(e => {
     setRowsPerPage(Number(e.target.value));
@@ -354,54 +412,48 @@ const ResultsTable = () => {
                 ))}
               </DropdownMenu>
             </Dropdown> */}
-            {!isEditMode && (
-              <>
-                <Dropdown>
-                  <DropdownTrigger className="hidden sm:flex">
-                    <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                      Kat. wiekowa
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu
-                    disallowEmptySelection
-                    aria-label="Status filter"
-                    closeOnSelect={false}
-                    selectedKeys={ageCategoryFilter}
-                    selectionMode="multiple"
-                    onSelectionChange={setAgeCategoryFilter}
-                  >
-                    {ageCategoryOptions.map(ageCategory => (
-                      <DropdownItem key={ageCategory.uid} className="capitalize">
-                        {capitalize(ageCategory.name)}
-                      </DropdownItem>
-                    ))}
-                  </DropdownMenu>
-                </Dropdown>
-                <Dropdown>
-                  <DropdownTrigger className="hidden sm:flex">
-                    <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                      Formuła
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu
-                    disallowEmptySelection
-                    aria-label="Status filter"
-                    closeOnSelect={false}
-                    selectedKeys={formulaFilter}
-                    selectionMode="multiple"
-                    onSelectionChange={setFormulaFilter}
-                  >
-                    {formulaOptions.map(formula => (
-                      <DropdownItem key={formula.uid} className="capitalize">
-                        {capitalize(formula.name)}
-                      </DropdownItem>
-                    ))}
-                  </DropdownMenu>
-                </Dropdown>{' '}
-              </>
-            )}
-            <EditButtons isEditMode={isEditMode} setIsEditMode={setIsEditMode} />
-
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                  Kat. wiekowa
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Status filter"
+                closeOnSelect={false}
+                selectedKeys={ageCategoryFilter}
+                selectionMode="multiple"
+                onSelectionChange={setAgeCategoryFilter}
+              >
+                {ageCategoryOptions.map(ageCategory => (
+                  <DropdownItem key={ageCategory.uid} className="capitalize">
+                    {capitalize(ageCategory.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                  Formuła
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Status filter"
+                closeOnSelect={false}
+                selectedKeys={formulaFilter}
+                selectionMode="multiple"
+                onSelectionChange={setFormulaFilter}
+              >
+                {formulaOptions.map(formula => (
+                  <DropdownItem key={formula.uid} className="capitalize">
+                    {capitalize(formula.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>{' '}
             {/* <RecordPaymentButton onClick={onModalOpen} /> */}
           </div>
         </div>
@@ -467,15 +519,16 @@ const ResultsTable = () => {
       bottomContentPlacement="outside"
       className={styles.table}
       classNames={{
-        wrapper: `max-h-[380px] ${styles.tableWrapper}`,
+        wrapper: `max-h-[460px] ${styles.tableWrapper}`,
       }}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
+      // selectedKeys={selectedKeys}
+      // selectionMode="multiple"
       sortDescriptor={sortDescriptor}
       topContent={topContent}
       topContentPlacement="outside"
       onSelectionChange={setSelectedKeys}
       onSortChange={setSortDescriptor}
+      // key={`results-table-${isEditMode}`}
     >
       <TableHeader columns={headerColumns}>
         {column => (

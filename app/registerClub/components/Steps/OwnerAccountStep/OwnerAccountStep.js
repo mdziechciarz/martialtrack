@@ -24,26 +24,28 @@ export default function OwnerAccountStep({
     register,
     handleSubmit,
     formState: {errors},
+    setValue,
   } = useForm({defaultValues: registrationData.ownerData});
 
   const onSubmit = data => {
-    // console.log('SUBMITTED');
-    // console.log(data);
-    // console.log(registrationData);
     setRegistrationData(prevState => ({
       ...prevState,
       ownerData: data,
     }));
+
     handleNextStep();
   };
-
-  console.log(registrationData);
 
   return (
     <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
       <div className={styles.contentContainer}>
         <div className={styles.formContainer}>
-          <UserAvatarCard />
+          <UserAvatarCard
+            register={register}
+            errors={errors}
+            setValue={setValue}
+            currentAvatarSrc={registrationData?.ownerData?.avatar}
+          />
           <Input
             label="Imię i nazwisko"
             placeholder="Wpisz swoje imię i nazwisko"
@@ -57,6 +59,7 @@ export default function OwnerAccountStep({
                 message: 'Imię i nazwisko są wymagane',
               },
             })}
+            validationBehavior="aria"
           />
           <Input
             label="Email"
@@ -72,6 +75,7 @@ export default function OwnerAccountStep({
               },
               required: 'Email jest wymagany',
             })}
+            validationBehavior="aria"
           />
           <Input
             label="Hasło"
@@ -92,6 +96,7 @@ export default function OwnerAccountStep({
                 message: 'Hasło za krótkie. Wymagana długość to 6 do 20 znaków',
               },
             })}
+            validationBehavior="aria"
           />
           <div className={styles.separator}>
             <div className={styles.line}></div>

@@ -1,3 +1,5 @@
+'use client';
+
 import {useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {v4} from 'uuid';
@@ -136,6 +138,7 @@ const Entry = ({id, dayOfWeek, start, end, handleRemoveEntry, register, errors, 
             defaultSelectedKeys={[dayOfWeek]}
             disallowEmptySelection
             {...field}
+            validationBehavior="aria"
           >
             <SelectItem key="monday">Poniedziałek</SelectItem>
             <SelectItem key="tuesday">Wtorek</SelectItem>
@@ -176,6 +179,7 @@ const Entry = ({id, dayOfWeek, start, end, handleRemoveEntry, register, errors, 
               isRequired
               isInvalid={!!errors?.[id]?.start}
               {...field}
+              validationBehavior="aria"
               onChange={e => field.onChange(e)}
             />
           )}
@@ -192,6 +196,7 @@ const Entry = ({id, dayOfWeek, start, end, handleRemoveEntry, register, errors, 
               isRequired
               isInvalid={!!errors?.[id]?.end}
               {...field}
+              validationBehavior="aria"
               onChange={e => field.onChange(e)}
             />
           )}

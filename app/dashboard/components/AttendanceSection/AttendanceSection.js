@@ -199,7 +199,7 @@ const AttendanceCard = ({name, color, times, attendanceList = null}) => {
   const router = useRouter();
 
   const domRef = useRef(null);
-  const {onClick: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
+  const {onPress: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
 
   const handleClick = e => {
     domRef.current && onRippleClickHandler(e);

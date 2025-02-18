@@ -1,8 +1,9 @@
 'use client';
 
-import {useState} from 'react';
+import Image from 'next/image';
+import {useCallback, useEffect, useState} from 'react';
+
 import {
-  Calendar12Filled,
   Cart16Filled,
   ChevronDown16Filled,
   ClipboardTaskListLtr20Filled,
@@ -22,24 +23,30 @@ import {
 
 import {
   Avatar,
+  Badge,
   Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
 } from '@nextui-org/react';
-import Image from 'next/image';
+
 import {usePathname, useRouter} from 'next/navigation';
 import {logOut} from './actions.ts';
 
 import {Trophy16Filled} from '@fluentui/react-icons';
+
+import {createClient} from '@/utils/supabase/client';
 import styles from './MainLayout.module.css';
 
+// const MainLayout = ({children, user}) => {
 const MainLayout = ({children}) => {
-  // const [isSideBarOpen, setIsSideBarOpen] = useState(false);
+  const supabase = createClient();
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
+  const [user, setUser] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Functino for opening sidebar to pass down to HamburgerButton
+  // Function for opening sidebar to pass down to HamburgerButton
   const openSideBar = () => {
     setIsSideBarOpen(true);
   };
@@ -48,11 +55,61 @@ const MainLayout = ({children}) => {
     setIsSideBarOpen(false);
   };
 
+  const fetchUser = useCallback(async () => {
+    console.log('fetchUser');
+
+    setIsLoading(true);
+
+    const {
+      data: {user},
+    } = await supabase.auth.getUser();
+
+    const {data: userData, error: userError} = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    if (userData.avatar_src) {
+      const {data: userAvatarData, error: userAvatarError} = await supabase.storage
+        .from('user_avatars')
+        .createSignedUrl(user.id, 60 * 60 * 24 * 30);
+
+      userData.avatar_src = userAvatarData.signedUrl;
+    }
+
+    const {data: clubData, error: clubError} = await supabase
+      .from('clubs')
+      .select('*')
+      .eq('id', userData.club_id)
+      .single();
+
+    if (clubData.logo_src) {
+      const {data: clubLogoData, error: clubLogoError} = await supabase.storage
+        .from('club_logos')
+        .createSignedUrl(clubData.id, 60 * 60 * 24 * 30);
+
+      clubData.logo_src = clubLogoData.signedUrl;
+    }
+
+    setUser(userData);
+    setIsLoading(false);
+  }, [supabase]);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
   return (
     <div className={styles.layoutContainer}>
       <SideBar isOpen={isSideBarOpen} closeSideBar={closeSideBar} openSideBar={openSideBar} />
       <div className={styles.mainContainer}>
-        <TopBar openSideBar={openSideBar} isSideBarOpen={isSideBarOpen} />
+        <TopBar
+          openSideBar={openSideBar}
+          isSideBarOpen={isSideBarOpen}
+          avatarSrc={user?.avatar_src}
+          key={user?.avatar_src}
+        />
         <div className={styles.contentContainer}>{children}</div>
       </div>
     </div>
@@ -61,7 +118,7 @@ const MainLayout = ({children}) => {
 
 export default MainLayout;
 
-const TopBar = ({openSideBar, isSideBarOpen}) => {
+const TopBar = ({openSideBar, isSideBarOpen, avatarSrc}) => {
   const handleLogout = async () => {
     logOut();
   };
@@ -69,18 +126,18 @@ const TopBar = ({openSideBar, isSideBarOpen}) => {
   return (
     <div className={styles.topBarContainer}>
       {!isSideBarOpen && <HamburgerButton openSideBar={openSideBar} />}
-      <UserProfileButton handleLogout={handleLogout} />
+      <UserProfileButton handleLogout={handleLogout} avatarSrc={avatarSrc} />
     </div>
   );
 };
 
-const UserProfileButton = ({handleLogout}) => {
+const UserProfileButton = ({handleLogout, avatarSrc}) => {
   return (
     <Dropdown>
       <DropdownTrigger>
         <Button variant="light" className={styles.userProfileButton}>
           <div className={styles.userProfileButtonContainer}>
-            <Avatar src="https://randomuser.me/api/portraits/thumb/men/75.jpg" size="sm" />
+            <Avatar size="sm" src={avatarSrc || null} />
             <ChevronDown16Filled />
           </div>
         </Button>
@@ -127,8 +184,14 @@ const SideBar = ({isOpen, closeSideBar, openSideBar}) => {
         <SideBarButton icon={Send16Filled} text="Wiadomości" url="/dashboard/messages" />
         <SideBarButton icon={ShieldPerson20Filled} text="Trenerzy" url="/dashboard/coaches" />
         <SideBarButton icon={Trophy16Filled} text="Zawody" url="/dashboard/competitions" />
-        <SideBarButton icon={Calendar12Filled} text="Harmonogram zajęć" url="/dashboard/schedule" />
-        <SideBarButton icon={Cart16Filled} text="Zamówienia" url="/dashboard/orders" />
+        {/* <SideBarButton icon={Calendar12Filled} text="Harmonogram zajęć" url="/dashboard/schedule" /> */}
+        <SideBarButton
+          icon={Cart16Filled}
+          text="Zamówienia"
+          url="/dashboard/orders"
+          hasBadge
+          badgeContent={5}
+        />
         <SideBarButton icon={ReceiptMoney16Filled} text="Dotacje" url="/dashboard/subsidies" />
         <SideBarButton icon={Settings16Filled} text="Ustawienia" url="/dashboard/settings" />
       </ul>
@@ -144,7 +207,7 @@ const SideBarCloseButton = ({closeSideBar}) => {
   );
 };
 
-const SideBarButton = ({icon: Icon, text, url}) => {
+const SideBarButton = ({icon: Icon, text, url, badgeContent, hasBadge}) => {
   const router = useRouter();
   const pathname = usePathname();
   const isActive = pathname === url;
@@ -155,9 +218,29 @@ const SideBarButton = ({icon: Icon, text, url}) => {
 
   return (
     <li className={`${styles.sideBarButton} ${isActive ? styles.sideBarButtonActive : ''}`}>
-      <Button onClick={handleClick} fullWidth startContent={<Icon />}>
-        {text}
-      </Button>
+      {hasBadge ? (
+        <Button
+          onClick={handleClick}
+          fullWidth
+          startContent={
+            <Badge
+              size="sm"
+              color="danger"
+              content={badgeContent}
+              placement="top-right"
+              showOutline={false}
+            >
+              <Icon />
+            </Badge>
+          }
+        >
+          {text}
+        </Button>
+      ) : (
+        <Button onClick={handleClick} fullWidth startContent={<Icon />}>
+          {text}
+        </Button>
+      )}
     </li>
   );
 };

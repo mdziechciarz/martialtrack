@@ -78,6 +78,7 @@ const EditModeContent = ({register, errors, description, website}) => {
         placeholder="Opis zawodów"
         defaultValue={description}
         {...register('description')}
+        validationBehavior="aria"
       />
       <Input
         label="Adres internetowy"
@@ -85,6 +86,7 @@ const EditModeContent = ({register, errors, description, website}) => {
         placeholder="Adres do strony zawodów"
         defaultValue={website}
         {...register('website')}
+        validationBehavior="aria"
       />
     </CardGrid>
   );

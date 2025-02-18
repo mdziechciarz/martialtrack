@@ -21,9 +21,9 @@ import {FormProvider, useForm} from 'react-hook-form';
 import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
 import AthleteDetailsTab from './components/AthleteDetailsTab/AthleteDetailsTab';
-import ParentDetailsTab from './components/ParentDetailsTab/ParentDetailsTab';
 
 import styles from './AthletePage.module.css';
+import {createNewAthlete} from './actions';
 
 const AthletePage = () => {
   // form tutaj
@@ -39,25 +39,28 @@ const AthletePage = () => {
       postalCode: '',
       phoneNumber: '',
       email: '',
-      parentOne: {
-        name: '',
-      },
+      // parentOne: {
+      //   name: '',
+      // },
     },
   });
 
-  const onSubmit = data => {};
+  const handleCreateNewAthlete = async data => {
+    await createNewAthlete({
+      ...data,
+      dateOfBirth: data.dateOfBirth.toString(),
+    });
+  };
+
+  const onSubmit = data => {
+    handleCreateNewAthlete(data);
+  };
 
   return (
     <MainLayout>
       <ContentContainer>
         <FormProvider {...methods}>
-          <form
-            onSubmit={e => {
-              e.preventDefault();
-              methods.handleSubmit(onSubmit)();
-              console.log(methods.formState.errors);
-            }}
-          >
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div className={styles.buttonsContainer}>
               <Buttons />
             </div>
@@ -65,7 +68,6 @@ const AthletePage = () => {
               variant="underlined"
               color="primary"
               defaultSelectedKey={'athleteDetails'}
-              onSelectionChange={key => console.log(key)}
               classNames={{
                 base: styles.base,
                 tabList: styles.tabList,
@@ -74,13 +76,14 @@ const AthletePage = () => {
                 panel: styles.panel,
               }}
               className={styles.tabsContainer}
+              destroyInactiveTabPanel={false}
             >
               <Tab key="athleteDetails" title="Dane zawodnika">
                 <AthleteDetailsTab />
               </Tab>
-              <Tab key="parents" title="Dane rodziców">
+              {/* <Tab key="parents" title="Dane rodziców">
                 <ParentDetailsTab />
-              </Tab>
+              </Tab> */}
             </Tabs>
           </form>
         </FormProvider>

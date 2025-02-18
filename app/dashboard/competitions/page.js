@@ -4,12 +4,38 @@ import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
 import PageTitle from '@/components/PageTitle/PageTitle';
 import {People12Filled} from '@fluentui/react-icons';
-import {Button, Ripple, Tab, Tabs, useRipple} from '@nextui-org/react';
+import {Button, Ripple, Spinner, Tab, Tabs, useRipple} from '@nextui-org/react';
 import {useRouter} from 'next/navigation';
-import {useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import styles from './CompetitionsPage.module.css';
+import {fetchCompetitions} from './actions';
 
 const CompetitionsPage = () => {
+  const [competitions, setCompetitions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const upcomingCompetitions = competitions.filter(
+    competition => new Date(competition.date_end) >= new Date()
+  );
+  const pastCompetitions = competitions.filter(
+    competition => new Date(competition.date_end) < new Date()
+  );
+
+  const handleFetchCompetitions = async () => {
+    const result = await fetchCompetitions();
+    if (result.data) {
+      console.log(result.data);
+      setCompetitions(result.data);
+    } else {
+      console.log(result.error);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    handleFetchCompetitions();
+  }, []);
+
   return (
     <MainLayout>
       <ContentContainer>
@@ -26,76 +52,49 @@ const CompetitionsPage = () => {
           onChange={index => console.log(index)}
           classNames={{tabList: styles.tabList, cursor: styles.tabCursor, tab: styles.tab}}
         >
-          <Tab key="active" title="Nadchodzące">
-            <ul className={styles.competitionsList}>
-              <CompetitionCard
-                color="red"
-                name="Mistrzostwa Polski Kick Light Juniorów, Seniorów i Weteranów"
-                dateStart="2024-03-02"
-                dateEnd="2024-03-03"
-                location="Warszawa"
-                entrantsConfirmed={15}
-                entrantsTotal={20}
-              />
-              <CompetitionCard
-                color="purple"
-                name="Mistrzostwa Polski Kick Light Juniorów, Seniorów i Weteranów"
-                dateStart="2024-03-02"
-                dateEnd="2024-03-03"
-                location="Warszawa"
-                entrantsConfirmed={15}
-                entrantsTotal={20}
-              />
-              <CompetitionCard
-                color="green"
-                name="Mistrzostwa Polski Kick Light Juniorów, Seniorów i Weteranów"
-                dateStart="2024-03-02"
-                dateEnd="2024-03-03"
-                location="Warszawa"
-                entrantsConfirmed={15}
-                entrantsTotal={20}
-              />
-            </ul>
+          <Tab
+            key="active"
+            title={isLoading ? 'Nadchodzące' : `Nadchodzące (${upcomingCompetitions.length})`}
+          >
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              <ul className={styles.competitionsList}>
+                {upcomingCompetitions.map(competition => (
+                  <CompetitionCard
+                    key={competition.id}
+                    color={competition.color}
+                    name={competition.name}
+                    dateStart={competition.date_start}
+                    dateEnd={competition.date_end}
+                    location={competition.location}
+                    participantsCount={competition?.competition_participants?.length}
+                  />
+                ))}
+              </ul>
+            )}
           </Tab>
-          <Tab key="past" title="Zakończone">
-            <ul className={styles.competitionsList}>
-              <CompetitionCard
-                color="#D4FF77"
-                name="Mistrzostwa Polski Kick Light Juniorów, Seniorów i Weteranów"
-                dateStart="2024-03-02"
-                dateEnd="2024-03-03"
-                location="Warszawa"
-                entrantsConfirmed={15}
-                entrantsTotal={20}
-              />
-              <CompetitionCard
-                color="red"
-                name="Mistrzostwa Polski Kick Light Juniorów, Seniorów i Weteranów"
-                dateStart="2024-03-02"
-                dateEnd="2024-03-03"
-                location="Warszawa"
-                entrantsConfirmed={15}
-                entrantsTotal={20}
-              />
-              <CompetitionCard
-                color="royalblue"
-                name="Mistrzostwa Polski Kick Light Juniorów, Seniorów i Weteranów"
-                dateStart="2024-03-02"
-                dateEnd="2024-03-03"
-                location="Warszawa"
-                entrantsConfirmed={15}
-                entrantsTotal={20}
-              />
-              <CompetitionCard
-                color="yellow"
-                name="Mistrzostwa Polski Kick Light Juniorów, Seniorów i Weteranów"
-                dateStart="2024-03-02"
-                dateEnd="2024-03-03"
-                location="Warszawa"
-                entrantsConfirmed={15}
-                entrantsTotal={20}
-              />
-            </ul>
+          <Tab
+            key="past"
+            title={isLoading ? 'Zakończone' : `Zakończone (${pastCompetitions.length})`}
+          >
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              <ul className={styles.competitionsList}>
+                {pastCompetitions.map(competition => (
+                  <CompetitionCard
+                    key={competition.id}
+                    color={competition.color}
+                    name={competition.name}
+                    dateStart={competition.date_start}
+                    dateEnd={competition.date_end}
+                    location={competition.location}
+                    participantsCount={competition?.competition_participants?.length}
+                  />
+                ))}
+              </ul>
+            )}
           </Tab>
         </Tabs>
       </ContentContainer>
@@ -109,13 +108,12 @@ const CompetitionCard = ({
   dateStart,
   dateEnd,
   location,
-  entrantsTotal,
-  entrantsConfirmed,
+  participantsCount,
 }) => {
   const router = useRouter();
 
   const domRef = useRef(null);
-  const {onClick: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
+  const {onPress: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
 
   const handleClick = e => {
     domRef.current && onRippleClickHandler(e);
@@ -141,9 +139,7 @@ const CompetitionCard = ({
         <div className={styles.entrantsIcon}>
           <People12Filled />
         </div>
-        <p className={styles.entrantsText}>
-          {entrantsConfirmed}/{entrantsTotal}
-        </p>
+        <p className={styles.entrantsText}>{participantsCount}</p>
       </div>
     </div>
   );

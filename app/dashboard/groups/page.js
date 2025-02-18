@@ -1,8 +1,8 @@
 'use client';
 
-import ContentContainer from '@/components/ContentContainer/ContentContainer';
-import MainLayout from '@/components/MainLayout/MainLayout';
-import PageTitle from '@/components/PageTitle/PageTitle';
+import {useRouter} from 'next/navigation';
+import {useEffect, useRef, useState} from 'react';
+
 import {
   Delete16Filled,
   HomeAdd20Regular,
@@ -23,94 +23,17 @@ import {
   useDisclosure,
   useRipple,
 } from '@nextui-org/react';
-import {useRouter} from 'next/navigation';
+
+import {createNewClubBranch, fetchClubBranchesAndGroups, removeClubBranch} from './actions';
+
+import ContentContainer from '@/components/ContentContainer/ContentContainer';
+import MainLayout from '@/components/MainLayout/MainLayout';
+import PageTitle from '@/components/PageTitle/PageTitle';
 import AddMemberModal from './components/AddMemberModal/AddMemberModal';
 import CoachCard from './components/AvatarCard/CoachCard';
 import NewBranchModal from './components/NewBranchModal/NewBranchModal';
 
-import {useRef} from 'react';
 import styles from './GroupsPage.module.css';
-
-const example_sections = [
-  {
-    title: 'Sekcja Łazy',
-    groups: [
-      {
-        id: 1,
-        name: 'Kickboxing Dinusie',
-        color: 'red',
-        coach: {
-          name: 'Jan Kowalski',
-          imgsrc: 'https://i.pravatar.cc/150?u=a042581f4e29026024d',
-        },
-        openingTimes: 'Pon 16:00 - 18:00, Czw 16:00 - 18:00',
-        members: 12,
-      },
-      {
-        id: 2,
-        name: 'Boks',
-        color: 'blue',
-        coach: {
-          name: 'Karol Nowak',
-          imgsrc: 'https://i.pravatar.cc/150?u=a042581f4e29026024d',
-        },
-        members: 5,
-        openingTimes: 'Pon 18:00 - 20:00',
-      },
-      {
-        id: 3,
-        name: 'Kickboxing grupa zawodnicza',
-        color: 'green',
-        coach: {
-          name: 'Szymon Kowalczyk',
-          imgsrc: 'https://i.pravatar.cc/150?u=a042581f4e29026024d',
-        },
-        members: 10,
-        openingTimes: 'Wto 16:00 - 18:00',
-      },
-    ],
-  },
-  {
-    title: 'Sekcja Katowice',
-    groups: [
-      {
-        id: 1,
-        name: 'Grupa 1',
-        color: 'yellow',
-        coach: {
-          name: 'Jan Kowalski',
-          imgsrc: 'https://i.pravatar.cc/150?u=a042581f4e29026024d',
-        },
-        members: 5,
-        openingTimes: 'Pon 16:00 - 18:00',
-      },
-      {
-        id: 2,
-        name: 'Grupa 2',
-        color: 'orange',
-        coach: {
-          name: 'Karol Nowak',
-          imgsrc: 'https://i.pravatar.cc/150?u=a042581f4e29026024d',
-        },
-        members: 7,
-        openingTimes: 'Wto 16:00 - 18:00',
-      },
-    ],
-  },
-  {
-    title: 'Sekcja Zawiercie',
-    groups: [
-      {
-        id: 1,
-        name: 'Grupa 1',
-        color: 'black',
-        coach: {name: 'Jan Kowalski', imgsrc: 'https://i.pravatar.cc/150?u=a042581f4e29026024d'},
-        members: 15,
-        openingTimes: 'Pon 16:00 - 18:00',
-      },
-    ],
-  },
-];
 
 const GroupsPage = () => {
   const {
@@ -124,6 +47,29 @@ const GroupsPage = () => {
     onOpen: onAthleteModalOpen,
     onOpenChange: onAthleteModalOpenChange,
   } = useDisclosure();
+
+  const [clubBranchesAndGroups, setClubBranchesAndGroups] = useState([]);
+
+  const handleFetchClubBranchesAndGroups = async () => {
+    const clubBranchesAndGroups = await fetchClubBranchesAndGroups();
+    setClubBranchesAndGroups(clubBranchesAndGroups);
+    console.log(clubBranchesAndGroups);
+  };
+
+  const handleCreateClubBranch = async clubBranchName => {
+    await createNewClubBranch({clubBranchName});
+    await handleFetchClubBranchesAndGroups();
+  };
+
+  const handleRemoveClubBranch = async clubBranchId => {
+    console.log('Removing club branch with id:', clubBranchId);
+    await removeClubBranch({clubBranchId});
+    await handleFetchClubBranchesAndGroups();
+  };
+
+  useEffect(() => {
+    handleFetchClubBranchesAndGroups();
+  }, []);
 
   return (
     <MainLayout>
@@ -140,11 +86,15 @@ const GroupsPage = () => {
           <Button color="primary" endContent={<PeopleCommunityAdd20Filled />}>
             Nowa grupa
           </Button>
-          <NewBranchModal isOpen={isBranchModalOpen} onOpenChange={onBranchModalOpenChange} />
+          <NewBranchModal
+            isOpen={isBranchModalOpen}
+            onOpenChange={onBranchModalOpenChange}
+            handleCreateClubBranch={handleCreateClubBranch}
+          />
         </div>
         <AddMemberModal isOpen={isAthleteModalOpen} onOpenChange={onAthleteModalOpenChange} />
         <Accordion selectionMode="multiple" defaultExpandedKeys="all">
-          {example_sections.map(section => (
+          {clubBranchesAndGroups.map(section => (
             <AccordionItem
               key={section.title}
               title={`${section.title} (${section.groups.length})`}
@@ -167,7 +117,13 @@ const GroupsPage = () => {
                 ))}
               </ul>
               <Tooltip content="Usuń sekcję i jej grupy" delay={700}>
-                <Button variant="light" isIconOnly fullWidth className={styles.deleteBranchButton}>
+                <Button
+                  variant="light"
+                  isIconOnly
+                  fullWidth
+                  className={styles.deleteBranchButton}
+                  onPress={() => handleRemoveClubBranch(section.id)}
+                >
                   <Delete16Filled />
                 </Button>
               </Tooltip>
@@ -185,7 +141,7 @@ const GroupCard = ({id, name, color, members, openingTimes, coach, onAddMemberCl
   const router = useRouter();
 
   const domRef = useRef(null);
-  const {onClick: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
+  const {onPress: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
 
   const handleClick = e => {
     domRef.current && onRippleClickHandler(e);

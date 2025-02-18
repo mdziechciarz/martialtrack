@@ -22,9 +22,7 @@ import styles from './CoachPage.module.css';
 const NewCoachPage = () => {
   const methods = useForm();
 
-  const onSubmit = data => {
-    console.log(data);
-  };
+  const onSubmit = data => {};
 
   return (
     <MainLayout>

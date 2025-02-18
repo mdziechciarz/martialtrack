@@ -24,14 +24,12 @@ const RecipientsCard = ({
   const [athletes, setAthletes] = useState([]);
   const [groups, setGroups] = useState([]);
   const [coaches, setCoaches] = useState([]);
-
-  // const [selectedRecipients, setSelectedRecipients] = useState([]);
+  const [competitions, setCompetitions] = useState([]);
 
   useEffect(() => {
     // Get all athletes
     const supabase = createClient();
 
-    console.log('Fetching athletes...');
     const fetchAthletes = async () => {
       const {data, error} = await supabase.from('athletes').select('*');
       if (error) {
@@ -56,9 +54,18 @@ const RecipientsCard = ({
       setCoaches(data);
     };
 
+    const fetchCompetitions = async () => {
+      const {data, error} = await supabase.from('competitions').select('*');
+      if (error) {
+        setCompetitions([]);
+      }
+      setCompetitions(data);
+    };
+
     fetchAthletes();
     fetchGroups();
     fetchCoaches();
+    fetchCompetitions();
   }, []);
 
   const handleAddRecipient = id => {
@@ -71,6 +78,9 @@ const RecipientsCard = ({
     } else if (groups.some(group => group.id === id)) {
       const group = groups.find(group => group.id === id);
       setSelectedRecipients([...selectedRecipients, {type: 'group', ...group}]);
+    } else if (competitions.some(competition => competition.id === id)) {
+      const competition = competitions.find(competition => competition.id === id);
+      setSelectedRecipients([...selectedRecipients, {type: 'competition', ...competition}]);
     }
   };
 
@@ -89,20 +99,14 @@ const RecipientsCard = ({
             rules={{required: 'Pole zamawiający jest wymagane'}}
             render={({field}) => ( */}
           <Autocomplete
-            // {...field}
-            // onSelectionChange={key => field.onChange({target: {value: key}})}
             defaultItems={athletes}
             label="Dodaj odbiorcę"
-            // placeholder="Dla kogo?"
             isRequired
             onSelectionChange={key => {
               handleAddRecipient(key);
             }}
             selectedKey={null}
-            // {...register('recipients', {validate: value => selectedRecipients.length > 0})}
-            // isInvalid={!!errors.recipients}
-            // isInvalid={!!errors.recipient}
-            // errorMessage={errors.recipient?.message}
+            validationBehavior="aria"
           >
             <AutocompleteSection showDivider title="Zawodnicy">
               {athletes
@@ -144,6 +148,45 @@ const RecipientsCard = ({
                   </AutocompleteItem>
                 ))}
             </AutocompleteSection>
+            <AutocompleteSection title="Członkowie grup">
+              {groups
+                .filter(group => selectedRecipients.every(recipient => recipient.id !== group.id))
+                .map(group => (
+                  <AutocompleteItem key={group.id} textValue={group.name} value={group.id}>
+                    <div
+                      className={`${styles.chipContainer}`}
+                      style={{backgroundColor: 'transparent'}}
+                    >
+                      <i
+                        className={styles.groupDot}
+                        style={{backgroundColor: group.color, marginRight: 4}}
+                      />
+                      <span className={styles.name}>{group.name}</span>
+                    </div>
+                  </AutocompleteItem>
+                ))}
+            </AutocompleteSection>
+            <AutocompleteSection title="Uczestnicy zawodów">
+              {competitions
+                .filter(competition =>
+                  selectedRecipients.every(recipient => recipient.id !== competition.id)
+                )
+                .map(competition => (
+                  <AutocompleteItem
+                    key={competition.id}
+                    textValue={competition.name}
+                    value={competition.id}
+                  >
+                    <div
+                      className={`${styles.chipContainer}`}
+                      style={{backgroundColor: 'transparent'}}
+                    >
+                      <i className={styles.groupDot} style={{backgroundColor: competition.color}} />
+                      <span className={styles.name}>{competition.name}</span>
+                    </div>
+                  </AutocompleteItem>
+                ))}
+            </AutocompleteSection>
           </Autocomplete>
 
           {/* )} */}
@@ -161,6 +204,7 @@ const RecipientsCard = ({
                 handleAddRecipient={handleAddRecipient}
                 groups={groups}
                 coaches={coaches}
+                competitions={competitions}
               />
             </AccordionItem>
           </Accordion>
@@ -206,6 +250,21 @@ const RecipientsCard = ({
                 />
               ))}
           </ul>
+          <ul>
+            {selectedRecipients
+              .filter(recipient => recipient.type === 'competition')
+              .map(recipient => (
+                <CompetitionChip
+                  key={recipient.id}
+                  name={recipient.name}
+                  color={recipient.color}
+                  dates={`${recipient.date_start} - ${recipient.date_end.slice(8)}`}
+                  location={recipient.location}
+                  isRemovable
+                  onClick={() => handleRemoveRecipient(recipient.id)}
+                />
+              ))}
+          </ul>
         </div>
       </div>
     </Card>
@@ -219,6 +278,7 @@ const SuggestedRecipientsSection = ({
   handleAddRecipient = () => {},
   groups = [],
   coaches = [],
+  competitions = [],
 }) => {
   return (
     <div className={styles.suggestedGrid}>
@@ -238,7 +298,7 @@ const SuggestedRecipientsSection = ({
         </ul>
       </div>
       <div className={styles.groupsContainer}>
-        <p>Grupy</p>
+        <p>Członkowie grup</p>
         <ul>
           {groups
             .filter(group => selectedRecipients.every(recipient => recipient.id !== group.id))
@@ -255,18 +315,24 @@ const SuggestedRecipientsSection = ({
       <div className={styles.competitionsContainer}>
         <p>Uczestnicy zawodów</p>
         <ul>
-          <CompetitionChip
-            name="Mistrzostwa Polski Kick Light Juniorów, Seniorów i Weteranów"
-            dates="02-03.03.2024"
-            location="Warszawa"
-            color="royalblue"
-          />
-          <CompetitionChip
-            name="Puchar Świata WAKO w Kickboxingu"
-            dates="11-17.06.2024"
-            location="Budapeszt"
-            color="purple"
-          />
+          {competitions
+            .filter(competition =>
+              selectedRecipients.every(recipient => recipient.id !== competition.id)
+            )
+            .map(competition => (
+              <CompetitionChip
+                key={competition.id}
+                name={competition.name}
+                color={competition.color}
+                dates={
+                  competition.date_start != competition.date_end
+                    ? `${competition.date_start} - ${competition.date_end.slice(8)}`
+                    : competition.date_start
+                }
+                location={competition.location}
+                onClick={() => handleAddRecipient(competition.id)}
+              />
+            ))}
         </ul>
       </div>
     </div>
@@ -306,7 +372,12 @@ const CompetitionChip = ({
   onClick = () => {},
 }) => {
   return (
-    <div className={`${styles.chipContainer} ${styles.competitionChipContainer}`} onClick={onClick}>
+    <div
+      className={`${styles.chipContainer} ${styles.competitionChipContainer} ${
+        isRemovable && styles.removable
+      }`}
+      onClick={onClick}
+    >
       <div className={styles.groupDot} style={{backgroundColor: color}}></div>
       <span className={styles.competitionName}>
         {name}
@@ -314,7 +385,7 @@ const CompetitionChip = ({
         {dates}, {location}
       </span>
       <span className={styles.userChipIcon}>
-        <Add16Filled />
+        {isRemovable ? <Dismiss16Filled /> : <Add16Filled />}
       </span>
     </div>
   );

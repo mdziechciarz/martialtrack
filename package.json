@@ -12,13 +12,14 @@
     "@fluentui/react": "^8.117.2",
     "@fluentui/react-icons": "^2.0.234",
     "@internationalized/date": "^3.5.4",
-    "@nextui-org/react": "^2.4.0",
+    "@nextui-org/react": "^2.6.11",
     "@nivo/bar": "^0.87.0",
     "@nivo/core": "^0.87.0",
     "@react-aria/i18n": "^3.11.1",
     "@supabase/ssr": "^0.4.0",
     "@supabase/supabase-js": "^2.45.1",
     "@uiw/react-color-colorful": "^2.3.0",
+    "base64-arraybuffer": "^1.0.2",
     "classnames": "^2.5.1",
     "framer-motion": "^11.0.28",
     "next": "14.1.4",
@@ -28,6 +29,7 @@
     "react-hook-form": "^7.53.1",
     "react-image-crop": "^11.0.5",
     "sonner": "^1.5.0",
+    "twilio": "^5.4.3",
     "uuid": "^11.0.2"
   },
   "devDependencies": {

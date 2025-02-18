@@ -14,6 +14,7 @@ const MainInfoCard = ({className, register, control, errors}) => {
           isRequired
           {...register('name', {required: true})}
           isInvalid={!!errors.name}
+          validationBehavior="aria"
         />
         <Controller
           name="date"
@@ -44,6 +45,7 @@ const MainInfoCard = ({className, register, control, errors}) => {
               isInvalid={!!errors.date}
               errorMessage={errors.date?.message}
               {...field}
+              validationBehavior="aria"
             />
           )}
         />
@@ -53,6 +55,7 @@ const MainInfoCard = ({className, register, control, errors}) => {
           labelPlacement="outside"
           placeholder="Wpisz lokalizację"
           {...register('location')}
+          validationBehavior="aria"
         />
         <Select
           label="Ranga zawodów"
@@ -63,6 +66,7 @@ const MainInfoCard = ({className, register, control, errors}) => {
           disallowEmptySelection
           defaultSelectedKeys={['nationalChampionship']}
           {...register('level', {required: true})}
+          validationBehavior="aria"
         >
           <SelectItem key="worldChampionship">Mistrzostwa Świata</SelectItem>
           <SelectItem key="europeanChampionship">Mistrzostwa Europy</SelectItem>
@@ -82,6 +86,7 @@ const MainInfoCard = ({className, register, control, errors}) => {
           label="Kolor"
           labelPlacement="outside"
           {...register('color')}
+          validationBehavior="aria"
         />
       </CardGrid>
     </Card>

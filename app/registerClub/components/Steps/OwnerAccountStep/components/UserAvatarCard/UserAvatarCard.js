@@ -8,17 +8,23 @@ import userAvatarPlaceholder from './user avatar placeholder.svg';
 
 import styles from './UserAvatarCard.module.css';
 
-const UserAvatarCard = ({children, className = ''}) => {
+const UserAvatarCard = ({children, className = '', setValue, currentAvatarSrc}) => {
   const {
     isOpen: isModalOpen,
     onOpen: onModalOpen,
     onOpenChange: onModalOpenChange,
   } = useDisclosure();
 
-  const [avatarSrc, setAvatarSrc] = useState(null);
+  const [avatarSrc, setAvatarSrc] = useState(currentAvatarSrc || null);
 
   const handleRemoveAvatar = () => {
-    setLogoSrc(null);
+    setValue('avatar', null);
+    setAvatarSrc(null);
+  };
+
+  const handleSelectAvatar = avatar => {
+    setValue('avatar', avatar);
+    setAvatarSrc(avatar);
   };
 
   return (
@@ -26,7 +32,7 @@ const UserAvatarCard = ({children, className = ''}) => {
       <NewAvatarModal
         isOpen={isModalOpen}
         onOpenChange={onModalOpenChange}
-        setAvatarSrc={setAvatarSrc}
+        setAvatarSrc={handleSelectAvatar}
       />
       <div className={styles.avatarWrapper}>
         <Image
@@ -45,7 +51,7 @@ const UserAvatarCard = ({children, className = ''}) => {
               isIconOnly
               className={styles.removePhotoButton}
               size="sm"
-              onClick={handleRemoveAvatar}
+              onPress={handleRemoveAvatar}
             >
               <Delete16Filled />
             </Button>

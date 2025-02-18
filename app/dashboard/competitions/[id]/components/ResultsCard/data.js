@@ -45,7 +45,7 @@ const users = [
     age_category: 'Senior',
     formula: 'Pointfighting',
     weight_or_height_category: '-79kg',
-    result: 1,
+    result: 'gold',
   },
   {
     id: 2,
@@ -55,7 +55,7 @@ const users = [
     age_category: 'Junior',
     formula: 'Light Contact',
     weight_or_height_category: '-74kg',
-    result: 2,
+    result: 'silver',
   },
   {
     id: 3,
@@ -65,7 +65,7 @@ const users = [
     age_category: 'Senior',
     formula: 'Full Contact',
     weight_or_height_category: '-79kg',
-    result: 3,
+    result: 'bronze',
   },
   {
     id: 4,
@@ -105,7 +105,7 @@ const users = [
     age_category: 'Junior',
     formula: 'Light Contact',
     weight_or_height_category: '-63kg',
-    result: 1,
+    result: 'gold',
   },
   {
     id: 8,

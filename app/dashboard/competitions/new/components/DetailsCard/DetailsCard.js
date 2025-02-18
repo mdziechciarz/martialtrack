@@ -14,12 +14,14 @@ const DetailsCard = ({className, register, control, errors}) => {
           placeholder="Opis zawodów"
           minRows={4}
           {...register('description')}
+          validationBehavior="aria"
         />
         <Input
           label="Strona internetowa"
           labelPlacement="outside"
           placeholder="Adres do strony zawodów"
           {...register('website')}
+          validationBehavior="aria"
         />
       </CardGrid>
     </Card>

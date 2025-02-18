@@ -44,6 +44,7 @@ const EditModeContent = ({register, errors, control, currentPhoneNumber, current
         isInvalid={!!errors.phoneNumber}
         isRequired
         defaultValue={currentPhoneNumber}
+        validationBehavior="aria"
       />
       <Input
         {...register('email', {required: true})}
@@ -53,6 +54,7 @@ const EditModeContent = ({register, errors, control, currentPhoneNumber, current
         isInvalid={!!errors.email}
         isRequired
         defaultValue={currentEmail}
+        validationBehavior="aria"
       />
     </CardGrid>
   );

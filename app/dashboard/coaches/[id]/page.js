@@ -28,7 +28,6 @@ const CoachPage = () => {
           variant="underlined"
           color="primary"
           activeIndex={0}
-          onChange={index => console.log(index)}
           classNames={{
             base: styles.base,
             tabList: styles.tabList,

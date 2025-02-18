@@ -5,10 +5,10 @@ import ReactCrop, {centerCrop, makeAspectCrop} from 'react-image-crop';
 
 import 'react-image-crop/dist/ReactCrop.css';
 
-const ASPECT_RATIO = 1;
+const ASPECT_RATIO = 5;
 const MIN_DIMENSION = 150;
 
-export default function NewBackgroundPhotoModal({isOpen, onOpenChange}) {
+export default function NewBackgroundPhotoModal({isOpen, onOpenChange, handleUpdateCoverPhoto}) {
   const imgRef = useRef(null);
   const inputRef = useRef(null);
   const [imgSrc, setImgSrc] = useState('');
@@ -28,8 +28,12 @@ export default function NewBackgroundPhotoModal({isOpen, onOpenChange}) {
       imageElement.addEventListener('load', e => {
         if (error) setError('');
         const {naturalWidth, naturalHeight} = e.currentTarget;
-        if (naturalWidth < MIN_DIMENSION || naturalHeight < MIN_DIMENSION) {
-          setError('Image must be at least 150 x 150 pixels.');
+        if (naturalWidth < MIN_DIMENSION * ASPECT_RATIO || naturalHeight < MIN_DIMENSION) {
+          setError(
+            `Zdjęcie musi mnieć przynajmniej ${
+              MIN_DIMENSION * ASPECT_RATIO
+            } x ${MIN_DIMENSION} pixeli.`
+          );
           return setImgSrc('');
         }
       });
@@ -61,8 +65,8 @@ export default function NewBackgroundPhotoModal({isOpen, onOpenChange}) {
     const {width, height} = image;
     const {width: cropWidth, height: cropHeight} = crop;
 
-    const targetImageSize = 300;
-    canvas.width = targetImageSize;
+    const targetImageSize = 200;
+    canvas.width = targetImageSize * ASPECT_RATIO;
     canvas.height = targetImageSize;
 
     const ctx = canvas.getContext('2d');
@@ -78,13 +82,12 @@ export default function NewBackgroundPhotoModal({isOpen, onOpenChange}) {
       image.naturalHeight * (cropHeight / 100),
       0,
       0,
-      targetImageSize,
+      targetImageSize * ASPECT_RATIO,
       targetImageSize
     );
 
     const croppedImage = canvas.toDataURL('image/jpeg');
-    localStorage.setItem('croppedImage', croppedImage);
-    // console.log(croppedImage);
+    handleUpdateCoverPhoto(croppedImage);
     handleCloseModal();
   };
 
@@ -100,6 +103,7 @@ export default function NewBackgroundPhotoModal({isOpen, onOpenChange}) {
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       placement="center"
+      size="2xl"
       onClose={handleCloseModal}
     >
       <ModalContent>
@@ -134,7 +138,6 @@ export default function NewBackgroundPhotoModal({isOpen, onOpenChange}) {
                   <ReactCrop
                     crop={crop}
                     onChange={(pixelCrop, percentCrop) => setCrop(percentCrop)}
-                    circularCrop
                     keepSelection
                     aspect={ASPECT_RATIO}
                     minWidth={MIN_DIMENSION}

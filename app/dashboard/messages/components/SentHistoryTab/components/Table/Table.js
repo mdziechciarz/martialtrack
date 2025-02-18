@@ -5,6 +5,7 @@ import {
   MoreVertical20Filled as VerticalDotsIcon,
 } from '@fluentui/react-icons';
 import {
+  Avatar,
   Button,
   Dropdown,
   DropdownItem,
@@ -12,6 +13,7 @@ import {
   DropdownTrigger,
   Input,
   Pagination,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -20,7 +22,7 @@ import {
   TableRow,
 } from '@nextui-org/react';
 import React from 'react';
-import {columns, sentMessages} from './data';
+// import {sentMessages} from './data';
 
 import styles from './Table.module.css';
 
@@ -28,17 +30,47 @@ const capitalize = str => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-const INITIAL_VISIBLE_COLUMNS = ['date', 'recipients', 'subject', 'content', 'actions'];
+const columns = [
+  {name: 'ID', uid: 'id', sortable: true},
+  {name: 'DATA', uid: 'date', sortable: true},
+  {name: 'TEMAT', uid: 'subject'},
+  {name: 'TREŚĆ', uid: 'content'},
+  {name: 'ODBIORCY', uid: 'message_recipients'},
+  {name: '', uid: 'actions'},
+];
 
-export default function SentMessagesTable() {
+const INITIAL_VISIBLE_COLUMNS = ['date', 'message_recipients', 'subject', 'content', 'actions'];
+
+const AvaratName = ({imgSrc, name}) => (
+  <div className={styles.avatarNameContainer}>
+    {/* <Image src={imgSrc} alt={name} width={24} height={24} className={styles.avatar} /> */}
+    <Avatar
+      src={imgSrc}
+      alt={name}
+      name={name}
+      size="sm"
+      className={styles.avatar}
+      classNames={{
+        base: styles.avatarBase,
+      }}
+    />
+    <span className={styles.name}>{name}</span>
+  </div>
+);
+
+export default function SentMessagesTable({messages, isLoading, handleRemoveMessage}) {
   return (
     <Card title="Wysłane wiadomości" className={styles.cardContainer}>
-      <MessagesTable />
+      <MessagesTable
+        messages={messages}
+        isLoading={isLoading}
+        handleRemoveMessage={handleRemoveMessage}
+      />
     </Card>
   );
 }
 
-const MessagesTable = () => {
+const MessagesTable = ({messages: sentMessages = [], isLoading = false, handleRemoveMessage}) => {
   const [filterValue, setFilterValue] = React.useState('');
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -87,10 +119,22 @@ const MessagesTable = () => {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
+  const renderCell = React.useCallback((message, columnKey) => {
+    const cellValue = message[columnKey];
 
     switch (columnKey) {
+      case 'message_recipients': {
+        return (
+          <ul className={styles.recipientsContainer}>
+            {cellValue.map(recipient => {
+              if (recipient.coach)
+                return <AvaratName key={recipient.coach.id} name={recipient.coach.full_name} />;
+              else if (recipient.athlete)
+                return <AvaratName key={recipient.athlete.id} name={recipient.athlete.full_name} />;
+            })}
+          </ul>
+        );
+      }
       case 'actions':
         return (
           <div className="relative flex justify-end items-center gnap-2">
@@ -103,7 +147,7 @@ const MessagesTable = () => {
               <DropdownMenu>
                 <DropdownItem>View</DropdownItem>
                 <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+                <DropdownItem onPress={() => handleRemoveMessage(message.id)}>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -266,7 +310,7 @@ const MessagesTable = () => {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={'No users found'} items={sortedItems}>
+      <TableBody emptyContent={isLoading ? <Spinner /> : 'Brak wiadomości.'} items={sortedItems}>
         {item => (
           <TableRow key={item.id}>
             {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}

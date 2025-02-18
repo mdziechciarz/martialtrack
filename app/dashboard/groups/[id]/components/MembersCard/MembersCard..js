@@ -1,3 +1,5 @@
+'use client';
+
 import {
   CheckboxChecked20Filled,
   ChevronDown20Regular as ChevronDownIcon,

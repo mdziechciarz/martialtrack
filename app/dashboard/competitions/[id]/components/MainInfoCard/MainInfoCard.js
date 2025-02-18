@@ -147,6 +147,7 @@ const EditableContent = ({
             isInvalid={!!errors.date}
             errorMessage={errors.date?.message}
             {...field}
+            validationBehavior="aria"
           />
         )}
       />
@@ -158,6 +159,7 @@ const EditableContent = ({
         defaultValue={currentLocation}
         isInvalid={!!errors.location}
         {...register('location', {required: true})}
+        validationBehavior="aria"
       />
       <Select
         label="Ranga zawodów"
@@ -168,6 +170,7 @@ const EditableContent = ({
         isInvalid={!!errors.level}
         disallowEmptySelection
         {...register('level', {required: true})}
+        validationBehavior="aria"
       >
         <SelectItem key="worldChampionship">Mistrzostwa Świata</SelectItem>
         <SelectItem key="europeanChampionship">Mistrzostwa Europy</SelectItem>
@@ -187,6 +190,7 @@ const EditableContent = ({
         label="Kolor"
         labelPlacement="outside"
         {...register('color')}
+        validationBehavior="aria"
       />
     </CardGrid>
   );

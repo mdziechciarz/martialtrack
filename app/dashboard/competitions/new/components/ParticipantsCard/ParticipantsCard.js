@@ -27,34 +27,65 @@ import {
   TableRow,
   useDisclosure,
 } from '@nextui-org/react';
-import {columns, groupOptions, users} from './data';
 
 import Card from '@/components/Card/Card';
 import AddParticipantModal from './components/AddParticipantModal/AddParticipantModal';
 import EditParticipantModal from './components/EditParticipantModal/EditParticipantModal';
 
+import {createClient} from '@/utils/supabase/client';
 import classNames from 'classnames';
+import Link from 'next/link';
 import styles from './ParticipantsCard.module.css';
 
 const capitalize = str => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
+const columns = [
+  {name: 'ZAWODNIK', uid: 'name', sortable: true},
+  {name: 'FORMUŁY', uid: 'categories'},
+  {name: 'GRUPY  ', uid: 'groups'},
+  {name: 'DATA URODZENIA  ', uid: 'date_of_birth', sortable: true},
+  {name: 'ZGODA', uid: 'consent', sortable: true},
+  {name: 'OPŁATA', uid: 'payment', sortable: true},
+  {name: 'WAGA', uid: 'weight', sortable: true},
+  {name: 'WZROST', uid: 'height', sortable: true},
+  // {name: 'BADANIA LEKARSKIE', uid: 'medical_checkups', sortable: true},
+  // {name: 'STOPIEŃ', uid: 'level', sortable: true},
+  {name: '', uid: 'actions'},
+];
+
 const INITIAL_VISIBLE_COLUMNS = [
   'name',
-  'formulas',
+  'categories',
   'payment',
   'consent',
-  'medical_checkups',
+  // 'medical_checkups',
   'weight',
   'height',
   'actions',
 ];
 
-export default function ParticipantsCard({className = ''}) {
+export default function ParticipantsCard({
+  className = '',
+  participants = [],
+  handleAddParticipant,
+  handleRemoveParticipant,
+  handleUpdateParticipant,
+}) {
+  const supabase = createClient();
+
+  const [groups, setGroups] = useState([]);
+
   return (
     <Card title="Uczestnicy" className={`${styles.cardContainer} ${className}`}>
-      <ParticipantsTable />
+      <ParticipantsTable
+        participants={participants}
+        groupOptions={groups}
+        handleAddParticipant={handleAddParticipant}
+        handleRemoveParticipant={handleRemoveParticipant}
+        handleUpdateParticipant={handleUpdateParticipant}
+      />
     </Card>
   );
 }
@@ -69,13 +100,13 @@ const AddParticipantButton = ({onClick = () => {}}) => {
 
   if (isMobile) {
     return (
-      <Button isIconOnly onClick={onClick} color="primary">
+      <Button isIconOnly onPress={onClick} color="primary">
         <PersonAdd20Filled />
       </Button>
     );
   } else {
     return (
-      <Button onClick={onClick} color="primary" endContent={<PersonAdd20Filled />}>
+      <Button onPress={onClick} color="primary" endContent={<PersonAdd20Filled />}>
         Nowy uczestnik
       </Button>
     );
@@ -90,14 +121,33 @@ const AvaratName = ({id, imgSrc, name}) => {
   };
 
   return (
-    <div onClick={handleClick} className={styles.avatarNameContainer}>
-      <Image src={imgSrc} alt={name} width={24} height={24} className={styles.avatar} />
+    // <Link onClick={handleClick} className={styles.avatarNameContainer}>
+    <Link
+      href={`/dashboard/athletes/${id}`}
+      rel="noopener noreferrer"
+      target="_blank"
+      className={styles.avatarNameContainer}
+    >
+      {/* <Image src={imgSrc} alt={name} width={24} height={24} className={styles.avatar} /> */}
+      <Image
+        src={'https://i.pravatar.cc/150?img=45x'}
+        alt={name}
+        width={24}
+        height={24}
+        className={styles.avatar}
+      />
       <span className={styles.name}>{name}</span>
-    </div>
+    </Link>
   );
 };
 
-const ParticipantsTable = () => {
+const ParticipantsTable = ({
+  participants = [],
+  groupOptions,
+  handleAddParticipant,
+  handleRemoveParticipant,
+  handleUpdateParticipant,
+}) => {
   const [filterValue, setFilterValue] = React.useState('');
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -118,19 +168,21 @@ const ParticipantsTable = () => {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredParticipants = [...participants];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter(user =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredParticipants = filteredParticipants.filter(participant =>
+        participant.athlete.full_name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (statusFilter !== 'all' && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredUsers = filteredUsers.filter(user => Array.from(statusFilter).includes(user.status));
-    }
+    // if (statusFilter !== 'all' && Array.from(statusFilter).length !== statusOptions.length) {
+    //   filteredParticipants = filteredParticipants.filter(user =>
+    //     Array.from(statusFilter).includes(user.status)
+    //   );
+    // }
 
-    return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+    return filteredParticipants;
+  }, [participants, filterValue, statusFilter]);
 
   const {
     isOpen: isModalOpen,
@@ -146,15 +198,14 @@ const ParticipantsTable = () => {
 
   const [editedParticipant, setEditedParticipant] = React.useState(null);
 
-  const handleEditClick = (name, athleteId, weight, height, consent, payment, categories) => {
+  const handleEditClick = (athlete, weight, height, consent, payment, categories) => {
     setEditedParticipant({
-      name,
-      athleteId,
+      athlete,
       weight,
       height,
       consent,
       payment,
-      categories,
+      categories: Object.values(categories),
     });
     onEditionModalOpen();
   };
@@ -178,8 +229,8 @@ const ParticipantsTable = () => {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
+  const renderCell = React.useCallback((participant, columnKey) => {
+    const cellValue = participant[columnKey];
 
     switch (columnKey) {
       case 'name':
@@ -187,19 +238,33 @@ const ParticipantsTable = () => {
           // <User avatarProps={{src: user.avatar}} description={user.email} name={cellValue}>
           //   {user.email}
           // </User>
-          <AvaratName id={user.id} imgSrc={user.avatar} name={user.name} />
+          <AvaratName
+            id={participant.athlete.id}
+            imgSrc={participant.athlete.avatar}
+            name={participant.athlete.full_name}
+          />
         );
+      case 'date_of_birth':
+        return <p>{participant.athlete.date_of_birth}</p>;
       case 'medical_checkups':
         return (
           <p className={styles.medicalCheckupsCell}>
             {cellValue}
-            {cellValue < new Date().toISOString().split('T')[0] ? (
-              <DismissCircle16Filled style={{color: '#FF5151'}} />
-            ) : (
-              <CheckboxChecked20Filled style={{color: '#7BD879'}} />
-            )}
+            <CheckboxChecked20Filled style={{color: '#7BD879'}} />
           </p>
+          // <p className={styles.medicalCheckupsCell}>
+          //   {cellValue}
+          //   {cellValue < new Date().toISOString().split('T')[0] ? (
+          //     <DismissCircle16Filled style={{color: '#FF5151'}} />
+          //   ) : (
+          //     <CheckboxChecked20Filled style={{color: '#7BD879'}} />
+          //   )}
+          // </p>
         );
+      case 'weight':
+        return <p>{cellValue}kg</p>;
+      case 'height':
+        return <p>{cellValue}cm</p>;
       case 'payment':
         return (
           <p className={styles.medicalCheckupsCell}>
@@ -223,12 +288,12 @@ const ParticipantsTable = () => {
       case 'groups':
         return (
           <ul className={styles.groupsList}>
-            {user.groups.map(group => (
-              <li key={group.uid} className={styles.group}>
+            {participant.athlete.group_members.map(({groups: group}) => (
+              <li key={group.id} className={styles.group}>
                 <Chip
                   variant="dot"
                   classNames={{base: styles.chipBase, dot: styles.chipDot}}
-                  style={{'--dot-color': groupOptions.find(g => g.uid === group.uid).color}}
+                  style={{'--dot-color': group.color}}
                 >
                   {group.name}
                 </Chip>
@@ -236,15 +301,22 @@ const ParticipantsTable = () => {
             ))}
           </ul>
         );
-      case 'formulas':
+      case 'categories':
         // return <p style={{whiteSpace: 'pre'}}>{cellValue}</p>;
         return (
           <ul className={styles.groupsList}>
-            {cellValue.split('\n').map(formula => (
-              <li key={formula}>
-                <Chip variant="flat">{formula}</Chip>
-              </li>
-            ))}
+            {Object.keys(cellValue).map(key => {
+              const category = cellValue[key];
+              return (
+                <li key={key}>
+                  <Chip variant="flat">
+                    {category.formula + ', ' || ''}
+                    {category.ageCategory + ', ' || ''}
+                    {category.weightAndHeightCategory || ''}
+                  </Chip>
+                </li>
+              );
+            })}
           </ul>
         );
       case 'actions':
@@ -258,21 +330,25 @@ const ParticipantsTable = () => {
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem
-                  onClick={() =>
+                  onPress={() =>
                     handleEditClick(
-                      user.name,
-                      user.id,
-                      user.weight,
-                      user.height,
-                      user.consent,
-                      user.payment,
-                      user.categories
+                      participant.athlete,
+                      participant.weight,
+                      participant.height,
+                      participant.consent,
+                      participant.payment,
+                      participant.categories
                     )
                   }
                 >
                   Edit
                 </DropdownItem>
-                <DropdownItem color="danger">Delete</DropdownItem>
+                <DropdownItem
+                  color="danger"
+                  onPress={() => handleRemoveParticipant(participant.athlete.id)}
+                >
+                  Delete
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -316,13 +392,18 @@ const ParticipantsTable = () => {
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <AddParticipantModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} />
+        <AddParticipantModal
+          isOpen={isModalOpen}
+          onOpenChange={onModalOpenChange}
+          handleAddParticipant={handleAddParticipant}
+        />
         {editedParticipant && (
           <EditParticipantModal
             isOpen={isEditionModalOpen}
             onOpenChange={onEditionModalOpenChange}
             editedParticipant={editedParticipant}
-            onClosed={() => setEditedParticipant(null)}
+            handleUpdateParticipant={handleUpdateParticipant}
+            // onClosed={() => setEditedParticipant(null)}
           />
         )}
         <div className="flex justify-between gap-3 items-end">
@@ -382,7 +463,7 @@ const ParticipantsTable = () => {
     statusFilter,
     visibleColumns,
     onRowsPerPageChange,
-    users.length,
+    participants.length,
     onSearchChange,
     hasSearchFilter,
     onModalOpen,
@@ -457,7 +538,7 @@ const ParticipantsTable = () => {
       </TableHeader>
       <TableBody emptyContent={'Nie dodano jeszcze żadnych uczestników.'} items={sortedItems}>
         {item => (
-          <TableRow key={item.id}>
+          <TableRow key={item.athlete.id}>
             {columnKey => (
               <TableCell
                 className={classNames({

@@ -1,0 +1,49 @@
+.mainContainer {
+  /* height: 100%; */
+  /* overflow: auto; */
+
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-row-gap: 16px;
+}
+
+@media screen and (min-width: 900px) {
+  .mainContainer {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 24px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .mainContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .mainContainer {
+    margin: 40px 0;
+  }
+
+  /* .avatarCard {
+    grid-column: 1 / 2;
+    grid-row: 1 / 3;
+  } */
+
+  .groupsCard {
+    grid-column: 3 / 4;
+    grid-row: 1 / 3;
+  }
+
+  .licensesCard {
+    grid-column: 3 / 4;
+    grid-row: 3 / 4;
+  }
+
+  .medicalDataCard {
+    display: none;
+  }
+
+  .contactCard {
+    grid-column: 1 / 2;
+    grid-row: 3 / 4;
+  }
+}

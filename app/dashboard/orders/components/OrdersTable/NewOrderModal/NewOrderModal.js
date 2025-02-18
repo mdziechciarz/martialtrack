@@ -18,20 +18,19 @@ import {
 
 import {ReceiptAdd20Filled} from '@fluentui/react-icons';
 
-export default function NewOrderModal({isOpen, onOpenChange}) {
+export default function NewOrderModal({isOpen, onOpenChange, handleCreateNewOrder}) {
   const [athletes, setAthletes] = useState([]);
 
   useEffect(() => {
     // Get all athletes
     const supabase = createClient();
 
-    console.log('Fetching athletes...');
     const fetchAthletes = async () => {
       const {data, error} = await supabase.from('athletes').select('*');
       if (error) {
         setAthletes([]);
       }
-      setAthletes(data);
+      setAthletes(data.map(athlete => ({...athlete, groups: []})));
     };
 
     fetchAthletes();
@@ -46,12 +45,12 @@ export default function NewOrderModal({isOpen, onOpenChange}) {
   } = useForm();
 
   const onSubmit = data => {
-    console.log('Submitted');
-    console.log(data);
+    handleCreateNewOrder(data);
+    reset();
+    onOpenChange(false);
   };
 
   const handleCancel = () => {
-    console.log('closing modal');
     reset();
   };
 
@@ -77,6 +76,7 @@ export default function NewOrderModal({isOpen, onOpenChange}) {
                       isRequired
                       isInvalid={!!errors.recipient}
                       errorMessage={errors.recipient?.message}
+                      validationBehavior="aria"
                     >
                       {user => (
                         <AutocompleteItem key={user.id} textValue={user.full_name} value={user.id}>
@@ -99,9 +99,10 @@ export default function NewOrderModal({isOpen, onOpenChange}) {
 
                 <Input
                   isRequired
-                  {...register('amount', {required: 'Pole należność jest wymagane'})}
-                  isInvalid={!!errors.amount}
-                  errorMessage={errors.amount?.message}
+                  {...register('price', {required: 'Pole należność jest wymagane'})}
+                  validationBehavior="aria"
+                  isInvalid={!!errors.price}
+                  errorMessage={errors.price?.message}
                   type="number"
                   label="Należność"
                   placeholder="0.00"
@@ -114,6 +115,7 @@ export default function NewOrderModal({isOpen, onOpenChange}) {
                 <Textarea
                   isRequired
                   {...register('order', {required: 'Pole zamaówienie jest wymagane'})}
+                  validationBehavior="aria"
                   isInvalid={!!errors.order}
                   errorMessage={errors.order?.message}
                   label="Zamówienie"

@@ -59,6 +59,7 @@ const EditModeContent = ({
             message: 'Ulica jest wymagana',
           },
         })}
+        validationBehavior="aria"
       />
       <Input
         isRequired
@@ -73,6 +74,7 @@ const EditModeContent = ({
             message: 'Nr domu/mieszkania jest wymagany',
           },
         })}
+        validationBehavior="aria"
       />
       <Input
         isRequired
@@ -87,6 +89,7 @@ const EditModeContent = ({
             message: 'Miasto jest wymagane',
           },
         })}
+        validationBehavior="aria"
       />
       <Input
         isRequired
@@ -101,6 +104,7 @@ const EditModeContent = ({
             message: 'Kod pocztowy jest wymagany',
           },
         })}
+        validationBehavior="aria"
       />
     </CardGrid>
   );

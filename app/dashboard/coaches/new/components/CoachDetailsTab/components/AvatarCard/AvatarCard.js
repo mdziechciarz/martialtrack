@@ -85,6 +85,7 @@ const EditModeContent = ({currentName, currentImgSrc, register, errors, setValue
         isRequired
         isInvalid={!!errors.fullName}
         errorMessage={errors.fullName?.message}
+        validationBehavior="aria"
         defaultValue={currentName}
         {...register('fullName', {
           required: {

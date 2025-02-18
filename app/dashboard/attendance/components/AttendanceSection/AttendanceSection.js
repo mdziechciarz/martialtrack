@@ -71,7 +71,7 @@ const AttendanceCard = ({name, color, times, attendanceList = null}) => {
   };
 
   const domRef = useRef(null);
-  const {onClick: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
+  const {onPress: onRippleClickHandler, onClear: onRippleClear, ripples} = useRipple();
 
   return (
     <div

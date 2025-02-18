@@ -94,6 +94,7 @@ const Entry = ({id, dayOfWeek, start, end, handleRemoveEntry, register, errors, 
             defaultSelectedKeys={[dayOfWeek]}
             disallowEmptySelection
             {...field}
+            validationBehavior="aria"
           >
             <SelectItem key="monday">Poniedziałek</SelectItem>
             <SelectItem key="tuesday">Wtorek</SelectItem>
@@ -117,6 +118,7 @@ const Entry = ({id, dayOfWeek, start, end, handleRemoveEntry, register, errors, 
               isRequired
               isInvalid={!!errors?.schedule?.[id]?.start}
               {...field}
+              validationBehavior="aria"
               onChange={e => field.onChange(e)}
             />
           )}
@@ -133,6 +135,7 @@ const Entry = ({id, dayOfWeek, start, end, handleRemoveEntry, register, errors, 
               isRequired
               isInvalid={!!errors?.schedule?.[id]?.end}
               {...field}
+              validationBehavior="aria"
               onChange={e => field.onChange(e)}
             />
           )}

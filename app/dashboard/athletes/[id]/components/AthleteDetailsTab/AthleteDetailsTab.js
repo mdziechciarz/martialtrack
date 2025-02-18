@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react';
 
 import AvatarCard from './components/AvatarCard/AvatarCard';
 // import Card from './components/Card/Card';
-import Card from '@/components/Card/Card';
 import AddressCard from './components/AddressCard/AddressCard';
 import ContactCard from './components/ContactCard/ContactCard';
 import GroupsCard from './components/GroupsCard/GroupsCard';
@@ -10,9 +9,10 @@ import OtherDetailsCard from './components/OtherDetailsCard/OtherDetailsCard';
 import PersonalDetailsCard from './components/PersonalDetailsCard/PersonalDetailsCard';
 import examplePhoto from './example_photo.png';
 
-import styles from './AthleteDetailsTab.module.css';
 import GradingsCard from './components/GradingsCard/GradingsCard';
 import LicensesCard from './components/LicensesCard/LicensesCard';
+
+import styles from './AthleteDetailsTab.module.css';
 
 const exampleGroups = [
   {
@@ -31,9 +31,17 @@ const exampleGroups = [
     days: 'Poniedziałek',
     hours: '19:00 - 20:00',
   },
+  {
+    id: '46546',
+    color: 'red',
+    groupName: 'K1',
+    coachName: 'Szymon Nowak',
+    days: 'Poniedziałek',
+    hours: '19:00 - 20:00',
+  },
 ];
 
-const AthleteDetailsView = () => {
+const CoachDetailsTab = () => {
   const [userAvatar, setUserAvatar] = useState(
     localStorage.getItem('croppedImage') || examplePhoto
   );
@@ -57,26 +65,16 @@ const AthleteDetailsView = () => {
       <PersonalDetailsCard />
       <AddressCard />
       <ContactCard />
-      <GroupsCard className={styles.groupsCard} groups={exampleGroups} />
+      <GroupsCard
+        className={styles.groupsCard}
+        groupsAsCoach={exampleGroups.slice(0, -1)}
+        groupsAsAssistant={exampleGroups.slice(-1)}
+      />
       <GradingsCard />
-      {/* <Card
-        title="Badania i licencje"
-        className={styles.licensesCard}
-        entries={{'Licencja PZKB': 'Ważna do 24.12.2023 \t ARE/2017/SDFSD/124'}}
-      /> */}
       <LicensesCard />
       <OtherDetailsCard />
-      <Card
-        className={styles.medicalDataCard}
-        title="Dane medyczne"
-        entries={{
-          'Grupa krwi': '0+',
-          'Choroby przewlekłe': 'brak',
-          Alergie: 'brak',
-        }}
-      />
     </div>
   );
 };
 
-export default AthleteDetailsView;
+export default CoachDetailsTab;

@@ -67,19 +67,6 @@
   word-wrap: break-word;
 }
 
-.editButton {
-  display: none;
-  /* transform: translateY(-50%); */
-}
-
-.container:hover .editButton {
-  display: block;
-}
-
-.editButton svg {
-  color: #737373;
-}
-
 .newEntryButtonContainer {
   margin-top: 16px;
 }
@@ -87,13 +74,11 @@
 .removeEntryButton {
   opacity: 0;
   position: absolute;
-  top: 50%;
-  /* left: 100%; */
+  top: 38px;
   right: 0;
-  transform: translateY(-50%);
 }
 
-.entry:hover {
+.entry.editMode:hover {
   padding-right: 40px;
   transition: padding-right 0.2s;
 }

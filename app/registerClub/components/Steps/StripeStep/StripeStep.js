@@ -4,6 +4,7 @@ import {RegistrationDataContext} from '../../../context';
 
 import {Button} from '@nextui-org/react';
 
+import {signUpNewClub} from '@/app/registerClub/actions';
 import styles from './StripeStep.module.css';
 
 export default function StripeStep({
@@ -26,12 +27,21 @@ export default function StripeStep({
   //   }));
   //   handleNextStep();
   // };
-  console.log(registrationData);
+
+  const handleRegister = () => {
+    console.log('Registering');
+
+    console.log(registrationData);
+
+    signUpNewClub({clubData: registrationData.clubData, ownerData: registrationData.ownerData});
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.contentContainer}>
-        <Button color="primary">Utwórz konto</Button>
+        <Button color="primary" onPress={handleRegister}>
+          Utwórz konto
+        </Button>
       </div>
       <div className={styles.buttonsContainer}>
         <Button variant="ghost" isDisabled={step === 3} onClick={handlePreviousStep}>

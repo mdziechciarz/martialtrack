@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import React, {useEffect, useState} from 'react';
 
 import {
@@ -9,6 +8,7 @@ import {
 } from '@fluentui/react-icons';
 
 import {
+  Avatar,
   Button,
   Chip,
   Dropdown,
@@ -17,6 +17,7 @@ import {
   DropdownTrigger,
   Input,
   Pagination,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -25,33 +26,67 @@ import {
   TableRow,
   useDisclosure,
 } from '@nextui-org/react';
-import {Toaster} from 'sonner';
+import {toast, Toaster} from 'sonner';
 
 import EditOrderModal from './EditOrderModal/EditOrderModal';
 import NewOrderModal from './NewOrderModal/NewOrderModal';
 
-import {columns, statusOptions, users} from './data';
 import {capitalize} from './utils';
 
+import {createNewOrder, fetchOrders, removeOrder} from '../../actions';
 import styles from './OrdersTable.module.css';
 
 const statusColorMap = {
-  Zrealizowane: 'success',
-  Nieopłacone: 'danger',
+  COMPLETE: 'success',
+  UNPAID: 'danger',
   Opłacone: 'warning',
 };
 
-const INITIAL_VISIBLE_COLUMNS = ['name', 'date', 'order', 'status', 'amount', 'actions'];
+const statusNameMap = {
+  COMPLETE: 'Zrealizowane',
+  UNPAID: 'Nieopłacone',
+  Opłacone: 'Opłacone',
+};
+
+const statusOptions = [
+  {name: 'Zrealizowane', uid: 'COMPLETE'},
+  {name: 'Opłacone', uid: 'PAID'},
+  {name: 'Nieopłacone', uid: 'UNPAID  '},
+];
+
+const INITIAL_VISIBLE_COLUMNS = ['name', 'date', 'order', 'status', 'price', 'actions'];
+
+const columns = [
+  {name: 'ID', uid: 'id', sortable: true},
+  {name: 'ZAMAWIAJĄCY', uid: 'name', sortable: true},
+  {name: 'DATA ZAMÓWIENIA', uid: 'date', sortable: true},
+  {name: 'ZAMÓWIENIE', uid: 'order'},
+  {name: 'NALEŻNOŚĆ', uid: 'price', sortable: true},
+  {name: 'STATUS', uid: 'status', sortable: true},
+  {name: '', uid: 'actions'},
+];
 
 const AvaratName = ({imgSrc, name}) => (
   <div className={styles.avatarNameContainer}>
-    <Image src={imgSrc} alt={name} width={24} height={24} className={styles.avatar} />
+    {/* <Image src={imgSrc} alt={name} width={24} height={24} className={styles.avatar} /> */}
+    <Avatar
+      src={imgSrc}
+      alt={name}
+      name={name}
+      size="sm"
+      className={styles.avatar}
+      classNames={{
+        base: styles.avatarBase,
+      }}
+    />
     <span className={styles.name}>{name}</span>
   </div>
 );
 
 const StatusChip = ({updateOrderStatus, status}) => {
   const [selectedStatus, setSelectedStatus] = React.useState(status);
+
+  console.log(status);
 
   return (
     <Dropdown>
@@ -63,7 +98,7 @@ const StatusChip = ({updateOrderStatus, status}) => {
             size="sm"
             variant="flat"
           >
-            {selectedStatus}
+            {statusNameMap[selectedStatus]}
           </Chip>
           <div className={styles.statusChevronContainer}>
             <ChevronDownIcon className={styles.statusChevronIcon} />
@@ -81,7 +116,7 @@ const StatusChip = ({updateOrderStatus, status}) => {
           setSelectedStatus(status);
         }}
       >
-        <DropdownItem key={'Zrealizowane'} className="capitalize">
+        <DropdownItem key={'COMPLETE'} className="capitalize">
           Zrealizowane
         </DropdownItem>
         <DropdownItem key={'Opłacone'} className="capitalize">
@@ -119,6 +154,44 @@ const NewOrderButton = ({onClick = () => {}}) => {
 };
 
 export default function OrdersTable() {
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [orders, setOrders] = React.useState([]);
+
+  const handleFetchOrders = async () => {
+    const result = await fetchOrders();
+    setOrders(
+      result.map(order => ({
+        ...order,
+        date: new Date(order.created_at).toISOString().split('T')[0],
+      }))
+    );
+  };
+
+  const handleCreateNewOrder = async data => {
+    await createNewOrder({
+      recipientId: data.recipient,
+      price: data.price,
+      order: data.order,
+    });
+
+    handleFetchOrders();
+  };
+
+  const handleRemoveOrder = async orderId => {
+    try {
+      await removeOrder({orderId});
+      await handleFetchOrders();
+      toast('Zamówienie zostało usunięte', {type: 'success'});
+    } catch (error) {
+      console.error('Error while removing order: ', error);
+    }
+  };
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    handleFetchOrders().finally(() => setIsLoading(false));
+  }, []);
+
   const [filterValue, setFilterValue] = React.useState('');
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -128,7 +201,6 @@ export default function OrdersTable() {
     column: 'status',
     direction: 'ascending',
   });
-
   const [page, setPage] = React.useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
@@ -140,19 +212,21 @@ export default function OrdersTable() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredOrders = [...orders];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter(user =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredOrders = filteredOrders.filter(order =>
+        order.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (statusFilter !== 'all' && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredUsers = filteredUsers.filter(user => Array.from(statusFilter).includes(user.status));
+      filteredOrders = filteredOrders.filter(order =>
+        Array.from(statusFilter).includes(order.status)
+      );
     }
 
-    return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+    return filteredOrders;
+  }, [orders, filterValue, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -178,14 +252,7 @@ export default function OrdersTable() {
 
     switch (columnKey) {
       case 'name':
-        return <AvaratName imgSrc={order.avatar} name={order.name} />;
-      case 'role':
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400">{user.team}</p>
-          </div>
-        );
+        return <AvaratName imgSrc={order.avatar} name={order.athletes.full_name} />;
       case 'status':
         return <StatusChip status={cellValue} handleUpdateStatus={() => {}} />;
       case 'actions':
@@ -200,11 +267,11 @@ export default function OrdersTable() {
               <DropdownMenu>
                 {/* <DropdownItem>View</DropdownItem> */}
                 <DropdownItem
-                  onClick={() => handleEditClick(order.id, order.name, order.amount, order.order)}
+                  onPress={() => handleEditClick(order.id, order.name, order.price, order.order)}
                 >
                   Edytuj
                 </DropdownItem>
-                <DropdownItem onClick={() => handleRemoveClick(order.id)}>Usuń</DropdownItem>
+                <DropdownItem onPress={() => handleRemoveOrder(order.id)}>Usuń</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -249,8 +316,10 @@ export default function OrdersTable() {
 
   const handleUpdateStatus = (id, newStatus) => {};
 
-  const handleEditClick = (orderId, recipientId, amount, order) => {
-    setEditedOrder({orderId, recipientId, amount, order});
+  const handleEditClick = (orderId, recipientId, price, order) => {
+    console.log('before', editedOrder);
+    setEditedOrder({orderId, recipientId, price, order});
+    console.log('after', editedOrder);
     onEditModalOpen();
   };
 
@@ -262,7 +331,11 @@ export default function OrdersTable() {
     return (
       <div className="flex flex-col gap-4">
         <Toaster richColors closeButton position="bottom-center" />
-        <NewOrderModal isOpen={isCreationModalOpen} onOpenChange={onCreationModalOpenChange} />
+        <NewOrderModal
+          isOpen={isCreationModalOpen}
+          onOpenChange={onCreationModalOpenChange}
+          handleCreateNewOrder={handleCreateNewOrder}
+        />
         {editedOrder && (
           <EditOrderModal
             isOpen={isEditModalOpen}
@@ -327,21 +400,6 @@ export default function OrdersTable() {
             <NewOrderButton onClick={onCreationModalOpen} />
           </div>
         </div>
-        {/* <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Łącznie {users.length} zamówień</span>
-          <label className="flex items-center text-default-400 text-small">
-            Wyświetlaj:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-              defaultValue={rowsPerPage}
-            >
-              <option value="10">10</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-            </select>
-          </label>
-        </div> */}
       </div>
     );
   }, [
@@ -349,7 +407,7 @@ export default function OrdersTable() {
     statusFilter,
     visibleColumns,
     onRowsPerPageChange,
-    users.length,
+    orders.length,
     onSearchChange,
     hasSearchFilter,
     onEditModalOpen,
@@ -411,7 +469,8 @@ export default function OrdersTable() {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={'No users found'} items={sortedItems}>
+      {/* <TableBody emptyContent={'No orders found'} items={sortedItems}> */}
+      <TableBody emptyContent={isLoading ? <Spinner /> : 'Brak zamówień.'} items={sortedItems}>
         {item => (
           <TableRow key={item.id}>
             {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}

@@ -146,6 +146,7 @@ const Entry = ({id, handleRemoveEntry, register, errors, control, label, value})
         isInvalid={!!errors?.[id]?.label}
         defaultValue={label}
         {...register(`${id}.label`, {required: true})}
+        validationBehavior="aria"
       />
       <Input
         label="Wartość"
@@ -154,6 +155,7 @@ const Entry = ({id, handleRemoveEntry, register, errors, control, label, value})
         isInvalid={!!errors?.[id]?.value}
         defaultValue={value}
         {...register(`${id}.value`, {required: true})}
+        validationBehavior="aria"
       />
       <RemoveEntryButton onClick={handleRemoveEntry} />
     </div>

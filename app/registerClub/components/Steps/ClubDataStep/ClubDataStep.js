@@ -5,10 +5,8 @@ import {Button, Input} from '@nextui-org/react';
 
 import {RegistrationDataContext} from '../../../context';
 
-import Card, {CardEntries} from '@/components/Card/Card';
+import Card, {CardGrid} from '@/components/Card/Card';
 import ClubLogoCard from './components/ClubLogoCard/ClubLogoCard';
-
-import exampleLogo from './logo.png';
 
 import styles from './ClubDataStep.module.css';
 
@@ -23,6 +21,7 @@ export default function ClubDataStep({
     register,
     handleSubmit,
     formState: {errors},
+    setValue,
   } = useForm({defaultValues: registrationData.clubData});
 
   const onSubmit = data => {
@@ -37,110 +36,114 @@ export default function ClubDataStep({
     <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
       <div className={styles.contentContainer}>
         <div className={styles.grid}>
-          <ClubLogoCard imgSrc={exampleLogo} register={register} errors={errors} />
+          <ClubLogoCard
+            register={register}
+            errors={errors}
+            setValue={setValue}
+            currentLogoSrc={registrationData?.clubData?.logo}
+          />
           <Card title="Dane kontaktowe">
-            <CardEntries
-              nonTextValues
-              entries={{
-                'Nr telefonu': (
-                  <Input
-                    label="Nr telefonu"
-                    isRequired
-                    isInvalid={!!errors.phoneNumber}
-                    errorMessage={errors.phoneNumber?.message}
-                    {...register('phoneNumber', {
-                      required: {
-                        value: true,
-                        message: 'Numer telefonu jest wymagany',
-                      },
-                    })}
-                  />
-                ),
-                'E-mail': (
-                  <Input
-                    label="E-mail"
-                    isRequired
-                    isInvalid={!!errors.email}
-                    errorMessage={errors.email?.message}
-                    {...register('email', {
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: 'Nieprawidłowy format adresu e-mail',
-                      },
-                      required: 'Email jest wymagany',
-                    })}
-                  />
-                ),
-                'Strona internetowa': <Input label="Strona internetowa" {...register('website')} />,
-              }}
-            />
+            <CardGrid>
+              <Input
+                label="Nr telefonu"
+                labelPlacement="outside"
+                isRequired
+                isInvalid={!!errors.phoneNumber}
+                errorMessage={errors.phoneNumber?.message}
+                {...register('phoneNumber', {
+                  required: {
+                    value: true,
+                    message: 'Numer telefonu jest wymagany',
+                  },
+                })}
+                validationBehavior="aria"
+              />
+              <Input
+                label="E-mail"
+                labelPlacement="outside"
+                isRequired
+                isInvalid={!!errors.email}
+                errorMessage={errors.email?.message}
+                {...register('email', {
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Nieprawidłowy format adresu e-mail',
+                  },
+                  required: 'Email jest wymagany',
+                })}
+                validationBehavior="aria"
+              />
+              <Input
+                label="Strona internetowa"
+                labelPlacement="outside"
+                {...register('website')}
+                validationBehavior="aria"
+              />
+            </CardGrid>
           </Card>
           <Card title="Adres">
-            <CardEntries
-              nonTextValues
-              entries={{
-                Ulica: (
-                  <Input
-                    label="Ulica"
-                    isRequired
-                    isInvalid={!!errors.street}
-                    errorMessage={errors.street?.message}
-                    {...register('street', {
-                      required: {
-                        value: true,
-                        message: 'Ulica jest wymagana',
-                      },
-                    })}
-                  />
-                ),
-                'Numer domu/mieszkania': (
-                  <Input
-                    label="Numer domu/mieszkania"
-                    isRequired
-                    isInvalid={!!errors.houseNumber}
-                    errorMessage={errors.houseNumber?.message}
-                    {...register('houseNumber', {
-                      required: {
-                        value: true,
-                        message: 'Numer domu/mieszkania jest wymagany',
-                      },
-                    })}
-                  />
-                ),
-                Miasto: (
-                  <Input
-                    label="Miasto"
-                    isRequired
-                    isInvalid={!!errors.city}
-                    errorMessage={errors.city?.message}
-                    {...register('city', {
-                      required: {
-                        value: true,
-                        message: 'Miasto jest wymagane',
-                      },
-                    })}
-                  />
-                ),
-                'Kod pocztowy': (
-                  <Input
-                    label="Kod pocztowy"
-                    isRequired
-                    isInvalid={!!errors.postalCode}
-                    errorMessage={errors.postalCode?.message}
-                    {...register('postalCode', {
-                      required: {
-                        value: true,
-                        message: 'Kod pocztowy jest wymagany',
-                      },
-                      pattern: {
-                        value: /^\d{2}-\d{3}$/,
-                        message: 'Nieprawidłowy format kodu pocztowego',
-                      },
-                    })}
-                  />
-                ),
-              }}
-            />
+            <CardGrid>
+              <Input
+                label="Ulica"
+                labelPlacement="outside"
+                isRequired
+                isInvalid={!!errors.street}
+                errorMessage={errors.street?.message}
+                {...register('street', {
+                  required: {
+                    value: true,
+                    message: 'Ulica jest wymagana',
+                  },
+                })}
+                validationBehavior="aria"
+              />
+              <Input
+                label="Numer domu/mieszkania"
+                labelPlacement="outside"
+                isRequired
+                isInvalid={!!errors.houseNumber}
+                errorMessage={errors.houseNumber?.message}
+                {...register('houseNumber', {
+                  required: {
+                    value: true,
+                    message: 'Numer domu/mieszkania jest wymagany',
+                  },
+                })}
+                validationBehavior="aria"
+              />
+              <Input
+                label="Miasto"
+                labelPlacement="outside"
+                isRequired
+                isInvalid={!!errors.city}
+                errorMessage={errors.city?.message}
+                {...register('city', {
+                  required: {
+                    value: true,
+                    message: 'Miasto jest wymagane',
+                  },
+                })}
+                validationBehavior="aria"
+              />
+              <Input
+                label="Kod pocztowy"
+                labelPlacement="outside"
+                isRequired
+                isInvalid={!!errors.postalCode}
+                errorMessage={errors.postalCode?.message}
+                {...register('postalCode', {
+                  required: {
+                    value: true,
+                    message: 'Kod pocztowy jest wymagany',
+                  },
+                  pattern: {
+                    value: /^\d{2}-\d{3}$/,
+                    message: 'Nieprawidłowy format kodu pocztowego',
+                  },
+                })}
+                validationBehavior="aria"
+              />
+            </CardGrid>
           </Card>
         </div>
       </div>

@@ -20,9 +20,10 @@ import RecipientsCard from './components/RecipientsCard/RecipientsCard';
 import ScheduleSendingModal from './components/ScheduleSendingModal/ScheduleSendingModal';
 
 import {toast, Toaster} from 'sonner';
+import {sendSMSMessage} from '../../actions';
 import styles from './NewMessageTab.module.css';
 
-const NewMessageTab = () => {
+const NewMessageTab = ({handleFetchMessages}) => {
   const {
     isOpen: isScheduleSendingModalOpen,
     onOpen: onScheduleSendingModalOpen,
@@ -47,10 +48,27 @@ const NewMessageTab = () => {
   });
 
   const onSubmit = data => {
-    // console.log('all good');
     if (selectedRecipients.length === 0) {
       toast.error('Nie wybrano odbiorców');
       return;
+    }
+
+    data.recipients = selectedRecipients;
+
+    handleSendMessage(data);
+  };
+
+  const handleSendMessage = async data => {
+    const response = await sendSMSMessage({
+      recipients: data.recipients,
+      message: data.messageContent,
+    });
+
+    if (response.success) {
+      toast.success('Wiadomość została wysłana');
+      handleFetchMessages();
+    } else {
+      toast.error('Wystąpił błąd podczas wysyłania wiadomości');
     }
   };
 
@@ -105,6 +123,7 @@ const MessageTypeSelectorCard = ({register, errors}) => {
           // disallowEmptySelection
           isInvalid={!!errors.messageType}
           {...register('messageType', {required: true})}
+          validationBehavior="aria"
         >
           <SelectItem key="sms">SMS</SelectItem>
           <SelectItem key="email">E-mail</SelectItem>
@@ -124,6 +143,7 @@ const MessageContentCard = ({register, errors, clearErrors}) => {
           isRequired
           isInvalid={!!errors.title}
           {...register('title', {required: true, onchange: () => clearErrors('title')})}
+          validationBehavior="aria"
         />
         <Textarea
           label="Treść wiadomości"
@@ -135,6 +155,7 @@ const MessageContentCard = ({register, errors, clearErrors}) => {
             required: true,
             onchange: () => clearErrors('messageContent'),
           })}
+          validationBehavior="aria"
         />
       </div>
     </Card>

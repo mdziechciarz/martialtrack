@@ -10,17 +10,23 @@ import clubLogoPlaceholder from './club logo placeholder.svg';
 
 import styles from './ClubLogoCard.module.css';
 
-const ClubLogoCard = ({register, errors}) => {
+const ClubLogoCard = ({register, currentLogoSrc, errors, setValue}) => {
   const {
     isOpen: isModalOpen,
     onOpen: onModalOpen,
     onOpenChange: onModalOpenChange,
   } = useDisclosure();
 
-  const [logoSrc, setLogoSrc] = useState(null);
+  const [logoSrc, setLogoSrc] = useState(currentLogoSrc || null);
 
   const handleRemoveLogo = () => {
+    setValue('logo', null);
     setLogoSrc(null);
+  };
+
+  const handleSelectLogo = logo => {
+    setValue('logo', logo);
+    setLogoSrc(logo);
   };
 
   return (
@@ -29,7 +35,7 @@ const ClubLogoCard = ({register, errors}) => {
         <NewAvatarModal
           isOpen={isModalOpen}
           onOpenChange={onModalOpenChange}
-          setLogoSrc={setLogoSrc}
+          setLogoSrc={handleSelectLogo}
         />
         <div className={styles.avatarWrapper}>
           <Image

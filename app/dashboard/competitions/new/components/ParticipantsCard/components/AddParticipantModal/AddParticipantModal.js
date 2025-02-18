@@ -1,5 +1,6 @@
+import {createClient} from '@/utils/supabase/client';
 import classNames from 'classnames';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {v4} from 'uuid';
 
@@ -20,15 +21,31 @@ import {
 
 import styles from './AddParticipantModal.module.css';
 
-const exampleAthletes = [
-  {id: 1, name: 'Jan Kowalski', avatar: 'https://i.pravatar.cc/150'},
-  {id: 2, name: 'Adam Nowak', avatar: 'https://i.pravatar.cc/148'},
-  {id: 3, name: 'Krzysztof Zielony', avatar: 'https://i.pravatar.cc/149'},
-  {id: 4, name: 'Kamil Zielony', avatar: 'https://i.pravatar.cc/147'},
-  {id: 5, name: 'Piotr Zielony', avatar: 'https://i.pravatar.cc/146'},
-];
+export default function AddParticipantModal({isOpen, onOpenChange, handleAddParticipant}) {
+  const [athletes, setAthletes] = useState([]);
 
-export default function AddParticipantModal({isOpen, onOpenChange}) {
+  useEffect(() => {
+    // Get all athletes
+    const supabase = createClient();
+
+    const fetchAthletes = async () => {
+      // const {data, error} = await supabase.from('athletes').select('*');
+      const {data, error} = await supabase.from('athletes').select(`
+    *,
+    group_members (
+      groups(*)
+    )
+  `);
+
+      if (error) {
+        setAthletes([]);
+      }
+      setAthletes(data);
+    };
+
+    fetchAthletes();
+  }, []);
+
   const [categories, setCategories] = useState([]);
 
   const {
@@ -41,13 +58,23 @@ export default function AddParticipantModal({isOpen, onOpenChange}) {
   } = useForm();
 
   const onSubmit = data => {
-    console.log('Submitted');
+    const athlete = athletes.find(athlete => athlete.id === data.athlete);
+
+    if (!athlete) {
+      return;
+    }
+
+    data.athlete = athlete;
+    handleAddParticipant(data);
     console.log(data);
+    reset();
+    setCategories([]);
+    onOpenChange(false);
   };
 
   const handleCancel = onClose => {
-    console.log('closing modal');
     reset();
+    setCategories([]);
     onClose();
   };
 
@@ -74,12 +101,13 @@ export default function AddParticipantModal({isOpen, onOpenChange}) {
                 <Controller
                   name="athlete"
                   control={control}
-                  rules={{required: 'Pole zamawiający jest wymagane'}}
+                  rules={{required: 'Pole zawodnik jest wymagane'}}
                   render={({field}) => (
                     <Autocomplete
                       {...field}
+                      validationBehavior="aria"
                       onSelectionChange={key => field.onChange({target: {value: key}})}
-                      defaultItems={exampleAthletes}
+                      defaultItems={athletes}
                       label="Zawodnik"
                       placeholder="Wybierz zawodnika"
                       isRequired
@@ -87,16 +115,16 @@ export default function AddParticipantModal({isOpen, onOpenChange}) {
                       errorMessage={errors.athlete?.message}
                     >
                       {user => (
-                        <AutocompleteItem key={user.id} textValue={user.name}>
+                        <AutocompleteItem key={user.id} textValue={user.full_name}>
                           <div className="flex gap-2 items-center">
                             <Avatar
-                              alt={user.name}
+                              alt={user.full_name}
                               className="flex-shrink-0"
                               size="sm"
                               src={user.avatar}
                             />
                             <div className="flex flex-col">
-                              <span className="text-small">{user.name}</span>
+                              <span className="text-small">{user.full_name}</span>
                             </div>
                           </div>
                         </AutocompleteItem>
@@ -109,6 +137,8 @@ export default function AddParticipantModal({isOpen, onOpenChange}) {
                     label="Waga"
                     placeholder="Waga"
                     {...register('weight', {required: 'Waga jest wymagana'})}
+                    validationBehavior="aria"
+                    type="number"
                     isRequired
                     isInvalid={!!errors.weight}
                     errorMessage={errors.weight?.message}
@@ -117,6 +147,8 @@ export default function AddParticipantModal({isOpen, onOpenChange}) {
                     label="Wzrost"
                     placeholder="Wzrost"
                     {...register('height', {required: 'Wzrost jest wymagany'})}
+                    validationBehavior="aria"
+                    type="number"
                     isRequired
                     isInvalid={!!errors.height}
                     errorMessage={errors.height?.message}
@@ -192,7 +224,8 @@ const CustomCheckBox = ({label, defaultChecked = false, register, isInvalid, err
       onValueChange={setIsSelected}
       {...register()}
       isInvalid={isInvalid}
-      errorMessage={errorMessage}
+      // errorMessage={errorMessage}
+      validationBehavior="aria"
     >
       <div style={{fontSize: 14}}>{label}</div>
     </Checkbox>
@@ -220,6 +253,7 @@ const CategoryItem = ({
           {...register(`categories.${id}].ageCategory`, {
             required: true,
           })}
+          validationBehavior="aria"
           isInvalid={!!errors?.categories?.[id]?.ageCategory}
         />
         <Input
@@ -230,6 +264,7 @@ const CategoryItem = ({
           {...register(`categories.${id}].formula`, {
             required: true,
           })}
+          validationBehavior="aria"
           isInvalid={!!errors?.categories?.[id]?.formula}
         />
         <Input
@@ -240,6 +275,7 @@ const CategoryItem = ({
           {...register(`categories.${id}].weightAndHeightCategory`, {
             required: true,
           })}
+          validationBehavior="aria"
           isInvalid={!!errors?.categories?.[id]?.weightAndHeightCategory}
         />
       </div>
@@ -253,7 +289,7 @@ const RemoveItemButton = ({onClick}) => {
     <Button
       className={styles.removeItemButton}
       size="sm"
-      onClick={onClick}
+      onPress={onClick}
       isIconOnly
       variant="light"
     >
@@ -267,7 +303,7 @@ const AddItemButton = ({onClick}) => {
     <Button
       className={styles.addItemButton}
       fullWidth
-      onClick={onClick}
+      onPress={onClick}
       variant="ghost"
       // color="secondary"
     >

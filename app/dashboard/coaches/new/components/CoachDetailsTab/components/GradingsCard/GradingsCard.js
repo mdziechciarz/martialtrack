@@ -98,6 +98,7 @@ const Entry = ({id, handleRemoveEntry, register, errors, control, label, value})
         isInvalid={!!errors?.levels?.[id]?.label}
         defaultValue={label}
         {...register(`levels.${id}.label`, {required: true})}
+        validationBehavior="aria"
       />
       <Input
         label="Stopień"
@@ -106,6 +107,7 @@ const Entry = ({id, handleRemoveEntry, register, errors, control, label, value})
         isInvalid={!!errors?.levels?.[id]?.value}
         defaultValue={value}
         {...register(`levels.${id}.value`, {required: true})}
+        validationBehavior="aria"
       />
       <RemoveEntryButton onClick={handleRemoveEntry} />
     </div>

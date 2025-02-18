@@ -1,0 +1,116 @@
+.container {
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatarWrapper {
+  position: relative;
+  width: 35%;
+  margin: 0 auto;
+  padding-top: 35%;
+}
+
+.avatar {
+  /* margin: 0 auto;
+  width: 30%;
+  height: auto;
+  border-radius: 50%; */
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 100%;
+  object-fit: cover;
+}
+
+.name {
+  margin-top: 8px;
+  text-align: center;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Edit mode */
+
+.overlay {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 100%;
+  background-color: rgba(85, 85, 85, 0);
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.overlay svg {
+  color: white;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.overlay:hover {
+  background-color: rgba(85, 85, 85, 0.5);
+}
+
+.overlay:hover svg {
+  opacity: 1;
+}
+
+.removePhotoButton {
+  display: none;
+  position: absolute;
+  bottom: 0px;
+  left: -4px;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.removePhotoButton svg {
+  color: white;
+  width: 20px;
+  height: 20px;
+}
+
+.editModeContentContainer:hover .removePhotoButton {
+  display: block;
+  opacity: 1;
+}
+
+.nameInput {
+  margin-top: 16px;
+}
+
+@media screen and (min-width: 600px) {
+  .container {
+    padding: 24px;
+  }
+
+  .avatarWrapper {
+    /* width: 25%;
+    padding-top: 25%; */
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .container {
+    padding: 32px;
+  }
+
+  .avatarWrapper {
+    width: 50%;
+    padding-top: 50%;
+  }
+}

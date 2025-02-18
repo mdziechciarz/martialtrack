@@ -90,6 +90,7 @@ const Entry = ({
           {...register(`licenses.${id}].licenseName`, {
             required: true,
           })}
+          validationBehavior="aria"
         />
       </div>
       <div style={{display: 'flex', columnGap: '4px'}}>
@@ -99,6 +100,7 @@ const Entry = ({
           defaultValue={licenseNumber}
           isInvalid={!!errors?.licenses?.[id]?.licenseNumber}
           {...register(`licenses.${id}].licenseNumber`)}
+          validationBehavior="aria"
         />
         <Controller
           control={control}
@@ -112,6 +114,7 @@ const Entry = ({
               disableAnimation
               isInvalid={!!errors?.licenses?.[id]?.licenseDate}
               {...field}
+              validationBehavior="aria"
             />
           )}
         />

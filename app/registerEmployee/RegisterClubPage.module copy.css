@@ -1,0 +1,79 @@
+.pageContainer {
+  width: 100%;
+  height: 100vh;
+  background-image: url('/background.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.cardContainer {
+  height: 100%;
+}
+
+.card {
+  height: 100%;
+  background-color: #fff;
+  padding: 16px;
+
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  /* overflow: hidden; */
+}
+
+.stepperContainer :global(.p-steps .p-steps-item.p-highlight .p-steps-number) {
+  background-color: #5ab8fb;
+}
+
+.stepperContainer :global(.p-steps-title) {
+  text-wrap: wrap;
+  text-align: center;
+  font-size: 14px;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.contentContainer {
+  display: grid;
+  flex-grow: 1;
+  /* flex-shrink: 1; */
+  overflow-y: hidden;
+}
+
+@media screen and (min-width: 600px) {
+  .card {
+    padding: 24px;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .pageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .cardContainer {
+    padding: 36px;
+    width: 90%;
+  }
+
+  .card {
+    border-radius: 12px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .card {
+    padding: 32px;
+  }
+
+  .cardContainer {
+    width: 80%;
+  }
+}
+
+/* TO BE DELETEDS */

@@ -1,9 +1,12 @@
 'use client';
 
 import {useRouter} from 'next/navigation';
+import {useState} from 'react';
 import {useForm} from 'react-hook-form';
 
 import {Button} from '@nextui-org/react';
+
+import {createNewCompetition} from '../actions';
 
 import ContentContainer from '@/components/ContentContainer/ContentContainer';
 import MainLayout from '@/components/MainLayout/MainLayout';
@@ -17,6 +20,23 @@ import styles from './CompetitionPage.module.css';
 const GroupPage = () => {
   const router = useRouter();
 
+  const [participants, setParticipants] = useState([]);
+
+  const handleAddParticipant = participant => {
+    setParticipants(prev => [...prev, participant]);
+  };
+
+  const handleRemoveParticipant = participantId => {
+    setParticipants(prev => prev.filter(participant => participant.athlete.id !== participantId));
+  };
+
+  const handleUpdateParticipant = participant => {
+    setParticipants(prev => [
+      ...prev.filter(p => p.athlete.id !== participant.athlete.id),
+      participant,
+    ]);
+  };
+
   const {
     register,
     handleSubmit,
@@ -24,8 +44,25 @@ const GroupPage = () => {
     formState: {errors},
   } = useForm();
 
+  const handleCreateNewCompetition = async data => {
+    await createNewCompetition(data);
+    // console.log(data);
+  };
+
   const onSubmit = data => {
-    console.log(data);
+    if (participants.length) data.participants = participants;
+
+    handleCreateNewCompetition({
+      name: data.name,
+      color: data.color,
+      location: data.location,
+      level: data.level,
+      description: data.description,
+      link: data.link,
+      participants: data.participants,
+      date_start: data.date.start.toString(),
+      date_end: data.date.end.toString(),
+    });
   };
 
   const handleCancel = () => {
@@ -61,7 +98,13 @@ const GroupPage = () => {
               control={control}
               errors={errors}
             />
-            <ParticipantsCard className={styles.participantsCard} />
+            <ParticipantsCard
+              className={styles.participantsCard}
+              participants={participants}
+              handleAddParticipant={handleAddParticipant}
+              handleRemoveParticipant={handleRemoveParticipant}
+              handleUpdateParticipant={handleUpdateParticipant}
+            />
           </div>
         </form>
       </ContentContainer>

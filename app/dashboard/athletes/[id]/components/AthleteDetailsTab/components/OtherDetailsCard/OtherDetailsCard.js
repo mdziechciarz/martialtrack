@@ -1,17 +1,68 @@
-import Card, {CardEntries} from '@/components/Card/Card';
 import {useState} from 'react';
+import {useForm} from 'react-hook-form';
 
-import {Add16Filled} from '@fluentui/react-icons';
+import {Add16Filled, Dismiss16Filled} from '@fluentui/react-icons';
 import {Button, Input} from '@nextui-org/react';
+
+import Card, {CardEntries, CardGrid} from '@/components/Card/Card';
+
 import styles from './OtherDetailsCard.module.css';
+
+const exampleEntries = [
+  {
+    id: '123',
+    label: 'Data przyjęcia',
+    value: '2023-03-10',
+  },
+];
 
 const OtherDetailsCard = () => {
   const [isEditMode, setIsEditMode] = useState(false);
 
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: {errors},
+    reset,
+    unregister,
+  } = useForm();
+
+  const handleSaveChanges = handleSubmit(data => {
+    console.log('Changes saved');
+    console.log(data);
+    reset();
+    setIsEditMode(false);
+  });
+
+  const handleCancelChanges = () => {
+    console.log('Changes canceled');
+    reset();
+    setIsEditMode(false);
+  };
+
+  const handleEdit = () => {
+    console.log('Editing');
+    setIsEditMode(true);
+  };
+
   return (
-    <Card title="Inne" isEditable isEditMode={isEditMode} setIsEditMode={setIsEditMode}>
+    <Card
+      title="Inne"
+      isEditable
+      isEditMode={isEditMode}
+      onSaveClick={handleSaveChanges}
+      onCancelClick={handleCancelChanges}
+      onEditClick={handleEdit}
+    >
       {isEditMode ? (
-        <EditModeContent entries={[{key: 'Data przyjęcia', value: '2021-01-01'}]} />
+        <EditModeContent
+          register={register}
+          control={control}
+          errors={errors}
+          unregister={unregister}
+          currentEntries={exampleEntries}
+        />
       ) : (
         <ReadOnlyContent />
       )}
@@ -20,74 +71,95 @@ const OtherDetailsCard = () => {
 };
 
 const ReadOnlyContent = () => {
-  return <CardEntries entries={{'Data przyjęcia': '2021-01-01'}} />;
-};
-
-const EditModeContent = ({entries: savedEntries = []}) => {
-  const [entries, setEntries] = useState(savedEntries);
-
-  const handleAddNewEntry = () => {
-    // Check if there are empty entries
-    if (entries.some(entry => entry.key === '' || entry.value === '')) return;
-    setEntries([...entries, {key: '', value: ''}]);
-  };
-
   return (
-    <div>
-      <div className={styles.grid}>
-        {entries.map((entry, index) => (
-          <Entry
-            key={index}
-            index={index}
-            setEntries={setEntries}
-            entryName={entry.key}
-            entryValue={entry.value}
-          />
-        ))}
-      </div>
-      <div className={styles.newEntryButtonContainer}>
-        <AddNewEntryButton onClick={handleAddNewEntry} styles={{marginTop: 16}} />
-      </div>
-    </div>
+    <CardEntries
+      entries={exampleEntries.reduce((result, item) => {
+        result[item.label] = item.value;
+        return result;
+      }, {})}
+    />
   );
 };
 
-export default OtherDetailsCard;
+const EditModeContent = ({register, unregister, errors, control, currentEntries}) => {
+  const [entries, setEntries] = useState(currentEntries || []);
 
-const Entry = ({index, entryName, entryValue, setEntries}) => {
+  const handleAddNewEntry = () => {
+    setEntries([...entries, {id: v4(), label: '', value: ''}]);
+  };
+
+  const handleRemoveEntry = id => {
+    setEntries(prev => prev.filter(entry => entry.id !== id));
+    unregister(`${id}`);
+  };
+
   return (
-    <div className={styles.entry}>
-      <div className={styles.key} style={{marginBottom: 4}}>
-        <Input
-          placeholder="Nazwa"
-          size="sm"
-          defaultValue={entryName}
-          onChange={e =>
-            setEntries(prev =>
-              prev.map((entry, i) => (i === index ? {...entry, key: e.target.value} : entry))
-            )
-          }
+    <CardGrid oneColumn>
+      {entries.map(entry => (
+        <Entry
+          key={entry.id}
+          id={entry.id}
+          handleRemoveEntry={() => handleRemoveEntry(entry.id)}
+          label={entry.label}
+          value={entry.value}
+          register={register}
+          errors={errors}
+          control={control}
         />
+      ))}
+      <div className={styles.newEntryButtonContainer}>
+        <AddNewEntryButton onClick={handleAddNewEntry} />
       </div>
-      <div className={styles.value}>
-        <Input
-          placeholder="Wartość"
-          defaultValue={entryValue}
-          onChange={e =>
-            setEntries(prev =>
-              prev.map((entry, i) => (i === index ? {...entry, value: e.target.value} : entry))
-            )
-          }
-        />
-      </div>
-    </div>
+    </CardGrid>
   );
 };
 
 const AddNewEntryButton = ({onClick}) => {
   return (
-    <Button className={styles.addTimeButton} size="sm" fullWidth onClick={onClick} variant="light">
+    <Button size="sm" fullWidth onPress={onClick} variant="light">
       <Add16Filled />
     </Button>
   );
 };
+
+const RemoveEntryButton = ({onClick}) => {
+  return (
+    <Button
+      className={styles.removeEntryButton}
+      size="sm"
+      onPress={onClick}
+      isIconOnly
+      variant="light"
+    >
+      <Dismiss16Filled />
+    </Button>
+  );
+};
+
+const Entry = ({id, handleRemoveEntry, register, errors, control, label, value}) => {
+  return (
+    <div className={styles.entry}>
+      <Input
+        label="Nazwa pola"
+        placeholder="Np. Data przyjęcia"
+        isRequired
+        isInvalid={!!errors?.[id]?.label}
+        defaultValue={label}
+        {...register(`${id}.label`, {required: true})}
+        validationBehavior="aria"
+      />
+      <Input
+        label="Wartość"
+        placeholder="Np. 2023-03-10"
+        isRequired
+        isInvalid={!!errors?.[id]?.value}
+        defaultValue={value}
+        {...register(`${id}.value`, {required: true})}
+        validationBehavior="aria"
+      />
+      <RemoveEntryButton onClick={handleRemoveEntry} />
+    </div>
+  );
+};
+
+export default OtherDetailsCard;

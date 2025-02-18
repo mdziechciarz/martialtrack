@@ -139,6 +139,7 @@ const EditModeContent = ({currentName, currentImgSrc, register, errors, setValue
             message: 'Imię i nazwisko jest wymagane',
           },
         })}
+        validationBehavior="aria"
         className={styles.nameInput}
       />
     </div>

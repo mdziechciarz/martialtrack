@@ -10,7 +10,6 @@ const MainInfoCard = ({clubBranches = [], color, clubBranch, register, control, 
       <EditableContent
         currentColor={color}
         clubBranches={clubBranches}
-        currentClubBranch={clubBranch}
         register={register}
         control={control}
         errors={errors}
@@ -19,14 +18,7 @@ const MainInfoCard = ({clubBranches = [], color, clubBranch, register, control, 
   );
 };
 
-const EditableContent = ({
-  currentColor,
-  clubBranches,
-  currentClubBranch,
-  register,
-  control,
-  errors,
-}) => {
+const EditableContent = ({clubBranches, register, control, errors}) => {
   return (
     <CardGrid oneColumn>
       <Input
@@ -35,18 +27,19 @@ const EditableContent = ({
         placeholder="Wpisz nazwę grupy"
         isRequired
         {...register('name', {required: true})}
+        validationBehavior="aria"
         isInvalid={!!errors.name}
       />
       <div style={{display: 'grid', gridTemplateColumns: '7fr 3fr', gap: '8px'}}>
         <Select
           placeholder="Wybierz sekcję"
-          defaultSelectedKeys={[currentClubBranch.id]}
           disallowEmptySelection
           label="Sekcja"
           labelPlacement="outside"
           isRequired
           isInvalid={!!errors.clubBranch}
           {...register('clubBranch', {required: true})}
+          validationBehavior="aria"
         >
           {clubBranches.map(branch => (
             <SelectItem key={branch.id}>{branch.name}</SelectItem>
@@ -62,6 +55,7 @@ const EditableContent = ({
           labelPlacement="outside"
           isRequired
           {...register('color')}
+          validationBehavior="aria"
         />
       </div>
     </CardGrid>

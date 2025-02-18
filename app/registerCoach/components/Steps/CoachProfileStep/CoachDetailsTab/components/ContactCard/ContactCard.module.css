@@ -1,0 +1,6 @@
+@media screen and (min-width: 1200px) {
+  .contactCard {
+    grid-column: 1 / 2;
+    grid-row: 3 / 4;
+  }
+}

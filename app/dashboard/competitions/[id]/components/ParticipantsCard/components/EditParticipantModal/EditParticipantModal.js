@@ -88,6 +88,7 @@ export default function EditParticipantModal({isOpen, onOpenChange, editedPartic
                     placeholder="Waga"
                     defaultValue={editedParticipant.weight}
                     {...register('weight', {required: 'Waga jest wymagana'})}
+                    validationBehavior="aria"
                     isRequired
                     isInvalid={!!errors.weight}
                     errorMessage={errors.weight?.message}
@@ -97,6 +98,7 @@ export default function EditParticipantModal({isOpen, onOpenChange, editedPartic
                     placeholder="Wzrost"
                     defaultValue={editedParticipant.height}
                     {...register('height', {required: 'Wzrost jest wymagany'})}
+                    validationBehavior="aria"
                     isRequired
                     isInvalid={!!errors.height}
                     errorMessage={errors.height?.message}
@@ -179,6 +181,7 @@ const CustomCheckBox = ({label, defaultChecked = false, register, isInvalid, err
       isSelected={isSelected}
       onValueChange={setIsSelected}
       {...register()}
+      validationBehavior="aria"
       isInvalid={isInvalid}
       errorMessage={errorMessage}
     >
@@ -208,6 +211,7 @@ const CategoryItem = ({
           {...register(`categories.${id}].ageCategory`, {
             required: true,
           })}
+          validationBehavior="aria"
           isInvalid={!!errors?.categories?.[id]?.ageCategory}
         />
         <Input
@@ -218,6 +222,7 @@ const CategoryItem = ({
           {...register(`categories.${id}].formula`, {
             required: true,
           })}
+          validationBehavior="aria"
           isInvalid={!!errors?.categories?.[id]?.formula}
         />
         <Input
@@ -228,6 +233,7 @@ const CategoryItem = ({
           {...register(`categories.${id}].weightAndHeightCategory`, {
             required: true,
           })}
+          validationBehavior="aria"
           isInvalid={!!errors?.categories?.[id]?.weightAndHeightCategory}
         />
       </div>

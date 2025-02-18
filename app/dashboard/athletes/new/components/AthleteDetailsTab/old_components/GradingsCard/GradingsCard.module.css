@@ -1,0 +1,123 @@
+.container {
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  /* width: 100%; */
+  overflow-x: auto;
+}
+
+.header {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.titleContainer {
+  padding-right: 8%;
+  width: fit-content;
+  border-bottom: 2px solid #5ab8fb;
+  position: relative;
+}
+
+.titleContainer h3 {
+  display: inline-block;
+  font-size: 14px;
+  color: #5ab8fb;
+  text-transform: uppercase;
+  /* font-weight: 600; */
+}
+
+.editButtonsContainer {
+  display: flex;
+  /* gap: 8px; */
+  /* display: none; */
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.contentContainer {
+  flex-grow: 1;
+}
+
+.grid {
+  width: 100%;
+  display: grid;
+  row-gap: 16px;
+  column-gap: 16px;
+  /* grid-template-columns: repeat(2, 1fr); */
+  align-items: center;
+}
+
+.entry {
+  min-width: 40%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 4px;
+  position: relative;
+}
+
+.entry .key {
+  color: #4a4a4a;
+  font-size: 13px;
+}
+
+.entry .value {
+  color: #000;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+.editButton {
+  display: none;
+  /* transform: translateY(-50%); */
+}
+
+.container:hover .editButton {
+  display: block;
+}
+
+.editButton svg {
+  color: #737373;
+}
+
+.newEntryButtonContainer {
+  margin-top: 16px;
+}
+
+.removeEntryButton {
+  opacity: 0;
+  position: absolute;
+  top: 12px;
+  right: 0;
+}
+
+.entry:hover {
+  padding-right: 40px;
+  transition: padding-right 0.2s;
+}
+
+.entry:hover .removeEntryButton {
+  opacity: 1;
+  transition: opacity 0.2s;
+  display: block;
+}
+
+@media screen and (min-width: 600px) {
+  .container {
+    padding: 24px;
+  }
+
+  .entry .key,
+  .entry .value {
+    font-size: 14px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .container {
+    padding: 32px;
+  }
+}
