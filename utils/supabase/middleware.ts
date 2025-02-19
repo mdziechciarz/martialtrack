@@ -39,8 +39,6 @@ export async function updateSession(request: NextRequest) {
     !user &&
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/registerClub') &&
-    !request.nextUrl.pathname.startsWith('/registerCoach') &&
-    !request.nextUrl.pathname.startsWith('/registerEmployee') &&
     !request.nextUrl.pathname.startsWith('/redeem_invitation')
   ) {
     // no user, potentially respond by redirecting the user to the login page

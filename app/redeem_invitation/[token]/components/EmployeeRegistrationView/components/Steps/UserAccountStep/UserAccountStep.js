@@ -30,15 +30,17 @@ export default function UserAccountStep({
   } = useForm({defaultValues: {...registrationData.userData, email}});
 
   const onSubmit = data => {
+    console.log('data', data);
+
     setRegistrationData(prevState => ({
       ...prevState,
       userData: data,
     }));
 
     registerAdminUser({
-      fullName: registrationData.userData.fullName,
-      email: registrationData.userData.email,
-      password: registrationData.userData.password,
+      fullName: data.fullName,
+      email: data.email,
+      password: data.password,
       token,
     });
   };

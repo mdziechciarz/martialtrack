@@ -2,7 +2,11 @@
 
 import {createClient} from '@/utils/supabase/server';
 import crypto from 'crypto';
+import {revalidatePath} from 'next/cache';
 import {redirect} from 'next/navigation';
+
+// TODO
+// Handle user already exists
 
 // Function to hash a token using SHA-256
 function hashToken(token) {
@@ -10,8 +14,6 @@ function hashToken(token) {
 }
 
 export async function registerAdminUser({fullName, email, password, token}) {
-  console.log({fullName, email, password, token});
-
   const supabase = createClient();
 
   // Get the invitation data
@@ -25,44 +27,45 @@ export async function registerAdminUser({fullName, email, password, token}) {
 
   if (invitationData) {
     // Check if the token is still valid
+
     if (new Date(invitationData.valid_until) > new Date()) {
       // Create the user
-      const {user, error} = await supabase.auth.signUp({
+      const {
+        data: {user},
+        error: userAuthError,
+      } = await supabase.auth.signUp({
         email,
         password,
       });
 
-      console.log('user', user);
-      console.log('error', error);
-
       if (user) {
         // Create user profile
         const {data: userProfileData, error: userProfileError} = await supabase
-          .from('user_profiles')
+          .from('users')
           .insert([
             {
-              user_id: user.id,
+              id: user.id,
               full_name: fullName,
               email,
               club_id: invitationData.club_id,
             },
-          ]);
+          ])
+          .select()
+          .single();
 
         // TODO, HANDLE AVATAR UPLOAD
 
-        if (userProfileData) {
-          // Delete the invitation
-          // await supabase.from('user_invitations').delete().match({id: invitationData.id});
-          console.log('removing invitation');
+        if (!userProfileError) {
+          // Delete the invitation after the user has been created
+          await supabase.from('user_invitations').delete().match({id: invitationData.id});
 
           revalidatePath('/dashboard', 'layout');
           redirect('/dashboard');
         }
       }
     } else {
-      // Delete the invitation from the database
-      // await supabase.from('user_invitations').delete().match({id: invitationData.id});
-      console.log('removing invitation');
+      // Delete the invitation from the database since it's no longer valid
+      await supabase.from('user_invitations').delete().match({id: invitationData.id});
 
       redirect(`/login?error=${encodeURIComponent('Zaproszenie jest już nieaktualne')}`);
     }
@@ -72,3 +75,5 @@ export async function registerAdminUser({fullName, email, password, token}) {
     success: false,
   };
 }
+
+// registerCoachUser({userData, coachProfileData, token}) {}
