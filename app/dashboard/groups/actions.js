@@ -86,12 +86,7 @@ export async function removeClubBranch({clubBranchId}) {
   const {data, error} = await supabase.from('club_branches').delete().eq('id', clubBranchId);
 }
 
-export async function createNewGroup({
-  groupName,
-  clubBranchId = 'c9b79bba-15ec-4f6b-ba01-41e84ebd3e15',
-  color,
-  coachId = '76df0cbe-faa1-492d-8ddc-fb8c2186f68b',
-}) {
+export async function createNewGroup({groupName, clubBranchId, color, coachId, schedule}) {
   const supabase = createClient();
 
   // Get user data
@@ -117,12 +112,31 @@ export async function createNewGroup({
         coach_id: coachId,
       },
     ])
-    .select();
+    .select()
+    .single();
 
   console.log('groupData', groupData);
   console.log('groupError', groupError);
 
-  redirect(`/dashboard/groups/${groupData[0].id}`);
+  if (!groupError) {
+    // Add group_schedule
+    const groupScheduleToInstert = schedule.map(day => ({
+      group_id: groupData.id,
+      day_of_week: day.dayOfWeek,
+      start_time: day.start,
+      end_time: day.end,
+    }));
+
+    const {data: groupScheduleData, error: groupScheduleError} = await supabase
+      .from('group_schedules')
+      .insert(groupScheduleToInstert)
+      .select();
+
+    console.log('groupScheduleData', groupScheduleData);
+    console.log('groupScheduleError', groupScheduleError);
+
+    redirect(`/dashboard/groups/${groupData.id}`);
+  }
 }
 
 export async function fetchGroupData(groupId) {
@@ -130,15 +144,24 @@ export async function fetchGroupData(groupId) {
 
   const {data: groupData, error: groupError} = await supabase
     .from('groups')
-    .select('*, coaches(*), club_branches(*)')
+    .select(
+      '*, coach:coaches(*), club_branch:club_branches(*), group_schedule:group_schedules(*), group_assistants(*)'
+    )
     .eq('id', groupId)
     .single();
 
   if (groupError) {
-    throw new Error(groupError.message);
+    console.log('groupError', groupError);
+
+    return {
+      success: false,
+    };
   }
 
-  return groupData;
+  return {
+    success: true,
+    data: groupData,
+  };
 }
 
 export async function fetchAvailableCoachesAndClubBranches() {

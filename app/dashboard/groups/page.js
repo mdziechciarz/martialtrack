@@ -93,7 +93,11 @@ const GroupsPage = () => {
           />
         </div>
         <AddMemberModal isOpen={isAthleteModalOpen} onOpenChange={onAthleteModalOpenChange} />
-        <Accordion selectionMode="multiple" defaultExpandedKeys="all">
+        <Accordion
+          selectionMode="multiple"
+          defaultExpandedKeys="all"
+          key={clubBranchesAndGroups.length}
+        >
           {clubBranchesAndGroups.map(section => (
             <AccordionItem
               key={section.title}

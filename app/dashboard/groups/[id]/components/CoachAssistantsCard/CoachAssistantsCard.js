@@ -10,7 +10,7 @@ import Card, {CardGrid} from '@/components/Card/Card';
 
 import styles from './CoachAssistantsCard.module.css';
 
-const CoachAssistantsCard = ({className}) => {
+const CoachAssistantsCard = ({className, coach, assistants}) => {
   const [isEditMode, setIsEditMode] = useState(false);
 
   const {
@@ -55,10 +55,7 @@ const CoachAssistantsCard = ({className}) => {
           currentAssistants={exampleCoaches.slice(2, 4)}
         />
       ) : (
-        <ReadOnlyModeContent
-          mainCoach={exampleCoaches[1]}
-          assistants={exampleCoaches.slice(2, 4)}
-        />
+        <ReadOnlyModeContent mainCoach={coach} assistants={assistants} />
       )}
     </Card>
   );
@@ -73,23 +70,25 @@ const AvaratName = ({imgSrc, name}) => (
 
 export default CoachAssistantsCard;
 
-const ReadOnlyModeContent = ({mainCoach, assistants}) => {
-  console.log(assistants);
-
+const ReadOnlyModeContent = ({mainCoach, assistants = []}) => {
   return (
     <CardGrid oneColumn>
       <div className={styles.entry}>
         <p className={styles.key}>Trener główny</p>
-        <AvaratName imgSrc={mainCoach.avatar} name={mainCoach.name} />
+        <AvaratName imgSrc={'https://i.pravatar.cc/150'} name={mainCoach.full_name} />
       </div>
       <div className={styles.entry}>
         <p className={styles.key}>Asystenci</p>
         <div className={styles.assistantsContainer}>
-          {/* <AvaratName imgSrc="https://i.pravatar.cc/150" name="Adam Nowak" />
-          <AvaratName imgSrc="https://i.pravatar.cc/150" name="Krzysztof Zielony" /> */}
-          {assistants.map(coach => (
-            <AvaratName key={coach.id} imgSrc={coach.avatar} name={coach.name} />
-          ))}
+          {assistants?.length
+            ? assistants.map(coach => (
+                <AvaratName
+                  key={coach.id}
+                  imgSrc={'https://i.pravatar.cc/150?img=8'}
+                  name={coach.full_name}
+                />
+              ))
+            : '-'}
         </div>
       </div>
     </CardGrid>

@@ -84,6 +84,16 @@
   background-color: #f0f0f0;
 }
 
+/* .attendanceCardContainer.canceled {
+  border-left: 8px solid #f50c0c;
+  background-color: #f5f5f5;
+  background-color: #fff;
+} */
+
+/* .attendanceCardContainer.canceled:hover {
+  background-color: #f0f0f0;
+} */
+
 .classDetailsContainer {
   line-height: 1.4;
 }
@@ -93,6 +103,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.attendanceDetailsContainer.canceled svg {
+  color: gray;
 }
 
 /* WEEK PICKER */

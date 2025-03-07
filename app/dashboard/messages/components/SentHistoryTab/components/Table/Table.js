@@ -39,7 +39,10 @@ const columns = [
   {name: '', uid: 'actions'},
 ];
 
-const INITIAL_VISIBLE_COLUMNS = ['date', 'message_recipients', 'subject', 'content', 'actions'];
+// const INITIAL_VISIBLE_COLUMNS = ['date', 'message_recipients', 'subject', 'content', 'actions'];
+const INITIAL_VISIBLE_COLUMNS = localStorage.getItem('sentHistoryTab_visibleColumns')
+  ? JSON.parse(localStorage.getItem('sentHistoryTab_visibleColumns'))
+  : ['date', 'message_recipients', 'subject', 'content', 'actions'];
 
 const AvaratName = ({imgSrc, name}) => (
   <div className={styles.avatarNameContainer}>
@@ -80,6 +83,11 @@ const MessagesTable = ({messages: sentMessages = [], isLoading = false, handleRe
     direction: 'ascending',
   });
   const [page, setPage] = React.useState(1);
+
+  const handleChangeVisibleColumns = columns => {
+    localStorage.setItem('sentHistoryTab_visibleColumns', JSON.stringify(Array.from(columns)));
+    setVisibleColumns(columns);
+  };
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -214,7 +222,7 @@ const MessagesTable = ({messages: sentMessages = [], isLoading = false, handleRe
                 closeOnSelect={false}
                 selectedKeys={visibleColumns}
                 selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
+                onSelectionChange={handleChangeVisibleColumns}
               >
                 {columns.map(column => (
                   <DropdownItem key={column.uid} className="capitalize">

@@ -29,11 +29,20 @@ const GroupPage = () => {
   } = useForm();
 
   const onSubmit = data => {
+    console.log(data);
+
+    data.schedule = Object.values(data.schedule).map(day => ({
+      dayOfWeek: day.dayOfWeek,
+      start: day.start.toString(),
+      end: day.end.toString(),
+    }));
+
     createNewGroup({
       groupName: data.name,
       clubBranchId: data.clubBranch,
       color: data.color,
-      coachId: data.coach,
+      coachId: data.mainCoach,
+      schedule: data.schedule,
     });
   };
 

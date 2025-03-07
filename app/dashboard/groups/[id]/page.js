@@ -47,22 +47,24 @@ const GroupPage = () => {
   const handleFetchGroupData = async () => {
     console.log('Fetching data');
 
-    try {
-      const groupData = await fetchGroupData(id);
-      // setGroupData(groupData);
-      setGroupData({
-        name: groupData.name,
-        color: groupData.color,
-        clubBranch: {
-          id: groupData.club_branches.id,
-          name: groupData.club_branches.name,
-        },
-      });
-      console.log('groupData', groupData);
-    } catch (error) {
-      console.error(error);
+    const {success, data} = await fetchGroupData(id);
+
+    // setGroupData(groupData);
+    if (!success) {
       redirect('/dashboard/groups');
     }
+    setGroupData({
+      name: data.name,
+      color: data.color,
+      clubBranch: {
+        id: data.club_branch.id,
+        name: data.club_branch.name,
+      },
+      coach: data.coach,
+      assistants: data.group_assistants,
+      schedule: data.group_schedule,
+    });
+    console.log('groupData', data);
   };
 
   useEffect(() => {
@@ -106,8 +108,12 @@ const GroupPage = () => {
             clubBranches={availableClubBranches}
             clubBranch={groupData.clubBranch}
           />
-          <CoachAssistantsCard className={styles.coachAndAssitantsCard} />
-          <ScheduleCard className={styles.scheduleCard} />
+          <CoachAssistantsCard
+            className={styles.coachAndAssitantsCard}
+            coach={groupData.coach}
+            assistants={groupData.assistants}
+          />
+          <ScheduleCard className={styles.scheduleCard} schedule={groupData.schedule} />
           <MembersCard className={styles.athletesCard} />
         </div>
       </ContentContainer>

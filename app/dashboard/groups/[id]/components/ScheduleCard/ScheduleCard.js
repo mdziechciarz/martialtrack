@@ -1,5 +1,6 @@
 'use client';
 
+import {parseTime} from '@internationalized/date';
 import {useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {v4} from 'uuid';
@@ -7,11 +8,11 @@ import {v4} from 'uuid';
 import {Add16Filled, Dismiss16Filled} from '@fluentui/react-icons';
 import {Button, Select, SelectItem, TimeInput} from '@nextui-org/react';
 
-import Card, {CardEntries, CardGrid} from '@/components/Card/Card';
+import Card, {CardGrid} from '@/components/Card/Card';
 
 import styles from './ScheduleCard.module.css';
 
-export default function ScheduleCard({className}) {
+export default function ScheduleCard({className, schedule = []}) {
   const [isEditMode, setIsEditMode] = useState(false);
 
   const {
@@ -58,16 +59,24 @@ export default function ScheduleCard({className}) {
           unregister={unregister}
           errors={errors}
           control={control}
+          currentSchedule={schedule}
         />
       ) : (
-        <ReadOnlyModeContent />
+        <ReadOnlyModeContent schedule={schedule} />
       )}
     </Card>
   );
 }
 
-const EditModeContent = ({register, unregister, errors, control}) => {
-  const [entries, setEntries] = useState([]);
+const EditModeContent = ({register, unregister, errors, control, currentSchedule = []}) => {
+  const initialEntries = currentSchedule.map(entry => ({
+    id: entry.id,
+    dayOfWeek: entry.day_of_week,
+    start: parseTime(entry.start_time),
+    end: parseTime(entry.end_time),
+  }));
+
+  const [entries, setEntries] = useState(initialEntries || []);
 
   const handleAddNewEntry = () => {
     setEntries([...entries, {id: v4(), dayOfWeek: '', start: null, end: null}]);
@@ -77,6 +86,10 @@ const EditModeContent = ({register, unregister, errors, control}) => {
     setEntries(prev => prev.filter(entry => entry.id !== id));
     unregister(`${id}`);
   };
+
+  console.log('currentSchedule', currentSchedule);
+
+  // TODO, DAY OF WEEK -> NUMBER TO TEXT
 
   return (
     <CardGrid oneColumn>
@@ -207,14 +220,58 @@ const Entry = ({id, dayOfWeek, start, end, handleRemoveEntry, register, errors, 
   );
 };
 
-const ReadOnlyModeContent = () => {
+const ReadOnlyModeContent = ({schedule}) => {
+  const entries = {};
+
+  const mapDayOfWeek = number => {
+    switch (number) {
+      case 1:
+        return 'Poniedziałek';
+      case 2:
+        return 'Wtorek';
+      case 3:
+        return 'Środa';
+      case 4:
+        return 'Czwartek';
+      case 5:
+        return 'Piątek';
+      case 6:
+        return 'Sobota';
+      case 7:
+        return 'Niedziela';
+      default:
+        throw new Error('Invalid day of week');
+    }
+  };
+
+  const grouppedSchedule = schedule.reduce((acc, curr) => {
+    const dayOfWeek = mapDayOfWeek(curr.day_of_week);
+
+    if (!acc[dayOfWeek]) {
+      acc[dayOfWeek] = [];
+    }
+
+    acc[dayOfWeek].push(curr);
+
+    acc[dayOfWeek] = acc[dayOfWeek].sort((a, b) => {
+      return a.start_time.localeCompare(b.start_time);
+    });
+
+    return acc;
+  }, {});
+
   return (
-    <CardEntries
-      entries={{
-        Poniedziałek: '16:00 - 17:00',
-        Wtorek: '16:00 - 17:00',
-        Środa: '16:00 - 17:00',
-      }}
-    />
+    <CardGrid>
+      {Object.entries(grouppedSchedule).map(([dayOfWeek, entries]) => (
+        <div key={dayOfWeek}>
+          <p style={{color: '#4a4a4a', fontSize: 13}}>{dayOfWeek}</p>
+          {entries.map(entry => (
+            <p key={entry.id}>
+              {entry.start_time.slice(0, 5)} - {entry.end_time.slice(0, 5)}
+            </p>
+          ))}
+        </div>
+      ))}
+    </CardGrid>
   );
 };

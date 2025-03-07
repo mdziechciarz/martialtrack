@@ -96,13 +96,13 @@ const Entry = ({id, dayOfWeek, start, end, handleRemoveEntry, register, errors, 
             {...field}
             validationBehavior="aria"
           >
-            <SelectItem key="monday">Poniedziałek</SelectItem>
-            <SelectItem key="tuesday">Wtorek</SelectItem>
-            <SelectItem key="wednesday">Środa</SelectItem>
-            <SelectItem key="thursday">Czwartek</SelectItem>
-            <SelectItem key="friday">Piątek</SelectItem>
-            <SelectItem key="saturday">Sobota</SelectItem>
-            <SelectItem key="sunday">Niedziela</SelectItem>
+            <SelectItem key="1">Poniedziałek</SelectItem>
+            <SelectItem key="2">Wtorek</SelectItem>
+            <SelectItem key="3">Środa</SelectItem>
+            <SelectItem key="4">Czwartek</SelectItem>
+            <SelectItem key="5">Piątek</SelectItem>
+            <SelectItem key="6">Sobota</SelectItem>
+            <SelectItem key="7">Niedziela</SelectItem>
           </Select>
         )}
       />

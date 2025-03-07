@@ -6,6 +6,7 @@ import {
   ChevronCircleLeft16Regular,
   ChevronCircleRight16Filled,
   ChevronCircleRight16Regular,
+  Dismiss16Filled,
 } from '@fluentui/react-icons';
 
 import styles from './AttendanceSection.module.css';
@@ -62,7 +63,7 @@ const DayColumn = ({dayName: dayOfWeek, isComplete = false, attendanceLists = []
   );
 };
 
-const AttendanceCard = ({name, color, times, attendanceList = null}) => {
+const AttendanceCard = ({name, color, times, attendanceList = null, isCanceled = false}) => {
   const router = useRouter();
 
   const handleClick = e => {
@@ -76,7 +77,7 @@ const AttendanceCard = ({name, color, times, attendanceList = null}) => {
   return (
     <div
       onClick={handleClick}
-      className={styles.attendanceCardContainer}
+      className={`${styles.attendanceCardContainer} ${isCanceled ? styles.canceled : ''}`}
       style={{borderLeftColor: color, position: 'relative', overflow: 'hidden'}}
       ref={domRef}
     >
@@ -91,6 +92,13 @@ const AttendanceCard = ({name, color, times, attendanceList = null}) => {
           <p>
             {attendanceList.attendeesCount}/{attendanceList.totalMembers}
           </p>
+        </div>
+      )}
+      {isCanceled && (
+        <div
+          className={`${styles.attendanceDetailsContainer} ${isCanceled ? styles.canceled : ''}`}
+        >
+          <Dismiss16Filled />
         </div>
       )}
     </div>

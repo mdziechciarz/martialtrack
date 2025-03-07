@@ -124,6 +124,7 @@ const MessageTypeSelectorCard = ({register, errors}) => {
           isInvalid={!!errors.messageType}
           {...register('messageType', {required: true})}
           validationBehavior="aria"
+          disabledKeys={['email']}
         >
           <SelectItem key="sms">SMS</SelectItem>
           <SelectItem key="email">E-mail</SelectItem>

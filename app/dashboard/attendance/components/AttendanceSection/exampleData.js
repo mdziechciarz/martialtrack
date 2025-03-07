@@ -71,6 +71,7 @@ const exampleAttendanceLists = {
       name: 'Kickboxing Dzieci',
       color: 'black',
       times: '18:30 - 20:00',
+      isCanceled: true,
     },
     {
       name: 'Kickboxing Dzieci',
