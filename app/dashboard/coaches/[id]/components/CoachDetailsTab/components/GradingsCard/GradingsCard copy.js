@@ -134,7 +134,7 @@ const GradingEntry = ({index, entryName, entryValue, setEntries}) => {
 
 const AddNewEntryButton = ({onClick}) => {
   return (
-    <Button className={styles.addTimeButton} size="sm" fullWidth onClick={onClick} variant="light">
+    <Button className={styles.addTimeButton} size="sm" fullWidth onPress={onClick} variant="light">
       <Add16Filled />
     </Button>
   );

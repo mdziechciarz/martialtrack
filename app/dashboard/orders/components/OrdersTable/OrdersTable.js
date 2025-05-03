@@ -37,21 +37,15 @@ import {createNewOrder, fetchOrders, removeOrder} from '../../actions';
 import styles from './OrdersTable.module.css';
 
 const statusColorMap = {
-  COMPLETE: 'success',
-  UNPAID: 'danger',
-  Opłacone: 'warning',
-};
-
-const statusNameMap = {
-  COMPLETE: 'Zrealizowane',
-  UNPAID: 'Nieopłacone',
-  Opłacone: 'Opłacone',
+  complete: 'success',
+  unpaid: 'danger',
+  paid: 'warning',
 };
 
 const statusOptions = [
-  {name: 'Zrealizowane', uid: 'COMPLETE'},
-  {name: 'Opłacone', uid: 'PAID'},
-  {name: 'Nieopłacone', uid: 'UNPAID  '},
+  {name: 'Zrealizowane', uid: 'complete'},
+  {name: 'Opłacone', uid: 'paid'},
+  {name: 'Nieopłacone', uid: 'unpaid'},
 ];
 
 const INITIAL_VISIBLE_COLUMNS = ['name', 'date', 'order', 'status', 'price', 'actions'];
@@ -83,22 +77,34 @@ const AvaratName = ({imgSrc, name}) => (
   </div>
 );
 
-const StatusChip = ({updateOrderStatus, status}) => {
-  const [selectedStatus, setSelectedStatus] = React.useState(status);
+const StatusChip = ({handleUpdateOrderStatus, currentStatus, orderId}) => {
+  const [isLoading, setIsLoading] = useState(false);
 
-  console.log(status);
+  // const handleUpdate = async ({newStatus}) => {
+  //   try {
+  //     setIsLoading(true);
+  //     await handleUpdateOrderStatus({orderId, status: newStatus});
+  //   } catch (error) {
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
-    <Dropdown>
+    <Dropdown isDisabled={isLoading}>
       <DropdownTrigger className="hidden sm:flex">
-        <div className={styles.statusChipContainer}>
+        <div
+          className={styles.statusChipContainer}
+          style={{cursor: isLoading ? 'unset' : 'pointer'}}
+        >
           <Chip
             className="capitalize"
-            color={statusColorMap[selectedStatus]}
+            color={statusColorMap[currentStatus]}
             size="sm"
             variant="flat"
+            // isDisabled={isLoading}
           >
-            {statusNameMap[selectedStatus]}
+            {statusOptions.find(option => option.uid === currentStatus)?.name || '-'}
           </Chip>
           <div className={styles.statusChevronContainer}>
             <ChevronDownIcon className={styles.statusChevronIcon} />
@@ -109,22 +115,17 @@ const StatusChip = ({updateOrderStatus, status}) => {
         disallowEmptySelection
         aria-label="Table Columns"
         closeOnSelect
-        selectedKeys={selectedStatus}
+        selectedKeys={currentStatus}
         selectionMode="single"
-        onAction={status => {
-          console.log('Selection change: ', status);
-          setSelectedStatus(status);
-        }}
+        // onAction={status => handleUpdate({newStatus: status})}
       >
-        <DropdownItem key={'COMPLETE'} className="capitalize">
-          Zrealizowane
-        </DropdownItem>
-        <DropdownItem key={'Opłacone'} className="capitalize">
-          Opłacone
-        </DropdownItem>
-        <DropdownItem key={'Nieopłacone'} className="capitalize">
-          Nieopłacone
-        </DropdownItem>
+        {statusOptions
+          .filter(status => status.uid != currentStatus)
+          .map(status => (
+            <DropdownItem key={status.uid} className="capitalize">
+              {capitalize(status.name)}
+            </DropdownItem>
+          ))}
       </DropdownMenu>
     </Dropdown>
   );
@@ -216,7 +217,7 @@ export default function OrdersTable() {
 
     if (hasSearchFilter) {
       filteredOrders = filteredOrders.filter(order =>
-        order.name.toLowerCase().includes(filterValue.toLowerCase())
+        order.athletes.full_name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (statusFilter !== 'all' && Array.from(statusFilter).length !== statusOptions.length) {
@@ -251,10 +252,21 @@ export default function OrdersTable() {
     const cellValue = order[columnKey];
 
     switch (columnKey) {
+      case 'order':
+        // Keep newline formatting (white-space: pre-wrap;)
+        return <p style={{whiteSpace: 'pre-wrap'}}>{cellValue}</p>;
+      case 'price':
+        return <p>{cellValue} PLN</p>;
       case 'name':
         return <AvaratName imgSrc={order.avatar} name={order.athletes.full_name} />;
       case 'status':
-        return <StatusChip status={cellValue} handleUpdateStatus={() => {}} />;
+        return (
+          <StatusChip
+            currentStatus={cellValue}
+            // handleUpdateOrderStatus={handleUpdateOrderStatus}
+            orderId={order.id}
+          />
+        );
       case 'actions':
         return (
           <div className="relative flex justify-end items-center gnap-2">
@@ -267,7 +279,9 @@ export default function OrdersTable() {
               <DropdownMenu>
                 {/* <DropdownItem>View</DropdownItem> */}
                 <DropdownItem
-                  onPress={() => handleEditClick(order.id, order.name, order.price, order.order)}
+                  onPress={() =>
+                    handleEditClick(order.id, order.athletes.name, order.price, order.order)
+                  }
                 >
                   Edytuj
                 </DropdownItem>
@@ -462,7 +476,7 @@ export default function OrdersTable() {
         {column => (
           <TableColumn
             key={column.uid}
-            align={column.uid === 'actions' ? 'center' : 'start'}
+            align={column.uid === 'actions' ? 'center' : column.id === 'price' ? 'end' : 'start'}
             allowsSorting={column.sortable}
           >
             {column.name}

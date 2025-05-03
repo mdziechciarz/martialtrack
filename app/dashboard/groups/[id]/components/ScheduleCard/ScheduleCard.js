@@ -68,10 +68,31 @@ export default function ScheduleCard({className, schedule = []}) {
   );
 }
 
+const mapDayOfWeekNumberToKey = number => {
+  switch (number) {
+    case 1:
+      return 'monday';
+    case 2:
+      return 'tuesday';
+    case 3:
+      return 'wednesday';
+    case 4:
+      return 'thursday';
+    case 5:
+      return 'friday';
+    case 6:
+      return 'saturday';
+    case 7:
+      return 'sunday';
+    default:
+      throw new Error('Invalid day of week');
+  }
+};
+
 const EditModeContent = ({register, unregister, errors, control, currentSchedule = []}) => {
   const initialEntries = currentSchedule.map(entry => ({
     id: entry.id,
-    dayOfWeek: entry.day_of_week,
+    dayOfWeek: mapDayOfWeekNumberToKey(entry.day_of_week),
     start: parseTime(entry.start_time),
     end: parseTime(entry.end_time),
   }));

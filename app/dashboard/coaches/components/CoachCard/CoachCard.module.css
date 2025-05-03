@@ -18,7 +18,8 @@
 }
 
 .optionsButton {
-  display: none;
+  /* display: none; */
+  visibility: hidden;
   position: absolute;
   top: 16px;
   right: 16px;
@@ -29,7 +30,8 @@
 }
 
 .container:hover .optionsButton {
-  display: block;
+  /* display: block; */
+  visibility: visible;
 }
 
 .avatarWrapper {

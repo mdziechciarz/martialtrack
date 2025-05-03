@@ -1,0 +1,61 @@
+@media screen and (min-width: 600px) {
+  .tableContainer {
+    /* padding: 24px 8px; */
+    padding: 24px;
+  }
+
+  .newOrderButton {
+    width: unset;
+    margin-left: auto;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .tableContainer {
+    padding: 32px;
+  }
+  .tableWrapper::-webkit-scrollbar {
+    width: 6px; /* Mostly for vertical scrollbars */
+    height: 6px; /* Mostly for horizontal scrollbars */
+  }
+  .tableWrapper::-webkit-scrollbar-thumb {
+    /* Foreground */
+    background: #4ba7e8;
+    border-radius: 8px;
+  }
+  .tableWrapper::-webkit-scrollbar-track {
+    /* Background */
+    background: #f0f0f0;
+    margin: 16px;
+    border-radius: 14px;
+  }
+}
+
+.cardContainer {
+  /* margin-top: 16px; */
+}
+
+.table {
+  margin-top: 16px;
+}
+
+.groupsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+}
+
+.chipBase {
+  cursor: pointer;
+}
+
+.chipBase:hover {
+  background-color: #ededed;
+}
+
+.chipDot {
+  width: 12px;
+  height: 12px;
+  background-color: var(--dot-color);
+}

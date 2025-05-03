@@ -2,33 +2,16 @@ const columns = [
   {name: 'ZAWODNIK', uid: 'name', sortable: true},
   {name: 'GRUPY  ', uid: 'groups'},
   {name: 'DATA URODZENIA  ', uid: 'birthdate', sortable: true},
-  {name: 'MIESIĄC', uid: 'month', sortable: true},
-  {name: 'ROK', uid: 'year', sortable: true},
   {name: 'NALEŻNOŚĆ', uid: 'amountDue', sortable: true},
-  {name: 'DATA WPŁATY', uid: 'paymentDate', sortable: true},
   {name: 'SPOSÓB PŁATNOŚCI', uid: 'paymentMethod', sortable: true},
   {name: 'STATUS', uid: 'status', sortable: true},
+  {name: 'MIESIĄC', uid: 'month', sortable: true},
   {name: '', uid: 'actions'},
 ];
 
 const statusOptions = [
   {name: 'Opłacone', uid: 'Opłacone'},
   {name: 'Nieopłacone', uid: 'Nieopłacone'},
-];
-
-const monthOptions = [
-  {name: 'Styczeń', uid: 'Styczeń'},
-  {name: 'Luty', uid: 'Luty'},
-  {name: 'Marzec', uid: 'Marzec'},
-  {name: 'Kwiecień', uid: 'Kwiecień'},
-  {name: 'Maj', uid: 'Maj'},
-  {name: 'Czerwiec', uid: 'Czerwiec'},
-  {name: 'Lipiec', uid: 'Lipiec'},
-  {name: 'Sierpień', uid: 'Sierpień'},
-  {name: 'Wrzesień', uid: 'Wrzesień'},
-  {name: 'Październik', uid: 'Październik'},
-  {name: 'Listopad', uid: 'Listopad'},
-  {name: 'Grudzień', uid: 'Grudzień'},
 ];
 
 const paymentMethodOptions = [
@@ -44,6 +27,21 @@ const groupsOptions = [
   {name: 'Kickboxing Kadeci', uid: 'Kickboxing Kadeci', color: '#2196F3'},
   {name: 'Yoga', uid: 'Yoga', color: '#9C27B0'},
   {name: 'Pilates', uid: 'Pilates', color: '#E91E63'},
+];
+
+const monthOptions = [
+  {name: 'Styczeń', uid: 'Styczeń'},
+  {name: 'Luty', uid: 'Luty'},
+  {name: 'Marzec', uid: 'Marzec'},
+  {name: 'Kwiecień', uid: 'Kwiecień'},
+  {name: 'Maj', uid: 'Maj'},
+  {name: 'Czerwiec', uid: 'Czerwiec'},
+  {name: 'Lipiec', uid: 'Lipiec'},
+  {name: 'Sierpień', uid: 'Sierpień'},
+  {name: 'Wrzesień', uid: 'Wrzesień'},
+  {name: 'Październik', uid: 'Październik'},
+  {name: 'Listopad', uid: 'Listopad'},
+  {name: 'Grudzień', uid: 'Grudzień'},
 ];
 
 const users = [

@@ -63,6 +63,8 @@
 }
 
 .avatar {
+  min-width: 24px;
+  min-height: 24px;
   width: 24px;
   height: 24px;
 }
@@ -88,10 +90,27 @@
   .groupName {
     font-size: 18px;
   }
-  .payerOptionsButton {
-    display: none;
+  .payer {
+    position: relative;
+    min-height: 32px;
   }
+
+  .payerOptionsButton {
+    /* display: none; */
+    position: absolute;
+    top: calc(50% - 16px);
+    right: 0;
+    /* opacity: 0; */
+    visibility: hidden;
+  }
+  .payer:hover > div {
+    padding-right: 32px;
+    transition: padding-right 0.2s ease-in-out;
+  }
+
   .payer:hover .payerOptionsButton {
-    display: block;
+    /* display: block; */
+    /* opacity: 1; */
+    visibility: visible;
   }
 }

@@ -1,3 +1,4 @@
+import {createClient} from '@/utils/supabase/client';
 import {PersonAdd20Filled} from '@fluentui/react-icons';
 import {
   Autocomplete,
@@ -9,43 +10,58 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react';
+import {useEffect, useState} from 'react';
 
-const exampleGroups = [
-  {
-    id: '123',
-    color: 'yellow',
-    groupName: 'Kickboxing  - Grupa 2',
-    coachName: 'Adam Zieliński',
-    days: 'Wtorek, Czwartek',
-    hours: '18:30 - 20:00',
-  },
-  {
-    id: '456',
-    color: 'royalblue',
-    groupName: 'Boks',
-    coachName: 'Martyna Błachowic',
-    days: 'Poniedziałek',
-    hours: '19:00 - 20:00',
-  },
-  {
-    id: '12233',
-    color: 'red',
-    groupName: 'Kickboxing  - zawodnicy',
-    coachName: 'Adam Zieliński',
-    days: 'Wtorek, Czwartek',
-    hours: '18:30 - 20:00',
-  },
-  {
-    id: '4564',
-    color: 'purple',
-    groupName: 'Yoga',
-    coachName: 'Martyna Błachowic',
-    days: 'Poniedziałek',
-    hours: '19:00 - 20:00',
-  },
-];
+import {addCoachAsAssistantToGroup} from '@/app/dashboard/coaches/[id]/actions/updateCoach';
 
-export default function NewGroupModal({isOpen, onOpenChange}) {
+export default function NewGroupModal({isOpen, onOpenChange, coachId, refetchCoachData}) {
+  const [groups, setGroups] = useState([]);
+  const [isAdding, setIsAdding] = useState(false);
+  const [selectedGroupId, setSelectedGroupId] = useState(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    const fetchGroups = async () => {
+      const {data, error} = await supabase.from('groups').select('*, group_assistants(*)');
+      if (error) {
+        setGroups([]);
+        console.error('Error fetching groups:', error);
+        return;
+      }
+      setGroups(
+        data.filter(
+          group =>
+            !group.group_assistants.some(assistant => assistant.coach_id === coachId) &&
+            !group.coach_id === coachId
+        )
+      );
+    };
+    fetchGroups();
+  }, []);
+
+  const handleAddCoachAsAssistantToGroup = async () => {
+    try {
+      setIsAdding(true);
+      const {success} = await addCoachAsAssistantToGroup({
+        coachId,
+        groupId: selectedGroupId,
+      });
+      if (success) {
+        console.log('Athlete added to group successfully');
+        refetchCoachData();
+      }
+      if (!success) {
+        console.error('Failed to add athlete to group');
+      }
+    } catch (error) {
+      console.error('Error adding athlete to group:', error);
+    } finally {
+      setIsAdding(false);
+      onOpenChange(false);
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
       <ModalContent>
@@ -56,15 +72,14 @@ export default function NewGroupModal({isOpen, onOpenChange}) {
             </ModalHeader>
             <ModalBody>
               <Autocomplete
-                defaultItems={exampleGroups}
-                // variant="bordered"
+                defaultItems={groups}
                 label="Grupa"
                 placeholder="Wybierz grupę"
-                // labelPlacement="inside"
-                // className="max-w-xs"
+                onSelectionChange={setSelectedGroupId}
+                selectedKey={selectedGroupId}
               >
                 {group => (
-                  <AutocompleteItem key={group.id} textValue={group.groupName}>
+                  <AutocompleteItem key={group.id} textValue={group.name}>
                     <div className="flex gap-2 items-center">
                       <span
                         style={{
@@ -75,7 +90,7 @@ export default function NewGroupModal({isOpen, onOpenChange}) {
                         }}
                       />
                       <div className="flex flex-col">
-                        <span className="text-small">{group.groupName}</span>
+                        <span className="text-small">{group.name}</span>
                       </div>
                     </div>
                   </AutocompleteItem>
@@ -86,7 +101,12 @@ export default function NewGroupModal({isOpen, onOpenChange}) {
               <Button variant="light" onPress={onClose}>
                 Anuluj
               </Button>
-              <Button color="primary" onPress={onClose} endContent={<PersonAdd20Filled />}>
+              <Button
+                color="primary"
+                onPress={handleAddCoachAsAssistantToGroup}
+                endContent={<PersonAdd20Filled />}
+                isDisabled={!selectedGroupId}
+              >
                 Dodaj
               </Button>
             </ModalFooter>

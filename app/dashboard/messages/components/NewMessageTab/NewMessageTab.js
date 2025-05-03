@@ -31,6 +31,7 @@ const NewMessageTab = ({handleFetchMessages}) => {
   } = useDisclosure();
 
   const [selectedRecipients, setSelectedRecipients] = useState([]);
+  const [isSending, setIsSending] = useState(false);
 
   const {
     register,
@@ -39,6 +40,7 @@ const NewMessageTab = ({handleFetchMessages}) => {
     trigger,
     clearErrors,
     formState: {errors},
+    reset,
   } = useForm({
     defaultValues: {
       messageType: 'sms',
@@ -59,6 +61,7 @@ const NewMessageTab = ({handleFetchMessages}) => {
   };
 
   const handleSendMessage = async data => {
+    setIsSending(true);
     const response = await sendSMSMessage({
       recipients: data.recipients,
       message: data.messageContent,
@@ -67,9 +70,12 @@ const NewMessageTab = ({handleFetchMessages}) => {
     if (response.success) {
       toast.success('Wiadomość została wysłana');
       handleFetchMessages();
+      reset();
+      setSelectedRecipients([]);
     } else {
       toast.error('Wystąpił błąd podczas wysyłania wiadomości');
     }
+    setIsSending(false);
   };
 
   const handleScheduleSending = handleSubmit(data => {
@@ -87,7 +93,7 @@ const NewMessageTab = ({handleFetchMessages}) => {
       <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.buttonsContainer}>
           <Button className={styles.cancelButton}>Anuluj</Button>
-          <Buttons onScheduleSendingClick={handleScheduleSending} />
+          <Buttons onScheduleSendingClick={handleScheduleSending} isSending={isSending} />
           <ScheduleSendingModal
             isOpen={isScheduleSendingModalOpen}
             onOpenChange={onScheduleSendingModalOpenChange}
@@ -163,10 +169,16 @@ const MessageContentCard = ({register, errors, clearErrors}) => {
   );
 };
 
-const Buttons = ({onScheduleSendingClick = () => {}}) => {
+const Buttons = ({onScheduleSendingClick = () => {}, isSending}) => {
   return (
     <ButtonGroup className={styles.buttonsGroup} color="primary">
-      <Button type="submit" className={styles.mainButton} startContent={<Send16Filled />}>
+      <Button
+        type="submit"
+        className={styles.mainButton}
+        startContent={<Send16Filled />}
+        isLoading={isSending}
+        isDisabled={isSending}
+      >
         Wyślij wiadomość
       </Button>
       <Dropdown placement="bottom-end">
@@ -180,7 +192,7 @@ const Buttons = ({onScheduleSendingClick = () => {}}) => {
             type="submit"
             key="1"
             startContent={<Calendar16Regular />}
-            onClick={onScheduleSendingClick}
+            onPress={onScheduleSendingClick}
           >
             Zaplanuj wysłanie
           </DropdownItem>

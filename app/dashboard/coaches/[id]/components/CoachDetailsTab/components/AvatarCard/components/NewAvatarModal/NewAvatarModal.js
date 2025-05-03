@@ -119,7 +119,7 @@ export default function NewAvatarModal({isOpen, onOpenChange, setAvatarSrc}) {
                   endContent={<ImageAdd20Filled />}
                   fullWidth
                   color="secondary"
-                  onClick={() => inputRef.current.click()}
+                  onPress={() => inputRef.current.click()}
                 >
                   Wybierz zdjęcie
                 </Button>

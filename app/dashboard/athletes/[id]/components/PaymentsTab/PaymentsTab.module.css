@@ -3,3 +3,10 @@
   flex-direction: column;
   gap: 16px;
 }
+
+@media screen and (min-width: 900px) {
+  .paymentsSettingsEditModeContent,
+  .paymentsSettingsReadOnlyContent {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}

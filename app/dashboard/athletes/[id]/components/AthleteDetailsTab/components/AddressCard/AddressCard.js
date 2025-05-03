@@ -5,15 +5,18 @@ import {Input} from '@nextui-org/react';
 
 import Card, {CardEntries, CardGrid} from '@/components/Card/Card';
 
-const exampleData = {
-  streetName: 'Kwiatowa',
-  houseAndApartmentNumber: '12',
-  cityName: 'Warszawa',
-  postalCode: '12-345',
-};
+import {updateAthleteAddressDetails} from '../../../../actions/updateAthlete';
 
-const AddressCard = () => {
+const AddressCard = ({
+  athleteId,
+  refetchAthleteData,
+  streetName,
+  houseAndApartmentNumber,
+  cityName,
+  postalCode,
+}) => {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     register,
@@ -23,11 +26,31 @@ const AddressCard = () => {
     reset,
   } = useForm();
 
-  const handleSaveChanges = handleSubmit(data => {
-    console.log('Changes saved');
-    console.log(data);
-    reset();
-    setIsEditMode(false);
+  const handleSaveChanges = handleSubmit(async data => {
+    try {
+      setIsSaving(true);
+
+      const {success} = await updateAthleteAddressDetails({
+        id: athleteId,
+        streetName: data.streetName,
+        houseAndApartmentNumber: data.houseAndApartmentNumber,
+        cityName: data.cityName,
+        postalCode: data.postalCode,
+      });
+
+      if (success) {
+        console.log('Changes saved successfully');
+        refetchAthleteData();
+      } else {
+        console.error('Failed to save changes');
+      }
+    } catch (error) {
+      console.error('Error saving changes:', error);
+    } finally {
+      setIsSaving(false);
+      reset();
+      setIsEditMode(false);
+    }
   });
 
   const handleCancelChanges = () => {
@@ -49,22 +72,23 @@ const AddressCard = () => {
       onSaveClick={handleSaveChanges}
       onCancelClick={handleCancelChanges}
       onEditClick={handleEdit}
+      isSaving={isSaving}
     >
       {isEditMode ? (
         <EditModeContent
           register={register}
           errors={errors}
-          currentStreetName={exampleData.streetName}
-          currentHouseAndAppartmentNumber={exampleData.houseAndApartmentNumber}
-          currentCityName={exampleData.cityName}
-          currentPostalCode={exampleData.postalCode}
+          currentStreetName={streetName}
+          currentHouseAndApartmentNumber={houseAndApartmentNumber}
+          currentCityName={cityName}
+          currentPostalCode={postalCode}
         />
       ) : (
         <ReadOnlyContent
-          streetName={exampleData.streetName}
-          houseAndApartmentNumber={exampleData.houseAndApartmentNumber}
-          cityName={exampleData.cityName}
-          postalCode={exampleData.postalCode}
+          streetName={streetName}
+          houseAndApartmentNumber={houseAndApartmentNumber}
+          cityName={cityName}
+          postalCode={postalCode}
         />
       )}
     </Card>
@@ -88,7 +112,7 @@ const EditModeContent = ({
   register,
   errors,
   currentStreetName,
-  currentHouseAndAppartmentNumber,
+  currentHouseAndApartmentNumber,
   currentCityName,
   currentPostalCode,
 }) => {
@@ -115,7 +139,7 @@ const EditModeContent = ({
         labelPlacement="outside"
         placeholder="Np. 12"
         isInvalid={!!errors.houseAndApartmentNumber}
-        defaultValue={currentHouseAndAppartmentNumber}
+        defaultValue={currentHouseAndApartmentNumber}
         {...register('houseAndApartmentNumber', {
           required: {
             value: true,

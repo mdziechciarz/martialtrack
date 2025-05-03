@@ -15,31 +15,84 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Spinner,
   Tab,
   Tabs,
 } from '@nextui-org/react';
+import {useEffect, useState} from 'react';
 import AthleteDetailsTab from './components/AthleteDetailsTab/AthleteDetailsTab';
 import OrdersTab from './components/OrdersTab/OrdersTab';
-import ParentDetailsTab from './components/ParentDetailsTab/ParentDetailsTab';
 import PaymentsTab from './components/PaymentsTab/PaymentsTab';
 
+import {getAthleteData} from './actions/getAthleteData';
+
+import {useParams, useRouter} from 'next/navigation';
 import styles from './AthletePage.module.css';
 
 const AthletePage = () => {
+  const router = useRouter();
+  const params = useParams();
+  const athleteId = params.id;
+
+  const [athleteData, setAthleteData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleGetAthleteData = async () => {
+    try {
+      setIsLoading(true);
+      if (!athleteId) {
+        throw new Error('Athlete ID is required');
+      }
+
+      const {success, data} = await getAthleteData(athleteId);
+      if (!success || !data) {
+        throw new Error('Failed to fetch athlete data');
+      }
+
+      setAthleteData({
+        id: data.id,
+        fullName: data.full_name,
+        pesel: data.pesel,
+        sex: data.sex,
+        dateOfBirth: data.date_of_birth,
+        placeOfBirth: data.place_of_birth,
+        streetName: data.street_name,
+        houseAndApartmentNumber: data.house_and_apartment_number,
+        cityName: data.city_name,
+        postalCode: data.postal_code,
+        phoneNumber: data.phone_number,
+        email: data.email,
+        medicalCheckupsAndLicenses: data.medical_checkups_and_licenses,
+        other: data.other,
+        levels: data.levels,
+        groups: data.groups,
+        avatar_url: data.avatar_url,
+        orders: data.orders,
+        membershipPayments: data.membership_payments,
+        membershipSettings: data.athlete_membership_settings,
+      });
+    } catch (error) {
+      console.error('Error fetching athlete data:', error);
+      router.push('/dashboard/athletes');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleGetAthleteData();
+  }, [athleteId]);
+
   return (
     <MainLayout>
-      <ContentContainer>
+      <ContentContainer style={{position: 'relative', minHeight: '80vh'}}>
         <div className={styles.buttonsContainer}>
-          {/* <Button color="primary" endContent={<Send16Filled />}>
-            Wiadomość
-          </Button> */}
           <Buttons />
         </div>
         <Tabs
           variant="underlined"
           color="primary"
           activeIndex={0}
-          onChange={index => console.log(index)}
           classNames={{
             base: styles.base,
             tabList: styles.tabList,
@@ -50,16 +103,33 @@ const AthletePage = () => {
           className={styles.tabsContainer}
         >
           <Tab key="athleteDetails" title="Dane zawodnika">
-            <AthleteDetailsTab />
+            {isLoading ? (
+              <Spinner style={{position: 'absolute', top: '50%', left: '50%'}} />
+            ) : (
+              <AthleteDetailsTab
+                athleteData={athleteData}
+                refetchAthleteData={handleGetAthleteData}
+              />
+            )}
           </Tab>
           <Tab key="payments" title="Składki">
-            <PaymentsTab />
+            <PaymentsTab
+              athleteId={athleteData?.id}
+              isLoading={isLoading}
+              paymentsData={athleteData?.membershipPayments}
+              membershipSettings={athleteData?.membershipSettings}
+              refetchAthleteData={handleGetAthleteData}
+            />
           </Tab>
-          <Tab key="parents" title="Dane rodziców">
-            <ParentDetailsTab />
-          </Tab>
+          {/* <Tab key="parents" title="Dane rodziców">
+                <ParentDetailsTab />
+              </Tab> */}
           <Tab key="orders" title="Zamówienia">
-            <OrdersTab />
+            <OrdersTab
+              orders={athleteData?.orders}
+              athleteId={athleteData?.id}
+              refetchAthleteData={handleGetAthleteData}
+            />
           </Tab>
         </Tabs>
       </ContentContainer>

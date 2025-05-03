@@ -161,6 +161,13 @@
   padding: 0;
 }
 
+.todayButton {
+  margin: 8px auto 12px;
+  display: block;
+  width: 120px;
+  font-size: 14px;
+}
+
 @media screen and (min-width: 600px) {
   .container {
     padding: 24px;
@@ -186,4 +193,31 @@
   .container {
     padding: 32px;
   }
+}
+
+/* Add these new styles to the existing CSS file */
+
+.loadingPlaceholder {
+  padding: 20px 0;
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
+.emptyDay {
+  padding: 20px 0;
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
+.future {
+  /* opacity: 0.7;
+  cursor: default;
+  background-color: #fafafa;
+  border-style: dashed; */
+}
+
+.future:hover {
+  background-color: #fafafa;
 }

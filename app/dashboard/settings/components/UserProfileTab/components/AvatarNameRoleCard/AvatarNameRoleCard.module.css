@@ -1,0 +1,76 @@
+.avatarWrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  /* margin: 0 auto; */
+  /* padding-top: 35%; */
+}
+
+.avatar {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 100%;
+  object-fit: cover;
+}
+
+.name {
+  margin-top: 8px;
+  text-align: center;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Edit mode */
+
+.overlay {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 100%;
+  background-color: rgba(85, 85, 85, 0);
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.overlay svg {
+  color: white;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.overlay:hover {
+  background-color: rgba(85, 85, 85, 0.5);
+}
+
+.overlay:hover svg {
+  opacity: 1;
+}
+
+.removePhotoButton {
+  display: none;
+  position: absolute;
+  bottom: 0px;
+  left: -4px;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.removePhotoButton svg {
+  color: white;
+  width: 20px;
+  height: 20px;
+}
+
+.editModeContentContainer:hover .removePhotoButton {
+  display: block;
+  opacity: 1;
+}

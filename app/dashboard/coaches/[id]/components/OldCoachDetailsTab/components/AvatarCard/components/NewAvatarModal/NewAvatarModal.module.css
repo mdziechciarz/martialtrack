@@ -1,0 +1,13 @@
+.newAvatarInput input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.newAvatarInput input::file-selector-button {
+  /* display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-align: center; */
+}

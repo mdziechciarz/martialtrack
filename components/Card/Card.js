@@ -16,6 +16,7 @@ export default function Card({
   onSaveClick = () => {},
   onCancelClick = () => {},
   onEditClick = () => {},
+  isSaving = false,
 }) {
   return (
     <div className={`${styles.container} ${className}`} style={style}>
@@ -30,8 +31,8 @@ export default function Card({
             <div className={styles.editButtonsContainer}>
               {isEditMode ? (
                 <>
-                  <SaveChangesButton onClick={onSaveClick} />
-                  <CancelChangesButton onClick={onCancelClick} />
+                  <SaveChangesButton onClick={onSaveClick} isDisabled={isSaving} />
+                  <CancelChangesButton onClick={onCancelClick} isDisabled={isSaving} />
                 </>
               ) : (
                 <EditButton onClick={onEditClick} />
@@ -77,23 +78,35 @@ export const CardGrid = ({children, className = '', style = {}, oneColumn = fals
 
 const EditButton = ({onClick}) => {
   return (
-    <Button className={styles.editButton} isIconOnly onClick={onClick} variant="light">
+    <Button className={styles.editButton} isIconOnly onPress={onClick} variant="light">
       <Edit16Filled />
     </Button>
   );
 };
 
-const SaveChangesButton = ({onClick}) => {
+const SaveChangesButton = ({onClick, isDisabled = false}) => {
   return (
-    <Button className={styles.saveChangesButton} isIconOnly onClick={onClick} variant="light">
+    <Button
+      className={styles.saveChangesButton}
+      isIconOnly
+      onPress={onClick}
+      variant="light"
+      isDisabled={isDisabled}
+    >
       <Checkmark16Filled />
     </Button>
   );
 };
 
-const CancelChangesButton = ({onClick}) => {
+const CancelChangesButton = ({onClick, isDisabled}) => {
   return (
-    <Button className={styles.cancelChangesButton} isIconOnly onClick={onClick} variant="light">
+    <Button
+      className={styles.cancelChangesButton}
+      isIconOnly
+      onPress={onClick}
+      variant="light"
+      isDisabled={isDisabled}
+    >
       <Dismiss16Filled />
     </Button>
   );

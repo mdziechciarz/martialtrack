@@ -5,6 +5,8 @@ import {Input} from '@nextui-org/react';
 
 import Card, {CardEntries, CardGrid} from '@/components/Card/Card';
 
+import {updateAthleteContactDetails} from '../../../../actions/updateAthlete';
+
 import styles from './ContactCard.module.css';
 
 const exampleContactData = {
@@ -12,8 +14,9 @@ const exampleContactData = {
   email: 'karolina.kowalska@email.com',
 };
 
-const ContactCard = () => {
+const ContactCard = ({refetchAthleteData, athleteId, phoneNumber, email}) => {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     register,
@@ -23,11 +26,29 @@ const ContactCard = () => {
     reset,
   } = useForm();
 
-  const handleSaveChanges = handleSubmit(data => {
-    console.log('Changes saved');
-    console.log(data);
-    reset();
-    setIsEditMode(false);
+  const handleSaveChanges = handleSubmit(async data => {
+    try {
+      setIsSaving(true);
+
+      const {success} = await updateAthleteContactDetails({
+        id: athleteId,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+      });
+
+      if (success) {
+        console.log('Changes saved successfully');
+        refetchAthleteData();
+      } else {
+        console.error('Failed to save changes');
+      }
+    } catch (error) {
+      console.error('Error saving changes:', error);
+    } finally {
+      setIsSaving(false);
+      reset();
+      setIsEditMode(false);
+    }
   });
 
   const handleCancelChanges = () => {
@@ -50,28 +71,29 @@ const ContactCard = () => {
       onSaveClick={handleSaveChanges}
       onCancelClick={handleCancelChanges}
       onEditClick={handleEdit}
+      isSaving={isSaving}
     >
       {isEditMode ? (
         <EditModeContent
           register={register}
           errors={errors}
           control={control}
-          currentPhoneNumber={exampleContactData.phoneNumber}
-          currentEmail={exampleContactData.email}
+          currentPhoneNumber={phoneNumber}
+          currentEmail={email}
         />
       ) : (
-        <ReadOnlyContent />
+        <ReadOnlyContent phoneNumber={phoneNumber} email={email} />
       )}
     </Card>
   );
 };
 
-const ReadOnlyContent = () => {
+const ReadOnlyContent = ({phoneNumber, email}) => {
   return (
     <CardEntries
       entries={{
-        Telefon: exampleContactData.phoneNumber,
-        'E-mail': exampleContactData.email,
+        Telefon: phoneNumber,
+        'E-mail': email,
       }}
     />
   );

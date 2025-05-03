@@ -1,0 +1,28 @@
+.entry {
+  display: flex;
+  column-gap: 8px;
+  align-items: center;
+  position: relative;
+}
+
+.removeEntryButton {
+  opacity: 0;
+  position: absolute;
+  top: 12px;
+  right: 0;
+}
+
+.entry:hover {
+  padding-right: 40px;
+  transition: padding-right 0.2s;
+}
+
+.entry:hover .removeEntryButton {
+  opacity: 1;
+  transition: opacity 0.2s;
+  display: block;
+}
+
+.newEntryButtonContainer {
+  margin-top: 16px;
+}

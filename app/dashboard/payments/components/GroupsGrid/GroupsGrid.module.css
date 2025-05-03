@@ -1,6 +1,7 @@
 .buttonsContainer {
   display: flex;
   justify-content: space-between;
+  gap: 16px;
 }
 
 .buttonsGroup svg {
@@ -13,6 +14,17 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
+}
+
+.filterButtons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-grow: 1;
+}
+
+.selectTrigger {
+  background-color: #fff;
 }
 
 @media screen and (min-width: 600px) {
@@ -29,7 +41,15 @@
 
 @media screen and (min-width: 1200px) {
   .grid {
-    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
+  }
+
+  .filterButtons {
+    max-width: 40%;
+  }
+}
+@media screen and (min-width: 1440px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

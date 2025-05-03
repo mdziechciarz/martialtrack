@@ -1,3 +1,4 @@
+import {encode} from 'base64-arraybuffer';
 import Image from 'next/image';
 import {useState} from 'react';
 import {useForm} from 'react-hook-form';
@@ -9,10 +10,30 @@ import Card from '@/components/Card/Card';
 import NewAvatarModal from './components/NewAvatarModal/NewAvatarModal';
 import userAvatarPlaceholder from './user avatar placeholder.svg';
 
+import {updateAthleteNameAndAvatar} from '../../../../actions/updateAthlete';
+
 import styles from './AvatarCard.module.css';
 
-const AvatarCard = ({children, className = '', name, imgSrc}) => {
+// Utility function to convert image URL to base64 using base64-arraybuffer
+const convertImageToBase64 = async imageUrl => {
+  if (!imageUrl || imageUrl.startsWith('data:')) return imageUrl;
+
+  try {
+    const response = await fetch(imageUrl);
+    const arrayBuffer = await response.arrayBuffer();
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    const base64 = encode(arrayBuffer);
+    return `data:${contentType};base64,${base64}`;
+  } catch (error) {
+    console.error('Error converting image to base64:', error);
+    return null;
+  }
+};
+
+const AvatarCard = ({className = '', name, imgSrc = null, athleteId, refetchAthleteData}) => {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [imgSrcBase64, setImgSrcBase64] = useState(null);
 
   const {
     register,
@@ -23,11 +44,31 @@ const AvatarCard = ({children, className = '', name, imgSrc}) => {
     reset,
   } = useForm();
 
-  const handleSaveChanges = handleSubmit(data => {
-    console.log('Changes saved');
-    console.log(data);
-    reset();
-    setIsEditMode(false);
+  const handleSaveChanges = handleSubmit(async data => {
+    console.log('Saving changes:', data);
+
+    try {
+      setIsSaving(true);
+
+      const {success} = await updateAthleteNameAndAvatar({
+        id: athleteId,
+        fullName: data.fullName,
+        avatarBase64: data.avatar,
+      });
+
+      if (success) {
+        console.log('Changes saved successfully');
+        refetchAthleteData();
+      } else {
+        console.error('Failed to save changes');
+      }
+    } catch (error) {
+      console.error('Error saving changes:', error);
+    } finally {
+      setIsSaving(false);
+      reset();
+      setIsEditMode(false);
+    }
   });
 
   const handleCancelChanges = () => {
@@ -36,9 +77,11 @@ const AvatarCard = ({children, className = '', name, imgSrc}) => {
     setIsEditMode(false);
   };
 
-  const handleEdit = () => {
+  const handleEdit = async () => {
     console.log('Editing');
-    setValue('avatar', imgSrc);
+    const base64Image = await convertImageToBase64(imgSrc);
+    setImgSrcBase64(base64Image);
+    setValue('avatar', base64Image);
     setIsEditMode(true);
   };
 
@@ -50,11 +93,12 @@ const AvatarCard = ({children, className = '', name, imgSrc}) => {
       onCancelClick={handleCancelChanges}
       onEditClick={handleEdit}
       setIsEditMode={setIsEditMode}
+      isSaving={isSaving}
     >
       {isEditMode ? (
         <EditModeContent
           currentName={name}
-          currentImgSrc={imgSrc}
+          currentImgSrc={imgSrcBase64}
           register={register}
           errors={errors}
           setValue={setValue}
@@ -70,7 +114,13 @@ const ReadOnlyContent = ({name, imgSrc}) => {
   return (
     <div>
       <div className={styles.avatarWrapper}>
-        <Image className={styles.avatar} src={imgSrc} alt="Avatar" width={300} height={300} />
+        <Image
+          className={styles.avatar}
+          src={imgSrc || userAvatarPlaceholder}
+          alt="Avatar"
+          width={300}
+          height={300}
+        />
       </div>
       <h2 className={styles.name}>{name}</h2>
     </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link.js';
 import {useCallback, useEffect, useState} from 'react';
 
 import {
@@ -22,6 +23,9 @@ import {
 // import {ReactComponent as MartialTrackLogo} from './logo_white.svg';
 
 import {
+  Autocomplete,
+  AutocompleteItem,
+  AutocompleteSection,
   Avatar,
   Badge,
   Button,
@@ -34,9 +38,10 @@ import {
 import {usePathname, useRouter} from 'next/navigation';
 import {logOut} from './actions.ts';
 
-import {Trophy16Filled} from '@fluentui/react-icons';
+import {ArrowExport16Filled, Search16Regular, Trophy16Filled} from '@fluentui/react-icons';
 
 import {createClient} from '@/utils/supabase/client';
+
 import styles from './MainLayout.module.css';
 
 // const MainLayout = ({children, user}) => {
@@ -100,6 +105,57 @@ const MainLayout = ({children}) => {
     fetchUser();
   }, [fetchUser]);
 
+  const [athletes, setAthletes] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [coaches, setCoaches] = useState([]);
+  const [competitions, setCompetitions] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
+
+  useEffect(() => {
+    setIsFetching(true);
+
+    // Get all athletes
+    const supabase = createClient();
+
+    const fetchAthletes = async () => {
+      const {data, error} = await supabase.from('athletes').select('*');
+      if (error) {
+        setAthletes([]);
+      }
+      setAthletes(data);
+    };
+
+    const fetchGroups = async () => {
+      const {data, error} = await supabase.from('groups').select('*');
+      if (error) {
+        setGroups([]);
+      }
+      setGroups(data);
+    };
+
+    const fetchCoaches = async () => {
+      const {data, error} = await supabase.from('coaches').select('*');
+      if (error) {
+        setCoaches([]);
+      }
+      setCoaches(data);
+    };
+
+    const fetchCompetitions = async () => {
+      const {data, error} = await supabase.from('competitions').select('*');
+      if (error) {
+        setCompetitions([]);
+      }
+      setCompetitions(data);
+    };
+
+    fetchAthletes();
+    fetchGroups();
+    fetchCoaches();
+    fetchCompetitions();
+    setIsFetching(false);
+  }, []);
+
   return (
     <div className={styles.layoutContainer}>
       <SideBar isOpen={isSideBarOpen} closeSideBar={closeSideBar} openSideBar={openSideBar} />
@@ -109,6 +165,11 @@ const MainLayout = ({children}) => {
           isSideBarOpen={isSideBarOpen}
           avatarSrc={user?.avatar_src}
           key={user?.avatar_src}
+          athletes={athletes}
+          coaches={coaches}
+          competitions={competitions}
+          groups={groups}
+          isFetching={isFetching}
         />
         <div className={styles.contentContainer}>{children}</div>
       </div>
@@ -118,14 +179,157 @@ const MainLayout = ({children}) => {
 
 export default MainLayout;
 
-const TopBar = ({openSideBar, isSideBarOpen, avatarSrc}) => {
+const TopBar = ({
+  openSideBar,
+  isSideBarOpen,
+  avatarSrc,
+  athletes = [],
+  coaches = [],
+  competitions = [],
+  groups = [],
+  isFetching = true,
+}) => {
   const handleLogout = async () => {
     logOut();
   };
 
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  // Get current url path to exclude from autocomplete
+  const pathname = usePathname();
   return (
     <div className={styles.topBarContainer}>
       {!isSideBarOpen && <HamburgerButton openSideBar={openSideBar} />}
+      <Autocomplete
+        className={styles.fastSearchInput}
+        placeholder="Szybkie wyszukiwanie"
+        selectorIcon={<Search16Regular />}
+        size="sm"
+        isClearable
+        onSelectionChange={() => {
+          setIsRedirecting(true);
+        }}
+        isLoading={isRedirecting}
+        isDisabled={isRedirecting || isFetching}
+      >
+        <AutocompleteSection showDivider title="Zawodnicy">
+          {athletes
+            .filter(user => pathname !== `/dashboard/athletes/${user.id}`)
+            .map(user => (
+              <AutocompleteItem
+                key={user.id}
+                textValue={user.full_name}
+                value={user.id}
+                className={styles.fastSearchItem}
+              >
+                <Link href={`/dashboard/athletes/${user.id}`}>
+                  <div className="flex gap-2 items-center">
+                    <Avatar
+                      alt={user.full_name}
+                      name={user.full_name}
+                      className="flex-shrink-0"
+                      size="sm"
+                      src={user.avatar_url || null}
+                    />
+                    <div className="flex flex-col">
+                      <span className="text-small">{user.full_name}</span>
+                    </div>
+                    <div className={styles.arrowIconContainer}>
+                      <ArrowExport16Filled />
+                    </div>
+                  </div>
+                </Link>
+              </AutocompleteItem>
+            ))}
+        </AutocompleteSection>
+        <AutocompleteSection title="Trenerzy">
+          {coaches
+            .filter(user => pathname !== `/dashboard/coaches/${user.id}`)
+            .map(user => (
+              <AutocompleteItem
+                key={user.id}
+                textValue={user.full_name}
+                value={user.id}
+                className={styles.fastSearchItem}
+              >
+                <Link href={`/dashboard/coaches/${user.id}`}>
+                  <div className="flex gap-2 items-center">
+                    <Avatar
+                      alt={user.full_name}
+                      name={user.full_name}
+                      className="flex-shrink-0"
+                      size="sm"
+                      src={user.avatar || null}
+                    />
+                    <div className="flex flex-col">
+                      <span className="text-small">{user.full_name}</span>
+                    </div>
+                    <div className={styles.arrowIconContainer}>
+                      <ArrowExport16Filled />
+                    </div>
+                  </div>
+                </Link>
+              </AutocompleteItem>
+            ))}
+        </AutocompleteSection>
+        <AutocompleteSection title="Grupy">
+          {groups
+            .filter(group => pathname !== `/dashboard/groups/${group.id}`)
+            .map(group => (
+              <AutocompleteItem
+                key={group.id}
+                textValue={group.name}
+                value={group.id}
+                className={styles.fastSearchItem}
+              >
+                <Link href={`/dashboard/groups/${group.id}`}>
+                  <div className="flex justify-between items-center">
+                    <div
+                      className={`${styles.chipContainer}`}
+                      style={{backgroundColor: 'transparent'}}
+                    >
+                      <i
+                        className={styles.groupDot}
+                        style={{backgroundColor: group.color, marginRight: 4}}
+                      />
+                      <span className={styles.name}>{group.name}</span>
+                    </div>
+                    <div className={styles.arrowIconContainer}>
+                      <ArrowExport16Filled />
+                    </div>
+                  </div>
+                </Link>
+              </AutocompleteItem>
+            ))}
+        </AutocompleteSection>
+        <AutocompleteSection title="Zawody">
+          {competitions
+            .filter(competition => pathname !== `/dashboard/competitions/${competition.id}`)
+            .map(competition => (
+              <AutocompleteItem
+                key={competition.id}
+                textValue={competition.name}
+                value={competition.id}
+                className={styles.fastSearchItem}
+              >
+                <Link href={`/dashboard/competitions/${competition.id}`}>
+                  <div className="flex justify-between items-center">
+                    <div
+                      className={`${styles.chipContainer}`}
+                      style={{backgroundColor: 'transparent'}}
+                    >
+                      <i className={styles.groupDot} style={{backgroundColor: competition.color}} />
+                      <span className={styles.name}>{competition.name}</span>
+                    </div>
+                    <div className={styles.arrowIconContainer}>
+                      <ArrowExport16Filled />
+                    </div>
+                  </div>
+                </Link>
+              </AutocompleteItem>
+            ))}
+        </AutocompleteSection>
+      </Autocomplete>
       <UserProfileButton handleLogout={handleLogout} avatarSrc={avatarSrc} />
     </div>
   );

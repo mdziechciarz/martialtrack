@@ -8,39 +8,13 @@ import {Button, DatePicker, Input} from '@nextui-org/react';
 
 import Card, {CardGrid} from '@/components/Card/Card';
 
+import {updateCoachMedicalCheckupsAndLicenses} from '../../../../actions/updateCoach';
+
 import styles from './LicensesCard.module.css';
 
-// const exampleEntries = [
-//   {
-//     id: '123',
-//     name: 'Badania lekarskie',
-//     number: 'ARE/2017/124',
-//     date: '2023-03-10',
-//   },
-//   {
-//     id: '456',
-//     name: 'Licencja PZKB',
-//     number: 'WAE/2019/124',
-//     date: '2024-07-24',
-//   },
-// ];
-const exampleEntries = [
-  {
-    id: '123',
-    name: 'Badania lekarskie',
-    number: 'ARE/2017/124',
-    date: parseDate('2023-03-10'),
-  },
-  {
-    id: '456',
-    name: 'Licencja PZKB',
-    number: 'WAE/2019/124',
-    date: parseDate('2024-07-24'),
-  },
-];
-
-const LicensesCard = () => {
+const LicensesCard = ({coachId, refetchCoachData, licenses = []}) => {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     register,
@@ -51,11 +25,32 @@ const LicensesCard = () => {
     unregister,
   } = useForm();
 
-  const handleSaveChanges = handleSubmit(data => {
-    console.log('Changes saved');
-    console.log(data);
-    reset();
-    setIsEditMode(false);
+  const handleSaveChanges = handleSubmit(async data => {
+    try {
+      setIsSaving(true);
+
+      const {success} = await updateCoachMedicalCheckupsAndLicenses({
+        id: coachId,
+        licenses: Object.values(data).map(entry => ({
+          name: entry.name,
+          number: entry.number || null,
+          expirationDate: entry.expirtationDate.toString() || null,
+        })),
+      });
+
+      if (success) {
+        console.log('Changes saved successfully');
+        refetchCoachData();
+      } else {
+        console.error('Failed to save changes');
+      }
+    } catch (error) {
+      console.error('Error saving changes:', error);
+    } finally {
+      setIsSaving(false);
+      reset();
+      setIsEditMode(false);
+    }
   });
 
   const handleCancelChanges = () => {
@@ -78,6 +73,7 @@ const LicensesCard = () => {
       onCancelClick={handleCancelChanges}
       onEditClick={handleEdit}
       className={styles.card}
+      isSaving={isSaving}
     >
       {isEditMode ? (
         <EditModeContent
@@ -85,32 +81,32 @@ const LicensesCard = () => {
           control={control}
           errors={errors}
           unregister={unregister}
-          currentEntries={exampleEntries}
+          currentEntries={licenses.map(entry => ({
+            id: v4(),
+            name: entry.name,
+            number: entry.number,
+            expirationDate: parseDate(entry.expirationDate),
+          }))}
         />
       ) : (
-        <ReadOnlyContent />
+        <ReadOnlyContent licenses={licenses} />
       )}
     </Card>
   );
 };
 
-const ReadOnlyContent = () => {
+const ReadOnlyContent = ({licenses}) => {
   return (
     <CardGrid oneColumn>
-      <div className={styles.entry}>
-        <p className={styles.key}>Badania lekarskie</p>
-        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '8px'}}>
-          <p className={styles.value}>ARE/2017/124</p>
-          <p className={styles.value}>Ważne do: 2023-12-24</p>
+      {licenses.map(entry => (
+        <div key={entry.name} className={styles.entry}>
+          <p className={styles.key}>{entry.name}</p>
+          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '8px'}}>
+            <p className={styles.value}>{entry.number || '-'}</p>
+            <p className={styles.value}>Ważne do: {entry.expirationDate || '-'}</p>
+          </div>
         </div>
-      </div>
-      <div className={styles.entry}>
-        <p className={styles.key}>Licencja PZKB</p>
-        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '8px'}}>
-          <p className={styles.value}>WAE/2019/124</p>
-          <p className={styles.value}>Ważne do: 2024-07-24</p>
-        </div>
-      </div>
+      ))}
     </CardGrid>
   );
 };
@@ -119,7 +115,7 @@ const EditModeContent = ({currentEntries = [], register, control, errors, unregi
   const [entries, setEntries] = useState(currentEntries || []);
 
   const handleAddNewEntry = () => {
-    setEntries([...entries, {id: v4(), label: '', value: ''}]);
+    setEntries([...entries, {id: v4(), name: '', number: null, expirationDate: null}]);
   };
 
   const handleRemoveEntry = id => {
@@ -136,7 +132,7 @@ const EditModeContent = ({currentEntries = [], register, control, errors, unregi
             id={entry.id}
             licenseName={entry.name}
             licenseNumber={entry.number}
-            licenseDate={entry.date}
+            licenseDate={entry.expirationDate}
             handleRemoveEntry={() => handleRemoveEntry(entry.id)}
             register={register}
             errors={errors}
@@ -172,8 +168,8 @@ const Entry = ({
           size="sm"
           isRequired
           defaultValue={licenseName}
-          isInvalid={!!errors?.[id]?.licenseName}
-          {...register(`${id}].licenseName`, {
+          isInvalid={!!errors?.[id]?.name}
+          {...register(`${id}].name`, {
             required: true,
           })}
           validationBehavior="aria"
@@ -184,13 +180,13 @@ const Entry = ({
           label="Numer"
           placeholder="Np. ARE/2017/124"
           defaultValue={licenseNumber}
-          isInvalid={!!errors?.[id]?.licenseNumber}
-          {...register(`${id}].licenseNumber`)}
+          isInvalid={!!errors?.[id]?.number}
+          {...register(`${id}].number`)}
           validationBehavior="aria"
         />
         <Controller
           control={control}
-          name={`${id}].licenseDate`}
+          name={`${id}].expirtationDate`}
           rules={{required: true}}
           defaultValue={licenseDate}
           render={({field}) => (
@@ -198,7 +194,7 @@ const Entry = ({
               label="Data ważności"
               isRequired
               disableAnimation
-              isInvalid={!!errors?.[id]?.licenseDate}
+              isInvalid={!!errors?.[id]?.expirtationDate}
               validationBehavior="aria"
               {...field}
             />
@@ -212,7 +208,7 @@ const Entry = ({
 
 const AddNewEntryButton = ({onClick}) => {
   return (
-    <Button className={styles.addTimeButton} size="sm" fullWidth onClick={onClick} variant="light">
+    <Button className={styles.addTimeButton} size="sm" fullWidth onPress={onClick} variant="light">
       <Add16Filled />
     </Button>
   );
@@ -223,7 +219,7 @@ const RemoveEntryButton = ({onClick}) => {
     <Button
       className={styles.removeEntryButton}
       size="sm"
-      onClick={onClick}
+      onPress={onClick}
       isIconOnly
       variant="light"
     >

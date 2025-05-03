@@ -1,10 +1,13 @@
 import {useState} from 'react';
 import {useForm} from 'react-hook-form';
+import {v4} from 'uuid';
 
 import {Add16Filled, Dismiss16Filled} from '@fluentui/react-icons';
 import {Button, Input} from '@nextui-org/react';
 
 import Card, {CardEntries, CardGrid} from '@/components/Card/Card';
+
+import {updateCoachOtherDetails} from '../../../../actions/updateCoach';
 
 import styles from './OtherDetailsCard.module.css';
 
@@ -16,8 +19,9 @@ const exampleEntries = [
   },
 ];
 
-const OtherDetailsCard = () => {
+const OtherDetailsCard = ({coachId, refetchCoachData, otherDetails = []}) => {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     register,
@@ -28,11 +32,28 @@ const OtherDetailsCard = () => {
     unregister,
   } = useForm();
 
-  const handleSaveChanges = handleSubmit(data => {
-    console.log('Changes saved');
-    console.log(data);
-    reset();
-    setIsEditMode(false);
+  const handleSaveChanges = handleSubmit(async data => {
+    try {
+      setIsSaving(true);
+
+      const {success} = await updateCoachOtherDetails({
+        id: coachId,
+        other: Object.values(data),
+      });
+
+      if (success) {
+        console.log('Changes saved successfully');
+        refetchCoachData();
+      } else {
+        console.error('Failed to save changes');
+      }
+    } catch (error) {
+      console.error('Error saving changes:', error);
+    } finally {
+      setIsSaving(false);
+      reset();
+      setIsEditMode(false);
+    }
   });
 
   const handleCancelChanges = () => {
@@ -54,6 +75,7 @@ const OtherDetailsCard = () => {
       onSaveClick={handleSaveChanges}
       onCancelClick={handleCancelChanges}
       onEditClick={handleEdit}
+      isSaving={isSaving}
     >
       {isEditMode ? (
         <EditModeContent
@@ -61,20 +83,24 @@ const OtherDetailsCard = () => {
           control={control}
           errors={errors}
           unregister={unregister}
-          currentEntries={exampleEntries}
+          currentEntries={otherDetails.map(entry => ({
+            id: v4(),
+            key: entry.key,
+            value: entry.value,
+          }))}
         />
       ) : (
-        <ReadOnlyContent />
+        <ReadOnlyContent otherDetails={otherDetails} />
       )}
     </Card>
   );
 };
 
-const ReadOnlyContent = () => {
+const ReadOnlyContent = ({otherDetails}) => {
   return (
     <CardEntries
-      entries={exampleEntries.reduce((result, item) => {
-        result[item.label] = item.value;
+      entries={otherDetails.reduce((result, item) => {
+        result[item.key] = item.value;
         return result;
       }, {})}
     />
@@ -85,7 +111,7 @@ const EditModeContent = ({register, unregister, errors, control, currentEntries}
   const [entries, setEntries] = useState(currentEntries || []);
 
   const handleAddNewEntry = () => {
-    setEntries([...entries, {id: v4(), label: '', value: ''}]);
+    setEntries([...entries, {id: v4(), key: '', value: ''}]);
   };
 
   const handleRemoveEntry = id => {
@@ -100,7 +126,7 @@ const EditModeContent = ({register, unregister, errors, control, currentEntries}
           key={entry.id}
           id={entry.id}
           handleRemoveEntry={() => handleRemoveEntry(entry.id)}
-          label={entry.label}
+          label={entry.key}
           value={entry.value}
           register={register}
           errors={errors}
@@ -116,7 +142,7 @@ const EditModeContent = ({register, unregister, errors, control, currentEntries}
 
 const AddNewEntryButton = ({onClick}) => {
   return (
-    <Button size="sm" fullWidth onClick={onClick} variant="light">
+    <Button size="sm" fullWidth onPress={onClick} variant="light">
       <Add16Filled />
     </Button>
   );
@@ -127,7 +153,7 @@ const RemoveEntryButton = ({onClick}) => {
     <Button
       className={styles.removeEntryButton}
       size="sm"
-      onClick={onClick}
+      onPress={onClick}
       isIconOnly
       variant="light"
     >
@@ -143,9 +169,9 @@ const Entry = ({id, handleRemoveEntry, register, errors, control, label, value})
         label="Nazwa pola"
         placeholder="Np. Data przyjęcia"
         isRequired
-        isInvalid={!!errors?.[id]?.label}
+        isInvalid={!!errors?.[id]?.key}
         defaultValue={label}
-        {...register(`${id}.label`, {required: true})}
+        {...register(`${id}.key`, {required: true})}
         validationBehavior="aria"
       />
       <Input

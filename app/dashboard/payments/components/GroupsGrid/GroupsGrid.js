@@ -6,55 +6,131 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Select,
+  SelectItem,
+  Spinner,
 } from '@nextui-org/react';
 
 import GroupPaymentsCard from './components/GroupPaymentsCard';
 
-import exampleGroupPaymentsData from './exampleData';
-
+import {useState} from 'react';
 import styles from './GroupsGrid.module.css';
 
-const GroupsGrid = ({}) => {
+const monthOptions = [
+  {name: 'Styczeń', uid: '1'},
+  {name: 'Luty', uid: '2'},
+  {name: 'Marzec', uid: '3'},
+  {name: 'Kwiecień', uid: '4'},
+  {name: 'Maj', uid: '5'},
+  {name: 'Czerwiec', uid: '6'},
+  {name: 'Lipiec', uid: '7'},
+  {name: 'Sierpień', uid: '8'},
+  {name: 'Wrzesień', uid: '9'},
+  {name: 'Październik', uid: '10'},
+  {name: 'Listopad', uid: '11'},
+  {name: 'Grudzień', uid: '12'},
+];
+
+const yearOptions = [
+  {name: '2022', uid: '2022'},
+  {name: '2023', uid: '2023'},
+  {name: '2024', uid: '2024'},
+  {name: '2025', uid: '2025'},
+];
+
+const GroupsGrid = ({isLoading = false, paymentsByGroup = [], refetchPayments}) => {
+  const currentMonth = parseInt(new Date().getMonth() + 1);
+  const currentYear = parseInt(new Date().getFullYear());
+
+  const [monthFilter, setMonthFilter] = useState(new Set([currentMonth.toString()]));
+  const [yearFilter, setYearFilter] = useState(new Set([currentYear.toString()]));
+
+  const filteredPayments = paymentsByGroup.map(group => {
+    const filteredPayments = group.membership_payments.filter(payment => {
+      return monthFilter.has(payment.month.toString()) && yearFilter.has(payment.year.toString());
+    });
+
+    return {
+      ...group,
+      membership_payments: filteredPayments,
+    };
+  });
+
   return (
     <div className={styles.container}>
       <div className={styles.buttonsContainer}>
         <div className={styles.filterButtons}>
-          <Dropdown>
-            <DropdownTrigger className="hidden sm:flex" style={{backgroundColor: 'white'}}>
-              <Button endContent={<ChevronDown16Filled className="text-small" />} variant="flat">
-                Miesiąc
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              disallowEmptySelection
-              aria-label="Month filter"
-              // closeOnSelect={false}
-              // selectedKeys={monthFilter}
-              // onSelectionChange={setMonthFilter}
-            >
-              {['Styczeń 2024', 'Luty 2024', 'Marzec 2024', 'Kwiecień 2024'].map(month => (
-                <DropdownItem key={month} className="capitalize">
-                  {month}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
+          <Select
+            label="Miesiąc"
+            placeholder="Wybierz miesiąc"
+            selectedKeys={monthFilter}
+            variant="flat"
+            size="sm"
+            classNames={{
+              trigger: styles.selectTrigger,
+            }}
+            onSelectionChange={setMonthFilter}
+            disallowEmptySelection
+          >
+            {monthOptions.map(month => (
+              <SelectItem key={month.uid}>{month.name}</SelectItem>
+            ))}
+          </Select>
+          <Select
+            label="Rok"
+            placeholder="Wybierz rok"
+            variant="flat"
+            size="sm"
+            classNames={{
+              trigger: styles.selectTrigger,
+            }}
+            selectedKeys={yearFilter}
+            onSelectionChange={setYearFilter}
+            disallowEmptySelection
+          >
+            {yearOptions.map(year => (
+              <SelectItem key={year.uid}>{year.name}</SelectItem>
+            ))}
+          </Select>
         </div>
         <Buttons />
       </div>
       <div className={styles.grid}>
-        {exampleGroupPaymentsData.map(group => (
-          <GroupPaymentsCard
-            key={group.name}
-            groupName={group.name}
-            color={group.color}
-            amountPaid={group.amountPaid}
-            amountToBePaid={group.amountToBePaid}
-            paidCount={group.paidCount}
-            toBePaidCount={group.toBePaidCount}
-            payers={group.payers}
-          />
-        ))}
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          filteredPayments.map(group => (
+            <GroupPaymentsCard
+              key={group.id}
+              groupName={group.name}
+              color={group.color}
+              payers={group.membership_payments.map(payment => ({
+                paymentId: payment.id,
+                name: payment.athlete.full_name,
+                amount: payment.amount_due,
+                // isPaid: payment.status === 'paid',
+                status: payment.status,
+              }))}
+              amountPaid={group.membership_payments.reduce((acc, payment) => {
+                return acc + (payment.status === 'paid' ? payment.amount_due : 0);
+              }, 0)}
+              amountToBePaid={group.membership_payments.reduce((acc, payment) => {
+                return (
+                  acc + (['paid', 'pending'].includes(payment.status) ? payment.amount_due : 0)
+                );
+              }, 0)}
+              paidCount={
+                group.membership_payments.filter(payment => payment.status === 'paid').length
+              }
+              toBePaidCount={
+                group.membership_payments.filter(payment =>
+                  ['paid', 'pending'].includes(payment.status)
+                ).length
+              }
+              refetchPayments={refetchPayments}
+            />
+          ))
+        )}
       </div>
     </div>
   );

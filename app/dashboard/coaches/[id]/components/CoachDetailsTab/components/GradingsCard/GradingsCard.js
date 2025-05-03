@@ -7,23 +7,13 @@ import {Button, Input} from '@nextui-org/react';
 
 import Card, {CardEntries, CardGrid} from '@/components/Card/Card';
 
+import {updateCoachLevels} from '../../../../actions/updateCoach';
+
 import styles from './GradingsCard.module.css';
 
-const exampleEntries = [
-  {
-    id: '123',
-    label: 'Taekwondo',
-    value: 'III Dan',
-  },
-  {
-    id: '456',
-    label: 'Kickboxing',
-    value: 'II Dan',
-  },
-];
-
-const GradingsCard = () => {
+const GradingsCard = ({coachId, refetchCoachData, levels = []}) => {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     register,
@@ -34,11 +24,28 @@ const GradingsCard = () => {
     unregister,
   } = useForm();
 
-  const handleSaveChanges = handleSubmit(data => {
-    console.log('Changes saved');
-    console.log(data);
-    reset();
-    setIsEditMode(false);
+  const handleSaveChanges = handleSubmit(async data => {
+    try {
+      setIsSaving(true);
+
+      const {success} = await updateCoachLevels({
+        id: coachId,
+        levels: Object.values(data),
+      });
+
+      if (success) {
+        console.log('Changes saved successfully');
+        refetchCoachData();
+      } else {
+        console.error('Failed to save changes');
+      }
+    } catch (error) {
+      console.error('Error saving changes:', error);
+    } finally {
+      setIsSaving(false);
+      reset();
+      setIsEditMode(false);
+    }
   });
 
   const handleCancelChanges = () => {
@@ -60,6 +67,7 @@ const GradingsCard = () => {
       onSaveClick={handleSaveChanges}
       onCancelClick={handleCancelChanges}
       onEditClick={handleEdit}
+      isSaving={isSaving}
     >
       {isEditMode ? (
         <EditModeContent
@@ -67,31 +75,35 @@ const GradingsCard = () => {
           control={control}
           errors={errors}
           unregister={unregister}
-          currentEntries={exampleEntries}
+          currentLevels={levels?.map(item => ({
+            id: v4(),
+            key: item.key,
+            value: item.value,
+          }))}
         />
       ) : (
-        <ReadOnlyContent />
+        <ReadOnlyContent levels={levels} />
       )}
     </Card>
   );
 };
 
-const ReadOnlyContent = () => {
+const ReadOnlyContent = ({levels = []}) => {
   return (
     <CardEntries
-      entries={exampleEntries.reduce((result, item) => {
-        result[item.label] = item.value;
+      entries={levels?.reduce((result, item) => {
+        result[item.key] = item.value;
         return result;
       }, {})}
     />
   );
 };
 
-const EditModeContent = ({register, unregister, errors, control, currentEntries}) => {
-  const [entries, setEntries] = useState(currentEntries || []);
+const EditModeContent = ({register, unregister, errors, control, currentLevels}) => {
+  const [entries, setEntries] = useState(currentLevels || []);
 
   const handleAddNewEntry = () => {
-    setEntries([...entries, {id: v4(), label: '', value: ''}]);
+    setEntries([...entries, {id: v4(), key: '', value: ''}]);
   };
 
   const handleRemoveEntry = id => {
@@ -101,12 +113,12 @@ const EditModeContent = ({register, unregister, errors, control, currentEntries}
 
   return (
     <CardGrid oneColumn>
-      {entries.map(entry => (
+      {entries?.map(entry => (
         <Entry
           key={entry.id}
           id={entry.id}
           handleRemoveEntry={() => handleRemoveEntry(entry.id)}
-          label={entry.label}
+          label={entry.key}
           value={entry.value}
           register={register}
           errors={errors}
@@ -122,7 +134,7 @@ const EditModeContent = ({register, unregister, errors, control, currentEntries}
 
 const AddNewEntryButton = ({onClick}) => {
   return (
-    <Button size="sm" fullWidth onClick={onClick} variant="light">
+    <Button size="sm" fullWidth onPress={onClick} variant="light">
       <Add16Filled />
     </Button>
   );
@@ -133,7 +145,7 @@ const RemoveEntryButton = ({onClick}) => {
     <Button
       className={styles.removeEntryButton}
       size="sm"
-      onClick={onClick}
+      onPress={onClick}
       isIconOnly
       variant="light"
     >
@@ -149,9 +161,9 @@ const Entry = ({id, handleRemoveEntry, register, errors, control, label, value})
         label="Dyscyplina"
         placeholder="Np. Taekwondo"
         isRequired
-        isInvalid={!!errors?.[id]?.label}
+        isInvalid={!!errors?.[id]?.key}
         defaultValue={label}
-        {...register(`${id}.label`, {required: true})}
+        {...register(`${id}.key`, {required: true})}
         validationBehavior="aria"
       />
       <Input
